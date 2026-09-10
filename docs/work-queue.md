@@ -6,7 +6,7 @@ This file records which branches are active, complete enough to stop, or intenti
 
 ## Ready for next bounded investigation
 
-### Intel LAN OPROM POST-hang fix
+### Intel LAN OPROM POST-hang fix — isolate the physical ROM
 
 Known changelog item from DRFXI 1.13:
 
@@ -14,21 +14,22 @@ Known changelog item from DRFXI 1.13:
 Fix hang at POST logo caused by Intel LAN OPROM
 ```
 
-Current negative evidence from 1.12→1.15:
+The first focused BDS/dispatch pass is complete. Current evidence from 1.12→1.15:
 
-- `LanRomDriver.efi` — byte-identical;
-- `UefiPxeBcDxe.efi` — byte-identical;
-- `SnpDxe.efi` — byte-identical;
-- `NetworkStackSetupScreen.efi` — byte-identical;
-- `RomLayoutDxe.efi` — byte-identical;
-- `OptionRomPolicy.efi` changes only minimally and looks consistent with PCD-token renumbering;
-- `PciBus.efi` likewise does not expose an obvious LAN-specific fix.
+- `LanRomDriver`, `UefiPxeBcDxe`, `SnpDxe`, `NetworkStackSetupScreen`, and `RomLayoutDxe` are byte-identical;
+- `OptionRomPolicy` differs only by 11 `+3` PCD-token renumberings;
+- `PciBus` differs only by two accesses to one renumbered token (`0x3D0→0x3D4`);
+- the explicit BDS Network Controller (`PCI base class 0x02`) path is semantically unchanged;
+- a major new BDS block was localized to display/GOP/device-path management (`class 0x03`, `AmiGopOutputDp`), so BDS growth itself is no longer evidence for the LAN fix;
+- no new direct Intel vendor-ID `0x8086` branch was found.
 
-`Bds.efi` remains the strongest unresolved executable candidate: it grows materially from 1.12 to 1.15 and has substantial real code differences.
+The actual Intel LAN PCI Option-ROM payload has not yet been isolated. A top-level `PCIR` scan is insufficient because it may be compressed or AMI-encapsulated.
 
-Because 1.13 and 1.14 binaries are missing, any 1.12→1.15 finding must distinguish direct code evidence from temporal attribution to 1.13.
+Recommended next task: identify the exact FFS/raw/compressed object that carries the Intel LAN Option ROM in 1.12 and 1.15, compare it, and trace only the dispatch route for that exact object. Resume BDS comparison only if the ROM payload proves unchanged.
 
-Recommended next task: bounded, BDS/LAN-only semantic diff, first identifying Option ROM dispatch / POST-logo / network-ROM paths and then comparing only those functions.
+See `docs/findings/intel-lan-oprom.md` and `docs/checkpoints/2026-09-10-intel-lan-oprom-bds.md`.
+
+Because 1.13 and 1.14 binaries are missing, any 1.12→1.15 finding must continue to distinguish direct code evidence from temporal attribution to 1.13.
 
 ## Completed enough to stop
 
