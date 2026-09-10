@@ -1,0 +1,11 @@
+comparison,metric,value,notes
+1.12->1.15,named_pe_modules_base,260,
+1.12->1.15,named_pe_modules_target,263,
+1.12->1.15,byte_identical_modules,79,raw exact-file comparison
+1.12->1.15,byte_changed_modules,181,substantially overstates semantic change because of PCD/build/relocation churn
+1.12->1.15,added_modules,3,AmdVariableProtection.efi; GenerateTimeBaseVariable.efi; HardwareSignatureEntry.efi
+1.15->1.17,named_pe_modules_base,263,
+1.15->1.17,named_pe_modules_target,266,
+1.15->1.17,byte_identical_modules,145,raw exact-file comparison
+1.15->1.17,byte_changed_modules,118,substantially overstates semantic change because of PCD/build/relocation churn
+1.15->1.17,added_modules,3,AmdCpmOemAcpi.efi; TcgStorageSecurity.efi; SmmTcgStorageSec.efi
