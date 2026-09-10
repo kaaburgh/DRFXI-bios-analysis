@@ -1,0 +1,74 @@
+{
+  "old": {
+    "sha256": "8d68393cb1388c3c936a24116883c0f8991f22696fc5e6d06980e096fd97668c",
+    "header": {
+      "BuildVersion": 7,
+      "Length": 5696,
+      "SystemSkuId": 0,
+      "LengthForAllSkus": 5696,
+      "UninitDataBaseSize": 776,
+      "LocalTokenNumberTableOffset": 664,
+      "ExMapTableOffset": 344,
+      "GuidTableOffset": 4516,
+      "StringTableOffset": 4652,
+      "SizeTableOffset": 5082,
+      "SkuIdTableOffset": 80,
+      "PcdNameTableOffset": 0,
+      "LocalTokenCount": 963,
+      "ExTokenCount": 40,
+      "GuidTableCount": 5
+    }
+  },
+  "new": {
+    "sha256": "e4847fe7ead968ced7c2842bd2e20934c3220765d53a606b35bca85ce94a8435",
+    "header": {
+      "BuildVersion": 7,
+      "Length": 5704,
+      "SystemSkuId": 0,
+      "LengthForAllSkus": 5704,
+      "UninitDataBaseSize": 778,
+      "LocalTokenNumberTableOffset": 664,
+      "ExMapTableOffset": 344,
+      "GuidTableOffset": 4528,
+      "StringTableOffset": 4664,
+      "SizeTableOffset": 5094,
+      "SkuIdTableOffset": 80,
+      "PcdNameTableOffset": 0,
+      "LocalTokenCount": 966,
+      "ExTokenCount": 40,
+      "GuidTableCount": 5
+    }
+  },
+  "normalization": {
+    "method": "value-aware sequence alignment excluding physical offsets/token numbers",
+    "equal_token_records": 962,
+    "inserted_token_records": 3,
+    "deleted_token_records": 0,
+    "replaced_same_category_records": 1,
+    "pcd_name_table_present_old": false,
+    "pcd_name_table_present_new": false,
+    "dynamic_ex_key_sets_equal": true,
+    "dynamic_ex_local_token_shift_distribution": {"3": 40}
+  },
+  "scalar_value_changes": [
+    {
+      "old_token_number": 209,
+      "new_token_number": 212,
+      "descriptor_old": "0x0400009c",
+      "descriptor_new": "0x0400009c",
+      "datum_type": "UINT32",
+      "offset_old": 156,
+      "offset_new": 156,
+      "old_value": 91,
+      "new_value": 100,
+      "old_hex": "0x0000005b",
+      "new_hex": "0x00000064"
+    }
+  ],
+  "inserted_tokens": [
+    {"token_number": 5, "descriptor_raw": "0x011015e5", "pcd_type": "DATA", "datum_type": "BOOLEAN", "offset": 5605, "scalar": true, "initialized_in_binary": true, "default_value": 1, "default_hex": "0x01"},
+    {"token_number": 163, "descriptor_raw": "0x01101914", "pcd_type": "DATA", "datum_type": "BOOLEAN", "offset": 6420, "scalar": true, "initialized_in_binary": false, "default_value": 0, "default_hex": "0x00"},
+    {"token_number": 164, "descriptor_raw": "0x01101915", "pcd_type": "DATA", "datum_type": "BOOLEAN", "offset": 6421, "scalar": true, "initialized_in_binary": false, "default_value": 0, "default_hex": "0x00"}
+  ],
+  "deleted_tokens": []
+}
