@@ -1,0 +1,32 @@
+Focused IFR evidence: hidden AMI user-default save/restore
+=========================================================
+
+Source firmware hashes:
+  1.12  246e7f54a12a8c7279ef68433602264b8ecbabcde828c9c9008f571c270845b9
+  1.15  3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88
+  1.17  99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51
+
+Source HII module: Setup
+
+Representative 1.15 extraction:
+
+    SuppressIf
+        Uint64 Value: 0x1
+        SuppressIf
+            EqIdVal QuestionId: 0x14C, Value: 0x6
+            Ref Prompt: "Save as User Defaults", Help: "Save the changes done so far as User Defaults.", QuestionId: 0x146, FormId: 0x2716
+        End
+    End
+
+    SuppressIf
+        Uint64 Value: 0x1
+        SuppressIf
+            EqIdVal QuestionId: 0x14C, Value: 0x7
+            Ref Prompt: "Restore User Defaults", Help: "Restore the User Defaults to all the setup options.", QuestionId: 0x147, FormId: 0x2716
+        End
+    End
+
+Equivalent actions and unconditional outer `SuppressIf` are present in 1.12 and 1.17 as well; only surrounding QuestionId numbering shifts.
+
+Interpretation:
+  `Uint64 Value: 0x1` is an unconditional true expression under SuppressIf, so the two actions are deliberately hidden. This establishes a real AMI user-default save/restore feature. It does NOT by itself establish multiple named OC-profile slots.
