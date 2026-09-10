@@ -1,0 +1,29 @@
+Focused IFR evidence: AMD Variable Protection
+============================================
+
+First observed in current corpus: DRFXI 1.15
+DRFXI 1.15 SHA-256:
+  3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88
+
+Source HII module: AmdPbsSetupDxe
+
+Extracted question:
+
+    OneOf Prompt: "AMD Variable Protection",
+          Help: "Protect some AMD specific variables for CBS, PBS and AOD. If locked, some utilities like RU that modify variable at runtime do not work.",
+          QuestionFlags: 0x14,
+          QuestionId: 0x1D,
+          VarStoreId: 0x1,
+          VarOffset: 0x91,
+          Flags: 0x10,
+          Size: 8,
+          Min: 0x0,
+          Max: 0x1
+        OneOfOption "Disabled" Value: 0
+        OneOfOption "Enabled " Value: 1, Default
+    End
+
+A corresponding new executable module `AmdVariableProtection.efi` is present by 1.15.
+
+Conclusion:
+  this is a real default-enabled behavior addition between 1.12 and 1.15. It is not explicitly named in the known 1.13-1.15 changelog. It may have arrived as part of the PI 1.0.0.3h platform update, but that attribution is not proven without intermediate 1.13/1.14 images or stronger upstream provenance.
