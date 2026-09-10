@@ -40,27 +40,43 @@ The exact 1.16 distribution file has not been recovered. This means every 1.15�
 
 ### 1.15 TCC / SMU power changes
 
-The 1.15 changelog entries now both have strong binary anchors.
+Both 1.15 changelog entries now have strong binary anchors, and the TCC consumer path is closed at BIOS→SMU level.
 
-`Set TCC to 100` is localized at value level in the early PEI `PcdPeim` database:
+`Set TCC to 100` is localized in the early PEI `PcdPeim` database:
 
 ```text
-1.12 local token: 209
-1.15 local token: 212
+1.12 local token: 209 (0xD1)
+1.15 local token: 212 (0xD4)
 same descriptor:  0x0400009C
-PCD type:         DATA
-Datum:            UINT32
+PCD type:         DATA / UINT32
 Database offset:  0x9C
-Value:            91 -> 100
+Static default:   91 -> 100
 ```
 
-This is the **only changed pre-existing scalar default** after semantic token normalization. 1.15 adds three ordinary Dynamic BOOLEAN tokens; all 40 stable DynamicEx identities move by exactly +3 local token numbers, validating the normalization. `PcdNameTableOffset = 0`, so the symbolic source-level PCD CName is absent from the binary database.
+This is the only changed pre-existing scalar default after semantic token normalization. Three newly inserted ordinary Dynamic BOOLEAN tokens account for the `+3` local-token shift.
 
-Current assessment: **high confidence** that this PCD is the static configuration described by `Set TCC to 100`. The next narrow question is which module/function consumes token 209/212 and where it sends the value.
+The consumer trace found exactly two direct native-PCD `Get32` literal-token sites, both in `SmuV13Dxe`:
+
+1. RVA `0x1B99`: reads token 209/212, passes the value as the SMU request argument with message ID `0x3F`, and references the firmware diagnostic identity `BIOSSMC_MSG_SetTjMax %x`.
+2. RVA `0x2D1D`: reads the same PCD and stores it at offset `+0x10` of a PPTable/default-infrastructure structure whose diagnostic dump labels that field `TjMax`.
+
+`AodPei` provides the corresponding PEI writer. If AOD `Platform Thermal Throttle Ctrl` (VarOffset `0xB1`) is Manual, it reads `Platform Thermal Throttle Limit` (VarOffset `0xB2`) and calls `PcdPpi->Set32` on the same target token. Thus the static platform value can be replaced by an explicit lower thermal limit before DXE.
+
+Current assessment: **very high confidence** that the `91 -> 100` PCD change is the code/data implementation of `Set TCC to 100`:
+
+```text
+PcdPeim default 91 -> 100
+    ↓
+SmuV13Dxe PcdGet32
+    ↓
+BIOSSMC_MSG_SetTjMax
+```
+
+The exact source-level PCD CName is still absent because `PcdNameTableOffset = 0`. This does not block the consumer-path attribution. It also does not prove that every supported CPU ultimately accepts 100°C as its effective silicon limit; downstream SMU policy can still clamp or reinterpret the request.
 
 Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15. Its embedded version field changes `0.54.68.0 → 0.54.6C.32`, and 64.68% of the decompressed 256-KiB firmware differs. This remains the strongest binary match for `Update SMU for power limit`; the exact internal SMU routine/table is not yet localized.
 
-See [`findings/smu-power-limit.md`](findings/smu-power-limit.md) and [`checkpoints/2026-09-10-pcd-tcc.md`](checkpoints/2026-09-10-pcd-tcc.md).
+See [`findings/smu-power-limit.md`](findings/smu-power-limit.md), [`findings/tcc-pcd-consumer.md`](findings/tcc-pcd-consumer.md), and [`checkpoints/2026-09-10-tcc-pcd-consumer.md`](checkpoints/2026-09-10-tcc-pcd-consumer.md).
 
 ### Community 795iX3D modification
 
@@ -114,18 +130,19 @@ Code comparison therefore separates:
 4. real data changes;
 5. real executable-logic changes.
 
-The `PcdPeim` TCC analysis adds a concrete example of semantic normalization: three inserted Dynamic tokens shift local token numbers while a stable descriptor/value record can still be tracked across releases.
+The TCC analysis provides a concrete end-to-end normalization example: three inserted Dynamic tokens shift the local token number `209 -> 212`, while the unchanged descriptor identifies the same PCD and the matched consumer instructions preserve exactly the same semantics.
 
 ## Active open questions
 
 Highest-value unresolved work outside the paused S3 branch:
 
-1. trace the consumer of the TCC PCD — local token 209 in 1.12 / 212 in 1.15 — and establish whether it feeds `SetTjMax` or another thermal path;
-2. identify the internal change(s) in `PSP_SMU_FN_FIRMWARE~0x108` responsible for the `power limit` wording;
-3. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
-4. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
-5. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-6. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. identify the internal change(s) in `PSP_SMU_FN_FIRMWARE~0x108` responsible for the 1.15 `Update SMU for power limit` wording;
+2. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
+3. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
+4. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
+5. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+
+Optional TCC follow-up is no longer on the critical path: recover the source-level PCD CName from matching debug/source metadata or verify effective thermal limits dynamically on hardware.
 
 ## Deferred branches
 
