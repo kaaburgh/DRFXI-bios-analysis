@@ -25,7 +25,7 @@ Missing but confirmed releases:
 - 1.14 — 2025-11-13, checksum `419D`
 - 1.16 — 2026-06-03, checksum `1EA3`
 
-The exact 1.16 distribution file has not been recovered. This means every 1.15→1.17 attribution must distinguish what is known from what is only temporally inferred.
+The missing intermediate binaries limit exact temporal attribution. In particular, 1.12→1.15 observations may include changes from 1.13, 1.14, 1.15, or undocumented work between those releases.
 
 ## Current high-confidence findings
 
@@ -40,9 +40,9 @@ The exact 1.16 distribution file has not been recovered. This means every 1.15�
 
 ### 1.15 TCC / SMU power changes
 
-Both 1.15 changelog entries now have strong binary anchors, and the TCC consumer path is closed at BIOS→SMU level.
+`Set TCC to 100` is localized end-to-end at BIOS→SMU level.
 
-`Set TCC to 100` is localized in the early PEI `PcdPeim` database:
+The early PEI `PcdPeim` database contains the only changed pre-existing scalar default after semantic token normalization:
 
 ```text
 1.12 local token: 209 (0xD1)
@@ -53,16 +53,16 @@ Database offset:  0x9C
 Static default:   91 -> 100
 ```
 
-This is the only changed pre-existing scalar default after semantic token normalization. Three newly inserted ordinary Dynamic BOOLEAN tokens account for the `+3` local-token shift.
+Three newly inserted ordinary Dynamic BOOLEAN tokens account for the `+3` local-token shift.
 
-The consumer trace found exactly two direct native-PCD `Get32` literal-token sites, both in `SmuV13Dxe`:
+The consumer trace found two direct reads in `SmuV13Dxe`:
 
-1. RVA `0x1B99`: reads token 209/212, passes the value as the SMU request argument with message ID `0x3F`, and references the firmware diagnostic identity `BIOSSMC_MSG_SetTjMax %x`.
-2. RVA `0x2D1D`: reads the same PCD and stores it at offset `+0x10` of a PPTable/default-infrastructure structure whose diagnostic dump labels that field `TjMax`.
+1. RVA `0x1B99`: reads token 209/212, passes the value to the SMU request with message ID `0x3F`, and references `BIOSSMC_MSG_SetTjMax %x`.
+2. RVA `0x2D1D`: reads the same PCD into a PPTable/default-infrastructure field whose diagnostic dump labels it `TjMax`.
 
-`AodPei` provides the corresponding PEI writer. If AOD `Platform Thermal Throttle Ctrl` (VarOffset `0xB1`) is Manual, it reads `Platform Thermal Throttle Limit` (VarOffset `0xB2`) and calls `PcdPpi->Set32` on the same target token. Thus the static platform value can be replaced by an explicit lower thermal limit before DXE.
+`AodPei` can overwrite this PCD when `Platform Thermal Throttle Ctrl` is Manual, using `Platform Thermal Throttle Limit` as the replacement value.
 
-Current assessment: **very high confidence** that the `91 -> 100` PCD change is the code/data implementation of `Set TCC to 100`:
+Assessment: **very high confidence** that the `91 -> 100` PCD change is the implementation of `Set TCC to 100`:
 
 ```text
 PcdPeim default 91 -> 100
@@ -72,11 +72,35 @@ SmuV13Dxe PcdGet32
 BIOSSMC_MSG_SetTjMax
 ```
 
-The exact source-level PCD CName is still absent because `PcdNameTableOffset = 0`. This does not block the consumer-path attribution. It also does not prove that every supported CPU ultimately accepts 100°C as its effective silicon limit; downstream SMU policy can still clamp or reinterpret the request.
+The source-level PCD CName is unavailable because `PcdNameTableOffset = 0`. The path also does not prove that every supported CPU accepts 100°C as its final silicon limit; downstream SMU policy may clamp or reinterpret the request.
 
-Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15. Its embedded version field changes `0.54.68.0 → 0.54.6C.32`, and 64.68% of the decompressed 256-KiB firmware differs. This remains the strongest binary match for `Update SMU for power limit`; the exact internal SMU routine/table is not yet localized.
+Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15: embedded version `0.54.68.0 → 0.54.6C.32`, both decompressed images 256 KiB. Raw fixed-offset diff is 64.68%, but content-based normalization proves that large regions are preserved at shifted offsets and much of that figure is layout movement. Internal localization of the `Update SMU for power limit` behavior is intentionally deferred until a reusable Ghidra/Xtensa-le environment is justified.
 
-See [`findings/smu-power-limit.md`](findings/smu-power-limit.md), [`findings/tcc-pcd-consumer.md`](findings/tcc-pcd-consumer.md), and [`checkpoints/2026-09-10-tcc-pcd-consumer.md`](checkpoints/2026-09-10-tcc-pcd-consumer.md).
+See `findings/smu-power-limit.md`, `findings/tcc-pcd-consumer.md`, and `deferred/smu-power-limit-deep-dive.md`.
+
+### Intel LAN OPROM POST-logo fix
+
+Known 1.13 changelog item:
+
+```text
+Fix hang at POST logo caused by Intel LAN OPROM
+```
+
+A focused 1.12→1.15 BDS/Option-ROM pass substantially narrows the search:
+
+- `LanRomDriver`, `UefiPxeBcDxe`, `SnpDxe`, `NetworkStackSetupScreen`, and `RomLayoutDxe` PE images are byte-identical.
+- `OptionRomPolicy` differs by exactly 11 bytes, all `+3` PCD-token renumberings; its logic and Option-ROM policy strings are unchanged.
+- `PciBus` differs by exactly two bytes, both one token moving `0x3D0→0x3D4`; its executable semantics are unchanged.
+- `Bds.efi` grows substantially (`76,928→100,096` bytes; `.text +0x4410`), but content anchors show old code surviving at shifted addresses rather than a wholesale rewrite.
+- A conspicuous new BDS path checks PCI base class `0x03`, references `PciRoot(0x0)/Pci(0x8,0x1)`, manages `AmiGopOutputDp`, and performs device-path/`ConnectController` work. It is strongly identified as display/GOP code, not LAN.
+- The identifiable BDS Network Controller path checks PCI base class `0x02` at RVA `0x2A95` and `0x2D31` in both versions and is semantically unchanged after helper-address normalization.
+- No newly introduced literal Intel vendor-ID `0x8086` special case was found in the changed candidates.
+
+This **downgrades the earlier hypothesis that BDS growth itself points to the LAN fix**. A subtle generic BDS connect/dispatch/order workaround remains possible, but broad BDS reverse engineering is no longer the best next move.
+
+The major unresolved artifact is the actual physical Intel LAN PCI Option-ROM payload. A top-level `PCIR` scan cannot exclude compressed/AMI-encapsulated ROM data, so byte identity of `LanRomDriver.efi` does not prove the real LAN OPROM binary is unchanged.
+
+Next step: identify the exact FFS/raw/compressed object carrying the Intel LAN Option ROM in 1.12 and 1.15, compare that object, and trace only its dispatch route. See `findings/intel-lan-oprom.md` and `checkpoints/2026-09-10-intel-lan-oprom-bds.md`.
 
 ### Community 795iX3D modification
 
@@ -104,7 +128,7 @@ The manufacturer-name change directly corresponds to the 1.14 changelog; adjacen
 
 ### 1.16 flash-driver candidate
 
-Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi` change materially. `ReFlash` also loses much of the older partial-update/NVRAM-reset UI and changes its post-flash reboot behavior. This is strongly attributable to the 1.16 changelog item `Add AMI flash driver EIP`, but the missing 1.16 binary prevents exact temporal proof.
+Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi` change materially. `ReFlash` loses much of the older partial-update/NVRAM-reset UI and changes its post-flash reboot behavior. This is strongly attributable to the 1.16 changelog item `Add AMI flash driver EIP`, but the missing 1.16 binary prevents exact temporal proof.
 
 ### 1.16 S3 workaround candidate
 
@@ -112,7 +136,7 @@ Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi
 
 This is high-confidence S3/PCIe power-resume machinery and a medium/high-confidence match for 1.16's `Workaround abnormal restart after S3`, but exact temporal proof still requires 1.16.
 
-**Status:** this branch is intentionally paused. Deferred follow-up is recorded in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
+**Status:** intentionally paused. Deferred follow-up is recorded in `findings/s3-workaround.md`.
 
 ### Undocumented 1.17 functionality
 
@@ -130,25 +154,30 @@ Code comparison therefore separates:
 4. real data changes;
 5. real executable-logic changes.
 
-The TCC analysis provides a concrete end-to-end normalization example: three inserted Dynamic tokens shift the local token number `209 -> 212`, while the unchanged descriptor identifies the same PCD and the matched consumer instructions preserve exactly the same semantics.
+The TCC analysis provides an end-to-end normalization example: three inserted Dynamic tokens shift local token `209 -> 212`, while the descriptor and consumer semantics remain stable.
+
+The Intel-LAN pass provides a second example: large raw BDS growth was initially suspicious, but content anchors and focused class-specific control-flow comparison separated unrelated new GOP code from unchanged network handling.
 
 ## Active open questions
 
-Highest-value unresolved work outside the paused S3 branch:
+Highest-value unresolved work outside deferred branches:
 
-1. identify the internal change(s) in `PSP_SMU_FN_FIRMWARE~0x108` responsible for the 1.15 `Update SMU for power limit` wording;
-2. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
-3. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
-4. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-5. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. identify the exact physical Intel LAN Option-ROM object and determine whether the 1.13 POST-logo fix changed the payload or only its dispatch route;
+2. obtain 1.13 / 1.14 / 1.16 to resolve intermediate-release attribution;
+3. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
+4. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
 
-Optional TCC follow-up is no longer on the critical path: recover the source-level PCD CName from matching debug/source metadata or verify effective thermal limits dynamically on hardware.
+Optional TCC follow-up is no longer on the critical path: recover the source-level PCD CName or verify effective thermal limits dynamically on hardware.
 
 ## Deferred branches
 
+### `Update SMU for power limit` internals
+
+Do not continue with raw byte diffing. Resume when a reusable Ghidra 12.1+/Xtensa-le toolchain is justified by enough reverse-engineering work. See `deferred/smu-power-limit-deep-dive.md`.
+
 ### S3 / PCIe power-resume
 
-Do not continue this branch by default. Resume only when useful again or when new evidence, especially DRFXI 1.16, appears. See [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
+Do not continue this branch by default. Resume when useful again or when new evidence, especially DRFXI 1.16, appears. See `findings/s3-workaround.md`.
 
 ## Rule for future updates
 
