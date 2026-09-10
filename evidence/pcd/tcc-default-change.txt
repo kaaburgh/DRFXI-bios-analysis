@@ -1,0 +1,74 @@
+DRFXI 1.12 -> 1.15 PcdPeim RAW database evidence
+==================================================
+
+Scope
+-----
+This excerpt records the value-level evidence for the 1.15 changelog item:
+
+    Set TCC to 100
+
+Input PCD databases
+-------------------
+1.12 PcdPeim RAW database:
+  size:   5696
+  SHA256: 8d68393cb1388c3c936a24116883c0f8991f22696fc5e6d06980e096fd97668c
+
+1.15 PcdPeim RAW database:
+  size:   5704
+  SHA256: e4847fe7ead968ced7c2842bd2e20934c3220765d53a606b35bca85ce94a8435
+
+Both parse as EDK II PCD_DATABASE_INIT BuildVersion 7.
+
+Normalization anchors
+---------------------
+  LocalTokenCount: 963 -> 966
+  ExTokenCount:      40 -> 40
+  GuidTableCount:     5 -> 5
+  PcdNameTableOffset: 0 -> 0
+
+All 40 DynamicEx semantic keys (TokenSpaceGuid, ExTokenNumber) are identical
+between the two databases. Every DynamicEx local token number shifts by exactly
++3, independently confirming insertion of three ordinary Dynamic tokens ahead
+of the DynamicEx tail.
+
+The three new ordinary tokens are BOOLEAN DATA PCDs. No pre-existing scalar
+other than the TCC candidate changes value.
+
+TCC candidate
+-------------
+Exactly one aligned pre-existing scalar PCD changes default:
+
+  1.12 local token number: 209
+  1.15 local token number: 212
+
+Descriptor in BOTH databases:
+
+  0x0400009C
+
+EDK II decode:
+
+  PCD type:    DATA
+  datum type:  UINT32
+  data offset: 0x9C
+
+Raw bytes at database offset 0x9C:
+
+  1.12: 5B 00 00 00 -> 91
+  1.15: 64 00 00 00 -> 100
+
+The descriptor 0x0400009C occurs exactly once in each database. The physical
+data location remains 0x9C; the local-token-number shift is explained by the
+three newly inserted Dynamic tokens.
+
+Attribution
+-----------
+HIGH CONFIDENCE: this 91 -> 100 Dynamic UINT32 PCD is the static configuration
+change described by the vendor changelog as "Set TCC to 100".
+
+Limitation: PcdNameTableOffset == 0, so the symbolic source-level PCD CName is
+not stored in this RAW database. The value-level localization is confirmed,
+but the exact PCD name and consuming module/function still require a separate
+consumer-trace analysis.
+
+Do not infer from this alone that an HX3D CPU's effective junction limit becomes
+100 C; this proves the platform PCD input changed, not the final CPU/SMU clamp.
