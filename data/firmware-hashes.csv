@@ -1,0 +1,10 @@
+version,date,size_bytes,sha256,vendor_checksum,status,notes
+1.04,2023-12-05,33554432,a1add065776b7b8b2425394fac9140810d238fa604239a2cccdc495796d09585,73E7,acquired,historical support-supplied MediaFire package
+1.07,2024-08-20,33554432,c38c918b39df06759f5c57a96c14422ba0f090aef5d9e50ac4e18de97b64ac46,54FB,acquired,DRFXI_1.07_240820B.7z
+1.12,2025-02-13,33554432,246e7f54a12a8c7279ef68433602264b8ecbabcde828c9c9008f571c270845b9,9A63,acquired,official Aliyun package
+1.13,2025-09-28,,,BF21,missing,release metadata recovered from cumulative notes
+1.14,2025-11-13,,,419D,missing,release metadata recovered from cumulative notes
+1.15,2026-01-05,33554432,3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88,A4C4,acquired,official Aliyun and S3 packages byte-identical
+1.16,2026-06-03,,,1EA3,missing,release confirmed; exact distribution file unresolved
+1.17,2026-08-28,33554432,99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51,4B54,acquired,current official support release
+community-795iX3D,2025-09-04,33554432,c63971eedd2e03005aaeba2786aa7834b38c8ac006978e9a011156ee61122b15,085C,reference,full configured-board SPI readback based on 1.12; not a clean distribution image
