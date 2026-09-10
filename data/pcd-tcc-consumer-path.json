@@ -1,0 +1,37 @@
+{
+  "scope": "consumer path for PcdPeim DATA/UINT32 descriptor 0x0400009C",
+  "target": {
+    "drfxi_1_12_local_token": 209,
+    "drfxi_1_15_local_token": 212,
+    "descriptor": "0x0400009C",
+    "static_default_change": [91, 100]
+  },
+  "consumers": [
+    {
+      "module": "SmuV13Dxe",
+      "rva": "0x1B99",
+      "api": "PcdProtocol->Get32",
+      "sink": "BIOSSMC_MSG_SetTjMax",
+      "message_id": "0x3F"
+    },
+    {
+      "module": "SmuV13Dxe",
+      "rva": "0x2D1D",
+      "api": "PcdProtocol->Get32",
+      "sink": "PPTable/default infrastructure TjMax field +0x10"
+    }
+  ],
+  "writer": {
+    "module": "AodPei",
+    "api": "PcdPpi->Set32",
+    "condition_var_offset": "0xB1",
+    "condition": "Platform Thermal Throttle Ctrl == Manual",
+    "value_var_offset": "0xB2",
+    "value": "Platform Thermal Throttle Limit"
+  },
+  "confidence": {
+    "pcd_is_tjmax_path": "confirmed",
+    "changelog_set_tcc_to_100_attribution": "very high",
+    "final_effective_silicon_limit_100c": "not proven"
+  }
+}
