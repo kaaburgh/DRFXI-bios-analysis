@@ -164,10 +164,20 @@ The same newer firmware also adds a GNVS field named `CNSB`. Its exact semantic 
 
 **Not proven:** that the package first appeared specifically in 1.16. Only the missing 1.16 binary can close that temporal gap.
 
-## Remaining S3-specific work
+## Deferred follow-up roadmap
 
-- resolve the C-side decision logic controlling which of the four SSDTs are actually installed on this platform;
-- identify actual runtime root-port names replacing the templates;
-- map the AMD register/state values `0x1B` and `0x1F` to documented or independently corroborated state names;
-- establish the role of `EXTGPP00` in the installed namespace;
-- compare directly against 1.16 if the image is recovered.
+S3-specific work is intentionally paused at this point. The current evidence is already sufficient to identify a technically plausible workaround path, and further detail is lower priority than other open firmware questions.
+
+When this branch is resumed, the most useful next steps are, in roughly descending value:
+
+1. **Recover DRFXI 1.16.** This is the single highest-value step because it would immediately separate the 1.16 S3 changes from unrelated 1.17 changes and convert the current temporal attribution from inference into direct evidence.
+2. **Resolve `AmdCpmOemAcpi` installation logic.** Trace the DXE code that selects, patches and installs `PT`, `GPP_PME_`, `EXTGPP00` and `GPIO`; determine which tables are always installed and which are platform/configuration dependent.
+3. **Recover actual runtime root-port mappings.** Determine the concrete ACPI NameSegs that replace template names such as `GPP0...GPPH`, `GP17`, `GP18`, `GP28` and the placeholder used by `PT` on BD790i X3D.
+4. **Resolve the dynamic GPE mapping.** Confirm the runtime `_Exx` value derived from MMIO `0xFED8025C`, and connect it to the relevant FCH/SoC GPE source if documentation or runtime ACPI tables become available.
+5. **Name the AMD link-state values.** Map `0x1B`, `0x1F`, marker `0x43`, the per-port `+0x280` WakeLink bit, and related `+0x294` state fields to AMD register/state names using public BKDG/PPR/AGESA-derived material or independent firmware corroboration.
+6. **Finish `EXTGPP00` activation analysis.** Determine how `APRW`, `BPRW`, `NGP0`, `NGP2`, `OL02` and `OL08` are consumed or patched, and whether that table is part of the core S3 workaround or ancillary wake metadata.
+7. **Trace the `AmiAgesaAcpi` side of the change.** Identify the inputs controlling its FADT flag edits (`PCI_EXP_WAK`, `HW_REDUCED_ACPI`, `LOW_POWER_S0_IDLE_CAPABLE`) and establish the role of the newly introduced `CNSB` GNVS field.
+8. **Validate against runtime ACPI on real hardware.** From a machine running 1.15 and/or 1.17, capture `/sys/firmware/acpi/tables` (and dynamic tables if present), decompile them, and compare installed/patched SSDTs against the firmware templates. This would answer several installation and runtime-mapping questions without further static reverse engineering.
+9. **Reproduce the failure/fix experimentally if practical.** If S3 is available on the board, compare suspend/resume behavior, PCIe link state and wake events between 1.15 and 1.17. This is optional and should only be attempted with a recoverable system state.
+
+The investigation should not restart by re-reading the generic S3 modules (`S3SaveStateDxe`, `SmmS3SaveState`, `SleepSmi`, etc.) unless new 1.16 evidence points back to them; the current normalized diff indicates that path is mostly PCD-token churn.
