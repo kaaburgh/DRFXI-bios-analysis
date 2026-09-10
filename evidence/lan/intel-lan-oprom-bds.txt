@@ -1,0 +1,51 @@
+DRFXI 1.12 -> 1.15 Intel LAN OPROM focused evidence
+====================================================
+
+BDS:
+  GUID 8F4B8F82-9B91-4028-86E6-F4DB7D4C1DFF
+  1.12 size 76928 SHA256 184493a59bf9db882ad12550b1efb1f49aa81792d8479b01646a2ba7bccb649c
+  1.15 size 100096 SHA256 fe579a1b0c9e856bc6c600ba31aa98f88d2772aeae2d87d70f68ee87e2f2de99
+  .text 0xEF30 -> 0x13340 (+0x4410)
+  .data 0x2410 -> 0x3350 (+0x0F40)
+
+Explicit BDS network class checks, unchanged:
+  RVA 0x2A95: cmp byte ptr [rbp+0x20],0x02
+  RVA 0x2D31: cmp byte ptr [rbp+0x20],0x02
+
+Normalized network-function helper relocations only:
+  0x7AD8 -> 0xB9F8
+  0x7734 -> 0xB654
+  0x76B8 -> 0xB5D8
+
+New 1.15 display/GOP path:
+  PCI base class check 0x03 around RVA 0xC1FC and 0xC44D
+  string: PciRoot(0x0)/Pci(0x8,0x1)
+  variable: AmiGopOutputDp
+  PCI_IO enumeration + device-path resolution + ConnectController
+
+OptionRomPolicy:
+  1.12 SHA256 cca026848f370a6caf46e29e897f6cf8c855bdd5a89028ebab82f11c39503587
+  1.15 SHA256 cdb0b6239d8d53cdc49f4d22658634fb8177355f9de37d7b2a2dc246edfbe5b7
+  exactly 11 differing bytes; each is a +3 PCD-token immediate shift.
+
+PciBus:
+  1.12 SHA256 7f320fe70d95a3d8bf7c99de142740fb0659d790049edaee01b18103f3b60363
+  1.15 SHA256 d656f21414256a5aa2524f8773318e9d381bb5cb706f58d160e12ab968f231a3
+  exactly two differing bytes:
+    token 0x3D0 -> 0x3D4 at ~0x8951
+    token 0x3D0 -> 0x3D4 at ~0x8997
+
+Exact identical modules:
+  LanRomDriver           SHA256 6e2dd29f159edf01187fb6b518dbafa388c2c0512f4beeb1c25d2f5613b4ea75
+  UefiPxeBcDxe            SHA256 c185ecfe9a643a82e9c8728f7ceb1a002112c5b14763983ea0218ed235cab6fd
+  SnpDxe                  SHA256 48fc6790588d499e37cc0e3a6c50f6532efcf84fc7fff0a784757f1a990b7d0e
+  NetworkStackSetupScreen SHA256 d2e5bfb2ca4700746134adc18fd627398cf7a22dba2eb23c4cbb873fc92b6c60
+  RomLayoutDxe            SHA256 76a7a922a009b6b93d305c995ff33498fa720d572937a90117f96bfb70bed41c
+
+Intel 0x8086:
+  no confirmed newly introduced vendor-ID conditional in BDS/OptionRomPolicy/PciBus.
+  apparent new BDS byte hit was a RIP-displacement false positive.
+
+Physical Intel LAN PCI Option-ROM:
+  not yet isolated; top-level plain-PCIR search cannot exclude compressed or
+  AMI-encapsulated ROM payloads.
