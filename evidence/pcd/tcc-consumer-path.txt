@@ -1,0 +1,48 @@
+DRFXI 1.12 -> 1.15 target TCC PCD consumer evidence
+=====================================================
+
+Target:
+  1.12 token 209 / 0xD1
+  1.15 token 212 / 0xD4
+  descriptor 0x0400009C
+  UINT32 static default 91 -> 100
+
+SmuV13Dxe:
+  FFS GUID 5C60F367-A505-419A-859E-2A4FF6CA6FE5
+  1.12 PE SHA256 1a2fd7004920d84f55f45f9a3c0ba00d3de36b2e123915db8dbcbe7044f51b43
+  1.15 PE SHA256 850202358265ab7a3fd4a43c32b59a4f3a393ca5a7a57765f34f888c675d5739
+
+Read #1, RVA 0x1B99:
+  1.12: mov ecx,0xD1 ; call [rax+0x18]
+  1.15: mov ecx,0xD4 ; call [rax+0x18]
+  result -> R8D -> message ID 0x3F -> SMU request helper
+  diagnostic string @0x9190: BIOSSMC_MSG_SetTjMax %x
+
+Read #2, RVA 0x2D1D:
+  1.12: token 0xD1 ; Get32 ; mov [rbx+0x10],eax
+  1.15: token 0xD4 ; Get32 ; mov [rbx+0x10],eax
+
+Diagnostic structure labels:
+  DEFAULT INFRASTRUCTURE LIMITS
+  TDP
+  PPT
+  TDC
+  EDC
+  TjMax   <- field +0x10
+
+AodPei override:
+  if AOD setup byte +0xB1 == 1:
+      value = byte +0xB2
+      PcdPpi->Set32(target token, value)
+
+AodDxe IFR:
+  0xB1 Platform Thermal Throttle Ctrl
+       Help: Allows the user to decrease the maximum allowed processor temperature (celsius).
+  0xB2 Platform Thermal Throttle Limit
+       Help: Allows the user to decrease the maximum allowed processor temperature (celsius).
+
+Direct literal-token access inventory:
+  DXE Get32: SmuV13Dxe x2
+  PEI Get32: none found
+  PEI Set32: AodPei x1 logical code site (duplicated FV copies)
+  CpuMpPei 0xD1 immediate: false positive, interrupt-vector stub
