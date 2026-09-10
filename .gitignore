@@ -1,0 +1,26 @@
+# Local raw firmware / acquisition material
+*.bin
+*.rom
+*.cap
+*.fd
+*.bio
+*.7z
+*.zip
+*.tar.gz
+
+# Extracted vendor firmware trees and local toolchains
+.local/
+work/
+raw/
+toolchains/
+extracted/
+
+# Common generated / editor noise
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/
+
+# Evidence intended for publication should be curated into text/CSV/JSON
+# files under evidence/ or data/, rather than force-added from raw outputs.
