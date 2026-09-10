@@ -1,0 +1,38 @@
+Focused IFR evidence: Above 4G Decoding visibility change
+========================================================
+
+Source firmware hashes:
+  1.12  246e7f54a12a8c7279ef68433602264b8ecbabcde828c9c9008f571c270845b9
+  1.15  3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88
+  1.17  99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51
+
+Source HII module: Setup
+Underlying setting: VarStoreId 0xF101, VarOffset 0x9D
+
+1.12 has a normally exposed copy:
+
+    OneOf Prompt: "Above 4G Decoding",
+          QuestionId: 0x57,
+          VarStoreId: 0xF101,
+          VarOffset: 0x9D
+        OneOfOption "Disabled" = 0
+        OneOfOption "Enabled"  = 1
+        Default = 1
+    End
+
+1.12 also has a second copy buried under permanent suppression:
+
+    SuppressIf
+        Uint64 Value: 0x1
+        ...
+        OneOf Prompt: "Above 4G Decoding",
+              QuestionId: 0xEC,
+              VarStoreId: 0xF101,
+              VarOffset: 0x9D
+        ...
+    End
+
+In 1.15 the normally exposed copy is gone. The suppressed copy remains, now with shifted QuestionId 0xEB but the same VarStore/offset 0x9D. 1.17 retains the 1.15 behavior.
+
+Conclusion:
+  This is direct HII evidence for the 1.14 changelog entry `Hide Above 4G Decoding`. The setting itself remains represented; its exposed UI entry was removed/hidden.
