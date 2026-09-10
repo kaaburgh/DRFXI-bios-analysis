@@ -32,11 +32,35 @@ The exact 1.16 distribution file has not been recovered. This means every 1.15�
 ### HII / IFR
 
 - The principal `CbsSetupDxeRPL` HII/IFR content is semantically unchanged across 1.12, 1.15 and 1.17 after extractor metadata/noise is removed.
-- Hidden AMD CBS/UMC controls therefore remain present in newer releases, including DRAM primary/secondary/tertiary timings, ODT/drive strengths, Power Down, TSME, training, ECC and related controls.
+- Hidden AMD CBS/UMC controls remain present in newer releases, including DRAM primary/secondary/tertiary timings, ODT/drive strengths, Power Down, TSME, training, ECC and related controls.
 - `Save as User Defaults` and `Restore User Defaults` exist in all three versions but are nested under unconditional `SuppressIf` expressions.
 - No evidence yet establishes an ASUS-style multi-slot named OC profile manager; the confirmed feature is AMI user-default save/restore.
 - `Above 4G Decoding` is visible in 1.12 and only the already-suppressed copy remains in 1.15/1.17. This directly matches the 1.14 changelog.
 - `AMD Variable Protection` appears by 1.15 at `AmdPbsSetupDxe` VarOffset `0x91`, default Enabled, together with new `AmdVariableProtection.efi`.
+
+### 1.15 TCC / SMU power changes
+
+The 1.15 changelog entries now both have strong binary anchors.
+
+`Set TCC to 100` is localized at value level in the early PEI `PcdPeim` database:
+
+```text
+1.12 local token: 209
+1.15 local token: 212
+same descriptor:  0x0400009C
+PCD type:         DATA
+Datum:            UINT32
+Database offset:  0x9C
+Value:            91 -> 100
+```
+
+This is the **only changed pre-existing scalar default** after semantic token normalization. 1.15 adds three ordinary Dynamic BOOLEAN tokens; all 40 stable DynamicEx identities move by exactly +3 local token numbers, validating the normalization. `PcdNameTableOffset = 0`, so the symbolic source-level PCD CName is absent from the binary database.
+
+Current assessment: **high confidence** that this PCD is the static configuration described by `Set TCC to 100`. The next narrow question is which module/function consumes token 209/212 and where it sends the value.
+
+Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15. Its embedded version field changes `0.54.68.0 → 0.54.6C.32`, and 64.68% of the decompressed 256-KiB firmware differs. This remains the strongest binary match for `Update SMU for power limit`; the exact internal SMU routine/table is not yet localized.
+
+See [`findings/smu-power-limit.md`](findings/smu-power-limit.md) and [`checkpoints/2026-09-10-pcd-tcc.md`](checkpoints/2026-09-10-pcd-tcc.md).
 
 ### Community 795iX3D modification
 
@@ -60,7 +84,7 @@ A raw SMBIOS/DMI data FFS shows real string changes between 1.12 and 1.15, inclu
 - `MotherBoard` → `MINISFORUM`
 - `Shenzhen Meigao Electronic Equipment Co.,Ltd` → `Meigao Innovation Technology (Shen Zhen) Co., Ltd`
 
-The manufacturer-name change directly corresponds to the 1.14 changelog; some adjacent DMI changes cannot be assigned to 1.14 vs 1.15 without those intermediate binaries.
+The manufacturer-name change directly corresponds to the 1.14 changelog; adjacent DMI changes cannot be assigned to 1.14 vs 1.15 without those intermediate binaries.
 
 ### 1.16 flash-driver candidate
 
@@ -68,38 +92,21 @@ Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi
 
 ### 1.16 S3 workaround candidate
 
-The strongest candidate is **not** a patch in the obvious legacy S3 modules; those mostly show PCD-token renumbering. Instead, 1.17 contains a new `AmdCpmOemAcpi.efi` package absent from 1.15.
+1.17 contains a new `AmdCpmOemAcpi.efi` package absent from 1.15. Its DEPEX depends on `EfiS3SaveStateProtocolGuid`, and its new SSDTs implement PCIe PME/power/resume behavior including a `CpmSendPmeTurnOff → CpmWakeLink → DL_ACTIVE` handshake.
 
-Important evidence:
+This is high-confidence S3/PCIe power-resume machinery and a medium/high-confidence match for 1.16's `Workaround abnormal restart after S3`, but exact temporal proof still requires 1.16.
 
-- its DEPEX explicitly depends on `EfiS3SaveStateProtocolGuid`;
-- it carries four new SSDTs: `GPIO`, `EXTGPP00`, `GPP_PME_`, `PT`;
-- `PT` provides 58 generated PCIe power-transition nodes with `_PRW`, `_DSW`, `_PS0`, `_PS3`, and `PWRS` resources;
-- `_PS3` conditionally performs a `CpmSendPmeTurnOff` hardware handshake and records a D3-transition marker;
-- the matching `_PS0` enables `CpmWakeLink`, polls for PCIe `DL_ACTIVE` / training completion for up to ~500 ms, then disables WakeLink;
-- `GPP_PME_` provides a dynamically retargeted edge-triggered GPE handler for PCIe PME/wake processing;
-- `AmdCpmOemAcpi` patches placeholder PCIe NameSegs and the raw `_E10` handler name at runtime according to platform data.
-
-This is high-confidence S3/PCIe power-resume machinery. Associating it specifically with 1.16's `Workaround abnormal restart after S3` is medium/high confidence because the 1.17 changelog only describes graphics behavior; exact temporal proof still requires 1.16.
-
-**Status:** this branch is intentionally paused. The existing evidence is sufficient for the current research goal; the deferred follow-up plan is recorded in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
+**Status:** this branch is intentionally paused. Deferred follow-up is recorded in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
 
 ### Undocumented 1.17 functionality
 
-1.17 introduces:
+1.17 introduces `TcgStorageSecurity.efi`, `SmmTcgStorageSec.efi`, `TcgStorageDynamicSetupVar`, and two `TCG Storage device Security Configuration` forms. This functionality is not mentioned in the known 1.16/1.17 changelog and is currently classified as a confirmed released change with undocumented provenance.
 
-- `TcgStorageSecurity.efi`
-- `SmmTcgStorageSec.efi`
-- `TcgStorageDynamicSetupVar`
-- two `TCG Storage device Security Configuration` forms
+## Methodological findings
 
-This functionality is not mentioned in the known 1.16/1.17 changelog and is currently classified as a confirmed released change with undocumented provenance.
+Raw module counts substantially overstate semantic change because PI/platform updates renumber PCD tokens and alter build/relocation metadata in many otherwise-equivalent modules.
 
-## Methodological finding: raw module counts overstate change
-
-Initial exact-file comparison reported 181 changed PE modules for 1.12→1.15 and 118 for 1.15→1.17. These counts substantially overstate semantic change because PI/platform updates renumber PCD tokens and alter build/relocation metadata in many otherwise-equivalent modules.
-
-Future code comparison therefore classifies differences as:
+Code comparison therefore separates:
 
 1. build/relocation noise;
 2. PCD-token renumbering;
@@ -107,24 +114,25 @@ Future code comparison therefore classifies differences as:
 4. real data changes;
 5. real executable-logic changes.
 
+The `PcdPeim` TCC analysis adds a concrete example of semantic normalization: three inserted Dynamic tokens shift local token numbers while a stable descriptor/value record can still be tracked across releases.
+
 ## Active open questions
 
 Highest-value unresolved work outside the paused S3 branch:
 
-1. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
-2. locate the actual `Set TCC to 100` / `Update SMU for power limit` changes in APCB/AGESA/SMU/config/default data;
-3. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
-4. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-5. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. trace the consumer of the TCC PCD — local token 209 in 1.12 / 212 in 1.15 — and establish whether it feeds `SetTjMax` or another thermal path;
+2. identify the internal change(s) in `PSP_SMU_FN_FIRMWARE~0x108` responsible for the `power limit` wording;
+3. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
+4. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
+5. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
+6. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
 
 ## Deferred branches
 
 ### S3 / PCIe power-resume
 
-Do not continue this branch by default. Resume only when it becomes useful again or when new evidence, especially DRFXI 1.16, appears.
-
-The next-step roadmap is maintained in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap). The highest-value future step is still recovery of the 1.16 image; deeper static analysis without it has diminishing returns.
+Do not continue this branch by default. Resume only when useful again or when new evidence, especially DRFXI 1.16, appears. See [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
 
 ## Rule for future updates
 
-Update this file when conclusions change. Preserve the original dated checkpoints under `docs/checkpoints/` rather than rewriting history.
+Update this file when conclusions change. Preserve original dated checkpoints under `docs/checkpoints/` rather than rewriting history.
