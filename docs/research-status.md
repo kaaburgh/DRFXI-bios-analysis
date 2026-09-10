@@ -82,6 +82,8 @@ Important evidence:
 
 This is high-confidence S3/PCIe power-resume machinery. Associating it specifically with 1.16's `Workaround abnormal restart after S3` is medium/high confidence because the 1.17 changelog only describes graphics behavior; exact temporal proof still requires 1.16.
 
+**Status:** this branch is intentionally paused. The existing evidence is sufficient for the current research goal; the deferred follow-up plan is recorded in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap).
+
 ### Undocumented 1.17 functionality
 
 1.17 introduces:
@@ -107,14 +109,21 @@ Future code comparison therefore classifies differences as:
 
 ## Active open questions
 
-Highest-value unresolved work:
+Highest-value unresolved work outside the paused S3 branch:
 
-1. obtain 1.16 to resolve 1.16-vs-1.17 attribution;
-2. finish C-side activation/install analysis for the four `AmdCpmOemAcpi` SSDTs;
-3. locate the actual `Set TCC to 100` / `Update SMU for power limit` changes in APCB/AGESA/SMU/config/default data;
-4. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
-5. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-6. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. obtain 1.16 to resolve 1.16-vs-1.17 attribution across several findings;
+2. locate the actual `Set TCC to 100` / `Update SMU for power limit` changes in APCB/AGESA/SMU/config/default data;
+3. determine the exact implementation of the Intel LAN OPROM POST-hang fix, with `Bds.efi` currently the strongest remaining code candidate;
+4. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
+5. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+
+## Deferred branches
+
+### S3 / PCIe power-resume
+
+Do not continue this branch by default. Resume only when it becomes useful again or when new evidence, especially DRFXI 1.16, appears.
+
+The next-step roadmap is maintained in [`findings/s3-workaround.md`](findings/s3-workaround.md#deferred-follow-up-roadmap). The highest-value future step is still recovery of the 1.16 image; deeper static analysis without it has diminishing returns.
 
 ## Rule for future updates
 
