@@ -1,8 +1,8 @@
 # Research status
 
-Last updated: 2026-09-10
+Last updated: 2026-09-11
 
-This is the **living checkpoint** for the investigation. Dated reports under `docs/checkpoints/` are immutable snapshots and may contain conclusions that were later refined.
+This is the **living checkpoint** for the investigation. Dated reports under `docs/checkpoints/` are historical snapshots and may contain conclusions later refined here.
 
 ## Firmware corpus
 
@@ -16,7 +16,7 @@ Primary official images currently analyzed:
 
 Reference images:
 
-- 1.04 and 1.07 distribution images were also acquired and structurally validated.
+- 1.04 and 1.07 distribution images are also acquired and structurally validated.
 - community `795iX3D.bin`: `c63971eedd2e03005aaeba2786aa7834b38c8ac006978e9a011156ee61122b15`.
 
 Missing but confirmed releases:
@@ -25,44 +25,96 @@ Missing but confirmed releases:
 - 1.14 — 2025-11-13, checksum `419D`
 - 1.16 — 2026-06-03, checksum `1EA3`
 
-The missing intermediate binaries limit exact temporal attribution. In particular, 1.12→1.15 observations may include changes from 1.13, 1.14, 1.15, or undocumented work between those releases.
+The missing intermediate binaries remain the main limit on exact temporal attribution: a 1.12→1.15 delta may belong to 1.13, 1.14, 1.15, or undocumented work between them.
 
 ## Current high-confidence findings
 
 ### HII / IFR
 
-- The principal `CbsSetupDxeRPL` HII/IFR content is semantically unchanged across 1.12, 1.15 and 1.17 after extractor metadata/noise is removed.
-- Hidden AMD CBS/UMC controls remain present in newer releases, including DRAM primary/secondary/tertiary timings, ODT/drive strengths, Power Down, TSME, training, ECC and related controls.
-- `Save as User Defaults` and `Restore User Defaults` exist in all three versions but are nested under unconditional `SuppressIf` expressions.
-- No evidence yet establishes an ASUS-style multi-slot named OC profile manager; the confirmed feature is AMI user-default save/restore.
-- `Above 4G Decoding` is visible in 1.12 and only the already-suppressed copy remains in 1.15/1.17. This directly matches the 1.14 changelog.
-- `AMD Variable Protection` appears by 1.15 at `AmdPbsSetupDxe` VarOffset `0x91`, default Enabled, together with new `AmdVariableProtection.efi`.
+- Principal `CbsSetupDxeRPL` HII/IFR content is semantically unchanged across 1.12, 1.15 and 1.17 after extractor metadata/noise is removed.
+- Hidden AMD CBS/UMC controls remain present in newer releases, including DRAM timings, ODT/drive strengths, Power Down, TSME, training, ECC and related controls.
+- `Save as User Defaults` and `Restore User Defaults` exist in all three versions but remain under unconditional `SuppressIf` expressions.
+- No evidence establishes an ASUS-style multi-slot named OC-profile manager; the confirmed facility is AMI user-default save/restore.
+- `Above 4G Decoding` is visible in 1.12; by 1.15/1.17 only the already-suppressed copy remains. This directly matches the 1.14 changelog.
+
+### 1.13 `Update PI 1.0.0.3h`
+
+The first bounded PI pass is complete.
+
+Official AMD documentation identifies the relevant Ryzen 7045 / Dragon Range branch as **DragonRangeFL1 / DragonRangeFL1PI** and explicitly names `1.0.0.3h`. AMD's security bulletin lists `DragonRangeFL1_1.0.0.3h` as the mitigation level for CVE-2024-36311, an SMM communications-buffer TOCTOU validation issue, with release date 2025-03-18.
+
+This establishes with high confidence that the MINISFORUM changelog's `PI 1.0.0.3h` is AMD Dragon Range PI, not vendor-local numbering.
+
+Across the available 1.12→1.15 boundary, the three newly named PE modules were classified:
+
+#### AMD Variable Protection cluster
+
+`AmdVariableProtection.efi` is a genuine new AMD-specific variable-policy consumer. It:
+
+- depends on Variable Write, PCD and either EDKII VariablePolicy or VarCheck;
+- protects AMD setup variables including `AMD_PBS_SETUP`, `AmdSetupRPL` and `AodSetupRpl`;
+- manages the separate `AmdVariableProtection` variable, GUID `40578F3D-65EE-49ED-8BC5-5A32BBEAE745`;
+- uses embedded authenticated create/delete payloads and runtime `GetVariable`/`SetVariable`;
+- corresponds to the new default-enabled `AMD Variable Protection` setup item at `AmdPbsSetupDxe` offset `0x91`.
+
+`GenerateTimeBaseVariable.efi` is a 692-KiB EFI application, not a DXE driver. It contains the same variable name/GUID and prints `mCreatePayload` / `mDeletePayload` C arrays after building authenticated-variable payloads. It is strongly identified as the companion payload-generation utility for `AmdVariableProtection`, not an automatically dispatched boot component.
+
+Focused 1.12 searches found no equivalent AMD protection layer, while generic VariablePolicy/VarCheck infrastructure was already present.
+
+The immediate generic provider `NvramDxe` is the same size in both versions and differs by only 28 bytes; inspected differences reduce to PCD-token renumbering plus build date/time. No VariablePolicy/VarCheck semantic change was found. The new AMD component is therefore a new **consumer on top of an effectively unchanged policy engine**.
+
+#### `HardwareSignatureEntry`
+
+`HardwareSignatureEntry.efi` is a separate new AMI DXE feature. Direct strings/GUIDs and public AMI source with the same module name and exact FFS GUID identify it as HardwareChange / ACPI FACS hardware-signature management: it records hardware configuration data and updates the hardware signature around the boot transition.
+
+1.12 lacks both its HardwareChange protocol GUID and `HardwareConfigData` variable string, so the functionality appears genuinely newly integrated by 1.15.
+
+No immediate dependency connects `HardwareSignatureEntry` to the AMD Variable Protection cluster.
+
+#### ECAM/MMCONFIG
+
+A real platform-wide PCI MMCONFIG/ECAM relocation remains established:
+
+```text
+1.12: 0xF0000000
+1.15: 0xE0000000
+```
+
+It occurs in at least `AmdNbioIOMMUDxe` and `PciRootBridge`. The first PI pass found no immediate dependency tying this relocation to the three newly added modules, so it remains a **separate platform-init delta**.
+
+#### Attribution boundary
+
+High confidence:
+
+- `1.0.0.3h` is the DragonRangeFL1PI revision relevant to this board family;
+- the release contains known upstream security/platform changes.
+
+Not proven:
+
+- that AMD Variable Protection first landed in DRFXI 1.13 rather than 1.14/1.15;
+- that `HardwareSignatureEntry` is part of AMD PI rather than adjacent AMI integration;
+- that the ECAM relocation belongs to 1.0.0.3h;
+- that any inspected delta implements CVE-2024-36311.
+
+Next evidence-driven PI step: derive the SMM communication component implicated by CVE-2024-36311 from public AMD/EDK2 evidence, then compare only that small validation path 1.12→1.15. Do not resume broad changed-module triage.
+
+See `checkpoints/2026-09-11-pi-1.0.0.3h-first-pass.md` and `findings/changelog-mapping.md`.
+
+### 1.13 Intel LAN OPROM POST-logo fix
+
+**Paused.**
+
+The probable Intel Option ROM belongs to an external/add-in NIC rather than the onboard Realtek path. The generic firmware chain has been followed through PCI ROM parsing/policy, EFI decompression, LoadImage/Security2/PE-COFF/StartImage, protocol installation/notification, DriverBinding/ConnectController, plus the Legacy/CSM alternative. No relevant 1.12→1.15 semantic delta was found in those generic paths.
+
+Public BD790i context makes **Intel X710-DA2 / `I40eUndiDxe`** the strongest board-specific candidate found, but the exact problem NIC/PCI ID remains unknown. Source-guided I40e analysis narrowed actual firmware dependencies to PciIo config/MMIO/DMA and Device Path; those implementations were also negative except for the separate platform-wide ECAM relocation above.
+
+Do not resume generic firmware reverse engineering for this branch. The next justified artifact is the exact problem NIC/ROM, or an X710-DA2 Option ROM as a surrogate.
+
+See `findings/intel-lan-oprom.md` and `checkpoints/2026-09-11-intel-lan-oprom-source-dependencies-closure.md`.
 
 ### 1.15 TCC / SMU power changes
 
-`Set TCC to 100` is localized end-to-end at BIOS→SMU level.
-
-The early PEI `PcdPeim` database contains the only changed pre-existing scalar default after semantic token normalization:
-
-```text
-1.12 local token: 209 (0xD1)
-1.15 local token: 212 (0xD4)
-same descriptor:  0x0400009C
-PCD type:         DATA / UINT32
-Database offset:  0x9C
-Static default:   91 -> 100
-```
-
-Three newly inserted ordinary Dynamic BOOLEAN tokens account for the `+3` local-token shift.
-
-The consumer trace found two direct reads in `SmuV13Dxe`:
-
-1. RVA `0x1B99`: reads token 209/212, passes the value to the SMU request with message ID `0x3F`, and references `BIOSSMC_MSG_SetTjMax %x`.
-2. RVA `0x2D1D`: reads the same PCD into a PPTable/default-infrastructure field whose diagnostic dump labels it `TjMax`.
-
-`AodPei` can overwrite this PCD when `Platform Thermal Throttle Ctrl` is Manual, using `Platform Thermal Throttle Limit` as the replacement value.
-
-Assessment: **very high confidence** that the `91 -> 100` PCD change is the implementation of `Set TCC to 100`:
+`Set TCC to 100` is localized end-to-end:
 
 ```text
 PcdPeim default 91 -> 100
@@ -72,81 +124,45 @@ SmuV13Dxe PcdGet32
 BIOSSMC_MSG_SetTjMax
 ```
 
-The source-level PCD CName is unavailable because `PcdNameTableOffset = 0`. The path also does not prove that every supported CPU accepts 100°C as its final silicon limit; downstream SMU policy may clamp or reinterpret the request.
+Three inserted Dynamic BOOLEAN tokens explain the local-token shift. `AodPei` may override the default when manual thermal-throttle settings are used. Confidence is very high.
 
-Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15: embedded version `0.54.68.0 → 0.54.6C.32`, both decompressed images 256 KiB. Raw fixed-offset diff is 64.68%, but content-based normalization proves that large regions are preserved at shifted offsets and much of that figure is layout movement. Internal localization of the `Update SMU for power limit` behavior is intentionally deferred until a reusable Ghidra/Xtensa-le environment is justified.
+Separately, `PSP_SMU_FN_FIRMWARE~0x108` is materially replaced between 1.12 and 1.15 (`0.54.68.0 → 0.54.6C.32`). Content normalization shows significant layout movement, so internal attribution for `Update SMU for power limit` remains intentionally deferred until a reusable Xtensa-le reverse-engineering environment is justified.
 
-See `findings/smu-power-limit.md`, `findings/tcc-pcd-consumer.md`, and `deferred/smu-power-limit-deep-dive.md`.
-
-### Intel LAN OPROM POST-logo fix
-
-Known 1.13 changelog item:
-
-```text
-Fix hang at POST logo caused by Intel LAN OPROM
-```
-
-A focused 1.12→1.15 BDS/Option-ROM pass substantially narrows the search:
-
-- `LanRomDriver`, `UefiPxeBcDxe`, `SnpDxe`, `NetworkStackSetupScreen`, and `RomLayoutDxe` PE images are byte-identical.
-- `OptionRomPolicy` differs by exactly 11 bytes, all `+3` PCD-token renumberings; its logic and Option-ROM policy strings are unchanged.
-- `PciBus` differs by exactly two bytes, both one token moving `0x3D0→0x3D4`; its executable semantics are unchanged.
-- `Bds.efi` grows substantially (`76,928→100,096` bytes; `.text +0x4410`), but content anchors show old code surviving at shifted addresses rather than a wholesale rewrite.
-- A conspicuous new BDS path checks PCI base class `0x03`, references `PciRoot(0x0)/Pci(0x8,0x1)`, manages `AmiGopOutputDp`, and performs device-path/`ConnectController` work. It is strongly identified as display/GOP code, not LAN.
-- The identifiable BDS Network Controller path checks PCI base class `0x02` at RVA `0x2A95` and `0x2D31` in both versions and is semantically unchanged after helper-address normalization.
-- No newly introduced literal Intel vendor-ID `0x8086` special case was found in the changed candidates.
-
-This **downgrades the earlier hypothesis that BDS growth itself points to the LAN fix**. A subtle generic BDS connect/dispatch/order workaround remains possible, but broad BDS reverse engineering is no longer the best next move.
-
-The major unresolved artifact is the actual physical Intel LAN PCI Option-ROM payload. A top-level `PCIR` scan cannot exclude compressed/AMI-encapsulated ROM data, so byte identity of `LanRomDriver.efi` does not prove the real LAN OPROM binary is unchanged.
-
-Next step: identify the exact FFS/raw/compressed object carrying the Intel LAN Option ROM in 1.12 and 1.15, compare that object, and trace only its dispatch route. See `findings/intel-lan-oprom.md` and `checkpoints/2026-09-10-intel-lan-oprom-bds.md`.
+See `findings/tcc-pcd-consumer.md`, `findings/smu-power-limit.md`, and `deferred/smu-power-limit-deep-dive.md`.
 
 ### Community 795iX3D modification
 
 - The image is overwhelmingly based on stock 1.12.
 - 398/399 parsed FFS files in the main UEFI volume are byte-identical to stock 1.12.
 - The only intentional UEFI change is `AMITSESetupData` (`FE612B72-203C-47B1-8560-A66D946EB371`).
-- After inner decompression, exactly 60 bytes differ; every change sets bit `0x04`, consistent with a bulk AMIBCP access-level/visibility change.
-- The full image also contains donor-board NVRAM/APOB/APCB/boot/security state, so it should be treated as a reference SPI readback, not a clean portable flash image.
+- After inner decompression, exactly 60 bytes differ; each sets bit `0x04`, consistent with a bulk AMIBCP access/visibility change.
+- The full image also contains donor-board NVRAM/APOB/APCB/boot/security state and should be treated as a reference SPI readback, not a clean portable flash image.
 
 ### 1.17 dGPU / iGPU behavior
 
 - New executable logic is localized to `OemDxe.efi`.
-- It scans PCIe for a display-class device, accesses `AmdSetupRPL`, and changes offset `0x44` (`iGPU Configuration`).
-- Observed transitions match the 1.17 changelog behavior: presence/absence of a dGPU can force iGPU Disabled or UMA_SPECIFIED and trigger a hard reset.
+- It scans PCIe for a display-class device, accesses `AmdSetupRPL` offset `0x44` (`iGPU Configuration`), and changes/reset behavior according to dGPU presence.
+- This matches the 1.17 graphics changelog with high confidence.
 
 ### DMI
 
-A raw SMBIOS/DMI data FFS shows real string changes between 1.12 and 1.15, including:
-
-- `MotherBoard Series` → `DeskMini Series`
-- `MotherBoard` → `MINISFORUM`
-- `Shenzhen Meigao Electronic Equipment Co.,Ltd` → `Meigao Innovation Technology (Shen Zhen) Co., Ltd`
-
-The manufacturer-name change directly corresponds to the 1.14 changelog; adjacent DMI changes cannot be assigned to 1.14 vs 1.15 without those intermediate binaries.
+Raw SMBIOS/DMI data shows real 1.12→1.15 string changes including manufacturer/product updates. The base-board manufacturer change directly corresponds to 1.14; neighboring DMI changes cannot be separated between 1.14 and 1.15 without intermediate binaries.
 
 ### 1.16 flash-driver candidate
 
-Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi` change materially. `ReFlash` loses much of the older partial-update/NVRAM-reset UI and changes its post-flash reboot behavior. This is strongly attributable to the 1.16 changelog item `Add AMI flash driver EIP`, but the missing 1.16 binary prevents exact temporal proof.
+Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi` change materially. This remains strongly attributable to `Add AMI flash driver EIP`, though missing 1.16 prevents exact temporal proof.
 
 ### 1.16 S3 workaround candidate
 
-1.17 contains a new `AmdCpmOemAcpi.efi` package absent from 1.15. Its DEPEX depends on `EfiS3SaveStateProtocolGuid`, and its new SSDTs implement PCIe PME/power/resume behavior including a `CpmSendPmeTurnOff → CpmWakeLink → DL_ACTIVE` handshake.
-
-This is high-confidence S3/PCIe power-resume machinery and a medium/high-confidence match for 1.16's `Workaround abnormal restart after S3`, but exact temporal proof still requires 1.16.
-
-**Status:** intentionally paused. Deferred follow-up is recorded in `findings/s3-workaround.md`.
+1.17 adds `AmdCpmOemAcpi.efi`; its S3 dependency and new SSDTs implement PCIe PME/power/resume behavior including `CpmSendPmeTurnOff → CpmWakeLink → DL_ACTIVE`. This is a strong candidate for the 1.16 S3 workaround, but the branch is intentionally paused pending 1.16 or runtime evidence.
 
 ### Undocumented 1.17 functionality
 
-1.17 introduces `TcgStorageSecurity.efi`, `SmmTcgStorageSec.efi`, `TcgStorageDynamicSetupVar`, and two `TCG Storage device Security Configuration` forms. This functionality is not mentioned in the known 1.16/1.17 changelog and is currently classified as a confirmed released change with undocumented provenance.
+1.17 introduces `TcgStorageSecurity.efi`, `SmmTcgStorageSec.efi`, a new dynamic setup VarStore and TCG Storage Security forms. No known 1.16/1.17 changelog item explicitly names this functionality.
 
 ## Methodological findings
 
-Raw module counts substantially overstate semantic change because PI/platform updates renumber PCD tokens and alter build/relocation metadata in many otherwise-equivalent modules.
-
-Code comparison therefore separates:
+Raw module counts substantially overstate semantic change. Comparisons must distinguish:
 
 1. build/relocation noise;
 2. PCD-token renumbering;
@@ -154,31 +170,27 @@ Code comparison therefore separates:
 4. real data changes;
 5. real executable-logic changes.
 
-The TCC analysis provides an end-to-end normalization example: three inserted Dynamic tokens shift local token `209 -> 212`, while the descriptor and consumer semantics remain stable.
+Examples now include:
 
-The Intel-LAN pass provides a second example: large raw BDS growth was initially suspicious, but content anchors and focused class-specific control-flow comparison separated unrelated new GOP code from unchanged network handling.
+- TCC: `209→212` token renumbering with stable consumer semantics around a real `91→100` default change;
+- Intel LAN: large BDS growth separated into unrelated GOP code plus unchanged network path;
+- PI first pass: `NvramDxe` hashes differ, but only 28 bytes change and normalize to PCD/build metadata while the real behavior change is a newly added consumer module.
 
 ## Active open questions
 
-Highest-value unresolved work outside deferred branches:
+Highest-value unresolved work outside paused branches:
 
-1. identify the exact physical Intel LAN Option-ROM object and determine whether the 1.13 POST-logo fix changed the payload or only its dispatch route;
-2. obtain 1.13 / 1.14 / 1.16 to resolve intermediate-release attribution;
-3. classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-4. derive a clean, version-aware unlock strategy for memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. use AMD's `DragonRangeFL1PI 1.0.0.3h` / CVE-2024-36311 mapping to identify and compare the smallest relevant SMM communication-validation path;
+2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
+3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
+4. derive a clean, version-aware unlock strategy for hidden memory controls and Save/Restore User Defaults without transplanting donor-board state.
 
-Optional TCC follow-up is no longer on the critical path: recover the source-level PCD CName or verify effective thermal limits dynamically on hardware.
+## Deferred / paused branches
 
-## Deferred branches
-
-### `Update SMU for power limit` internals
-
-Do not continue with raw byte diffing. Resume when a reusable Ghidra 12.1+/Xtensa-le toolchain is justified by enough reverse-engineering work. See `deferred/smu-power-limit-deep-dive.md`.
-
-### S3 / PCIe power-resume
-
-Do not continue this branch by default. Resume when useful again or when new evidence, especially DRFXI 1.16, appears. See `findings/s3-workaround.md`.
+- Intel LAN OPROM: wait for exact NIC/ROM or X710-DA2 ROM surrogate.
+- `Update SMU for power limit` internals: wait for justified reusable Xtensa-le tooling.
+- S3 / PCIe power-resume: wait for DRFXI 1.16 or useful runtime evidence.
 
 ## Rule for future updates
 
-Update this file when conclusions change. Preserve original dated checkpoints under `docs/checkpoints/` rather than rewriting history.
+Update this file when conclusions change. Preserve historical dated checkpoints rather than rewriting them after later evidence changes the interpretation.
