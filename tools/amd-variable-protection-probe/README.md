@@ -88,7 +88,7 @@ Static DRFXI 1.17 analysis also shows that gate creation is not ReadyToBoot-only
 
 Therefore, with the feature enabled and the driver loading normally, both warm and cold reboot enter a fresh DXE execution and should recreate the gate even if the authenticated deletion persisted in NVRAM from the previous Shell session. This remains a static prediction until verified on hardware.
 
-For the first hardware test, reboot or power-cycle immediately after recording the post-trigger result. On the next Shell boot, run the probe again and confirm that Phase 1 sees the gate restored before considering any later experiment.
+For the first hardware test, reboot or power-cycle immediately after recording the post-trigger result. On the next Shell boot, use the Shell's read-only `dmpstore AmdVariableProtection` display command to check that the variable exists again. This is preferable to running the probe a second time because a second probe run would intentionally delete the gate again after its Phase 1 observation.
 
 ## Build
 
@@ -150,7 +150,13 @@ The reference binary has one deliberately forced ordinary DIR64 relocation so it
 5. Photograph or capture the entire output, especially Phase 1, the protocol/ExtractConfig addresses, Phase 3 status, and Phase 4.
 6. Do not run any variable editor or setup-variable write in the same Shell session.
 7. Reboot or power-cycle immediately.
-8. On the next Shell boot, run the same probe again and verify that the new Phase 1 reports the gate present again. Note that this second run will again trigger the hook; if only a recovery check is desired, a future `--observe-only` mode should be added before that test rather than using this v1 binary.
+8. On the next Shell boot, do **not** rerun the probe just to verify recovery. Instead run:
+
+   ```text
+   dmpstore AmdVariableProtection
+   ```
+
+   and confirm that the displayed entry has GUID `408F573D-65EE-49ED-8BC5-5A32BBEAE745` and value `01` (or otherwise capture exactly what is shown).
 
 ### If DRFXI has no built-in Shell
 
