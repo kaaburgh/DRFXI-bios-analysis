@@ -123,22 +123,83 @@ These are outputs of the Intel driver. The generic synchronous protocol-notify m
 
 The optional HII setup path locates `EFI_HII_DATABASE_PROTOCOL` and `EFI_HII_STRING_PROTOCOL`. This happens after controller initialization and only on the first PF partition in the inspected source. It is therefore lower priority than PCI/DMA/device-path state for a POST-logo hang during controller start, but it remains a concrete dependency if earlier candidates close negative.
 
+## Concrete DMA/IOMMU backend comparison
+
+The I40e DMA dependency was followed into the firmware instead of reopening generic PCI analysis.
+
+EDK2's standard `EDKII_IOMMU_PROTOCOL` GUID is:
+
+```text
+4E939DE9-D948-4B0F-88ED-E6E1CE517C1E
+```
+
+and its interface provides `SetAttribute`, `Map`, `Unmap`, `AllocateBuffer`, and `FreeBuffer`. Standard EDK2 PciBus implementations may delegate PciIo DMA operations through this protocol.
+
+A full decompressed-image GUID scan of DRFXI 1.12 and 1.15 found the same relevant modules referencing the IOMMU GUID, including `AmdNbioIOMMUDxe`, `PciBus`, `PciRootBridge`, `Bds`, and `NvmeSmm`.
+
+### Provider: `AmdNbioIOMMUDxe`
+
+`AmdNbioIOMMUDxe` installs the IOMMU protocol. The located protocol vtable is unchanged between 1.12 and 1.15:
+
+```text
+Revision       0x00010000
+SetAttribute   RVA 0x5424
+Map            RVA 0x5490
+Unmap          RVA 0x5614
+AllocateBuffer RVA 0x56f4
+FreeBuffer     RVA 0x5780
+```
+
+The relevant protocol methods and their immediate DMA-translation helpers were disassembled and compared. **No semantic code change was found in SetAttribute/Map/Unmap/AllocateBuffer/FreeBuffer or their directly used translation helpers.**
+
+This is a strong negative result for the simple mechanism "1.13 fixed Intel UNDI by changing DMA Map/Unmap semantics".
+
+### Real state delta underneath the unchanged methods: PCI MMCONFIG / ECAM base
+
+`AmdNbioIOMMUDxe` is not byte-identical. Most byte differences are PCD-token renumbering, but one genuine platform-state change recurs consistently:
+
+```text
+PCI MMCONFIG / ECAM base
+1.12: 0xF0000000
+1.15: 0xE0000000
+```
+
+Representative changed constants occur around RVAs `0x1d54`, `0x26ed..0x27e9`, `0x5157`, `0x57c1/0x57cc`, and `0x595b/0x5964`. The function around the `0x5157` delta uses the MMCONFIG base while reading PCI configuration offsets such as `0x44/0x48` and constructing internal IOMMU state before publishing/using the IOMMU service.
+
+The same `F0000000 -> E0000000` platform change is visible in `PciRootBridge`, which strongly indicates a **system-wide PCI MMCONFIG relocation**, not an Intel-NIC special case.
+
+Interpretation:
+
+- **Confirmed semantic/state delta:** the platform PCI ECAM window changed between 1.12 and 1.15.
+- **Confirmed negative:** the IOMMU DMA service API implementation consumed by a plausible Intel UNDI driver did not change semantically.
+- **Possible mechanism:** corrected/different ECAM state can alter what IOMMU/root-bridge initialization sees and therefore indirectly alter DMA/controller state presented to an external Intel UNDI driver.
+- **Attribution confidence to the LAN fix: low.** The matching root-bridge-wide change and the 1.13 changelog's separate `Update PI 1.0.0.3h` entry make this at least as plausibly a platform-init update as the specific Intel-LAN workaround.
+
+This delta should therefore be preserved as a concrete candidate dependency/state change, but **not promoted to the Intel LAN fix without a reproducer, exact 1.13 binary, or additional causal evidence**.
+
+## Cross-family implication
+
+The source-family search shows that `GigUndiDxe`, `XGigUndiDxe`, `I40eUndiDxe`, and `IceUndiDxe` all use the same broad PCI/DMA shape: `EFI_PCI_IO_PROTOCOL`, PCI attributes/config, and PciIo DMA allocation/mapping. Therefore the IOMMU/MMCONFIG dependency is not unique to X710; it remains relevant even if the original card belonged to another mainstream Intel server-NIC UNDI family.
+
+That weakens its value for identifying the exact card but strengthens it as the one concrete firmware state boundary shared by plausible Intel OPROM families.
+
 ## Current narrowing
 
-The I40e source changes the firmware-side question substantially. For an X710-family reproducer, the most relevant motherboard-controlled inputs after the already-closed generic dispatch chain are not arbitrary network-stack protocols. They are primarily:
+The source-guided investigation has now produced one real 1.12→1.15 state delta on a dependency the Intel ROM actually consumes, but not a convincing LAN-specific implementation delta.
 
-1. **the PciIo-visible controller state**: PCI attributes/config/MMIO and DMA mapping behavior;
-2. **the controller Device Path / Remaining Device Path** passed to DriverBinding;
-3. secondarily HII protocols used later in Start.
+Current priority order:
 
-Because the `PciBus.efi` executable itself was previously shown to have no semantic code delta except PCD token renumbering, a changed PciIo method implementation is not currently supported. The remaining concrete possibility is a changed **state/provider underneath those same methods** — especially DMA/IOMMU-visible state or controller/device-path state — rather than a new Intel-specific dispatch branch.
+1. `EFI_PCI_IO_PROTOCOL` direct implementation: already essentially negative because `PciBus` code is semantic-identical.
+2. DMA/IOMMU service methods: **negative**; identical relevant provider methods.
+3. underlying PCI/IOMMU initialization state: **MMCONFIG F0000000→E0000000**, real delta, low confidence as LAN-fix attribution.
+4. controller Device Path / RemainingDevicePath state: still to close narrowly.
+5. HII Database/String: lower priority because reached after hardware initialization in I40e Start.
 
 ## Next action in this pass
 
-Check only the providers/state implied by the concrete I40e dependencies:
+Check only the two remaining concrete dependencies without reopening generic PCI initialization:
 
-1. determine whether the PciIo DMA Map/Unmap path delegates to an IOMMU protocol/provider on this firmware, and if so compare that provider 1.12→1.15;
-2. check whether the controller Device Path producer/state relevant to an add-in network card changed without reopening broad BDS/PCI initialization;
-3. inspect HII Database/String providers only if the higher-priority PCI/DMA state is negative.
+1. determine whether the actual controller Device Path producer code changed; because `PciBus` is already semantic-identical, distinguish code change from merely runtime topology/BDF state;
+2. hash/compare the HII Database/String provider(s) used by Intel UNDI setup code, only to close this lower-priority dependency.
 
-Do not reopen PciBus policy, LoadImage/StartImage, Security2, CSM, BDS, generic protocol notify or the byte-identical network stack.
+Then checkpoint. If both are negative, the next highest-value external artifact is the exact Intel NIC/ROM or reproduction hardware; further generic firmware RE would have sharply diminishing evidence value.
