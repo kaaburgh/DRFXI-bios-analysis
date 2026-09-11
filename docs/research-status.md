@@ -1,6 +1,6 @@
 # Research status
 
-Last updated: 2026-09-11
+Last updated: 2026-09-12
 
 This is the **living checkpoint** for the investigation. Dated reports under `docs/checkpoints/` are historical snapshots and may contain conclusions later refined here.
 
@@ -53,9 +53,22 @@ Across the available 1.12→1.15 boundary, the three newly named PE modules were
 
 - depends on Variable Write, PCD and either EDKII VariablePolicy or VarCheck;
 - protects AMD setup variables including `AMD_PBS_SETUP`, `AmdSetupRPL` and `AodSetupRpl`;
-- manages the separate `AmdVariableProtection` variable, GUID `40578F3D-65EE-49ED-8BC5-5A32BBEAE745`;
+- manages the separate `AmdVariableProtection` variable, GUID `408F573D-65EE-49ED-8BC5-5A32BBEAE745`;
 - uses embedded authenticated create/delete payloads and runtime `GetVariable`/`SetVariable`;
-- corresponds to the new default-enabled `AMD Variable Protection` setup item at `AmdPbsSetupDxe` offset `0x91`.
+- corresponds to the new default-enabled `AMD Variable Protection` setup item at `AmdPbsSetupDxe` offset `0x91`, though the exact static bridge from that setup byte to the feature/PCD lifecycle remains unproven.
+
+The runtime gate lifecycle is now localized further:
+
+- policy registration occurs during DXE;
+- `ExtractConfig()` is hooked so the gate is authenticated-deleted before the original router is called;
+- ReadyToBoot recreates the gate when absent;
+- gate creation also happens during the driver's normal DXE initialization after backend registration, so next-boot recovery is not ReadyToBoot-only.
+
+A standalone read-only X64 hardware probe now exists at `tools/amd-variable-protection-probe/`. It deliberately calls the installed `ExtractConfig()` with `Request == NULL`: the AMD wrapper performs gate handling first, while upstream EDK II original routing returns `EFI_INVALID_PARAMETER` before routing to any HII Config Access driver. Reference probe SHA-256:
+
+`8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431`
+
+Static validation passes; actual gate deletion/recreation remains to be verified on BD790i hardware. See `docs/checkpoints/2026-09-12-amd-variable-protection-runtime-probe.md`.
 
 `GenerateTimeBaseVariable.efi` is a 692-KiB EFI application, not a DXE driver. It contains the same variable name/GUID and prints `mCreatePayload` / `mDeletePayload` C arrays after building authenticated-variable payloads. It is strongly identified as the companion payload-generation utility for `AmdVariableProtection`, not an automatically dispatched boot component.
 
@@ -192,7 +205,7 @@ Between 1.15 and 1.17, `ReFlash.efi`, `FlashDriver.efi`, and `FlashDriverSmm.efi
 
 ### Undocumented 1.17 functionality
 
-1.17 introduces `TcgStorageSecurity.efi`, `SmmTcgStorageSec.efi`, a new dynamic setup VarStore and TCG Storage Security forms. No known 1.16/1.17 changelog item explicitly names this functionality.
+1.17 introduces `TcgStorageSecurity.efi`, `SmmTcgStorageSec.efi`, a new dynamic setup VarStore and TCG Storage Security forms. No known 1.16/1.17 changelog item explicitly mentions this feature, so it is currently tracked as a confirmed released change with undocumented provenance.
 
 ## Methodological findings
 
@@ -215,9 +228,10 @@ Examples now include:
 
 Highest-value unresolved work outside paused branches:
 
-1. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
-2. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
-3. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps.
+1. run the read-only `AmdVariableProtectionProbe.efi` on stock 1.17 hardware and verify gate deletion plus next-boot recovery without any setup-variable write;
+2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
+3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
+4. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps.
 
 ## Deferred / paused branches
 
