@@ -140,6 +140,38 @@ See `findings/tcc-pcd-consumer.md`, `findings/smu-power-limit.md`, and `deferred
 - After inner decompression, exactly 60 bytes differ; each sets bit `0x04`, consistent with a bulk AMIBCP access/visibility change.
 - The full image also contains donor-board NVRAM/APOB/APCB/boot/security state and should be treated as a reference SPI readback, not a clean portable flash image.
 
+### DRFXI 1.17 clean HII unlock
+
+The clean, version-aware static construction branch is complete enough to stop.
+
+A fail-closed patcher now exists at `scripts/patch_drfxi_117_clean_hii_unlock.py`. It accepts only the exact official 1.17 image and validates the nested firmware structures plus known stock `Setup` PE32 and `AMITSESetupData` hashes before modification.
+
+The first minimal target set makes exactly 24 semantic byte edits before recompression:
+
+- 22 `AMITSESetupData` access-byte changes exposing the selected UMC/DDR memory tree plus the already-existing VDDP/FCLK branch through `SMU Common Options`;
+- 2 `Setup` IFR constants exposing AMI Save/Restore User Defaults by changing only their outer unconditional `Uint64(1)` suppressors to `Uint64(0)`.
+
+The two nested LZMA streams are recompressed inside their original allocations; no FFS/section size or downstream offset changes are required.
+
+Reference patched image SHA-256:
+
+`dc70d7d94d146fa3a8f75233f729648695dba07eef7245514121e2fffe7d879f`
+
+Static validation:
+
+- UEFIExtract A75 stock and patched structural reports are identical;
+- recursive extraction yields 6926 leaf files in both images with identical relative path sets;
+- exactly two leaf payloads differ: `Setup` PE32 and decompressed `AMITSESetupData`;
+- `Setup` PE32 differs by exactly 2 bytes;
+- `AMITSESetupData` differs by exactly 22 bytes, each only setting access bit `0x04`;
+- IFR re-extraction changes semantically only the two intended `Uint64 1 -> 0` instructions;
+- every other extracted leaf is byte-identical, including NVRAM/default-store and unrelated executable/data/ACPI content;
+- already-patched and one-byte-corrupted inputs are rejected fail-closed before output creation.
+
+See `findings/clean-hii-unlock.md` and `data/drfxi-1.17-clean-hii-unlock-validation.json`.
+
+This is **not** a flashing recommendation. Hardware boot/runtime validation and flash-path/integrity/recovery safety remain separate, unproven questions.
+
 ### 1.17 dGPU / iGPU behavior
 
 - New executable logic is localized to `OemDxe.efi`.
@@ -176,7 +208,8 @@ Examples now include:
 
 - TCC: `209→212` token renumbering with stable consumer semantics around a real `91→100` default change;
 - Intel LAN: large BDS growth separated into unrelated GOP code plus unchanged network path;
-- PI first pass: `NvramDxe` hashes differ, but only 28 bytes change and normalize to PCD/build metadata while the real behavior change is a newly added consumer module.
+- PI first pass: `NvramDxe` hashes differ, but only 28 bytes change and normalize to PCD/build metadata while the real behavior change is a newly added consumer module;
+- clean HII unlock: whole-image recompression creates compressed-byte churn, while recursive extraction proves that the semantic modifications are confined to exactly two decompressed leaf payloads.
 
 ## Active open questions
 
@@ -184,7 +217,7 @@ Highest-value unresolved work outside paused branches:
 
 1. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
 2. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
-3. derive a clean, version-aware unlock strategy for hidden memory controls and Save/Restore User Defaults without transplanting donor-board state.
+3. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps.
 
 ## Deferred / paused branches
 
