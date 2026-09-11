@@ -6,29 +6,31 @@ This file records which branches are active, complete enough to stop, or intenti
 
 ## Ready for next bounded investigation
 
-### DRFXI 1.13 `Update PI 1.0.0.3h` — isolate concrete PI/platform deltas
+### DRFXI 1.13 `Update PI 1.0.0.3h` — CVE-directed SMM validation pass
 
-Known changelog item from DRFXI 1.13:
+The first bounded PI pass is complete.
 
-```text
-Update PI 1.0.0.3h
-```
+Confirmed from the 1.12→1.15 boundary:
 
-Because 1.13 and 1.14 binaries are missing, the available boundary is **1.12→1.15** and temporal attribution must remain explicit.
+- `AmdVariableProtection.efi` is a genuinely new AMD VariablePolicy/VarCheck consumer protecting AMD setup variables;
+- `GenerateTimeBaseVariable.efi` is its companion EFI application for generating authenticated create/delete payloads for the same `AmdVariableProtection` variable;
+- `HardwareSignatureEntry.efi` is a separate AMI HardwareChange/FACS hardware-signature feature, not part of the AMD variable-protection dependency cluster;
+- the immediate generic VariablePolicy/VarCheck provider `NvramDxe` has only PCD-token/build-time differences and no relevant semantic delta;
+- PCI MMCONFIG/ECAM `0xF0000000→0xE0000000` remains a separate platform-init delta rather than part of the three-module cluster.
 
-Existing evidence already shows that raw module churn badly overstates semantic change: 181 named PE modules differ bytewise across 1.12→1.15, but many inspected differences reduce to PCD-token renumbering, relocation/build noise, or global platform constants. Three named PE modules are genuinely added by 1.15:
+External AMD documentation now identifies the changelog version precisely as **DragonRangeFL1PI 1.0.0.3h** for Ryzen 7045/Dragon Range. AMD lists that PI revision as the mitigation level for **CVE-2024-36311**, an SMM communications-buffer TOCTOU validation issue, with a 2025-03-18 release date.
 
-- `AmdVariableProtection.efi`
-- `GenerateTimeBaseVariable.efi`
-- `HardwareSignatureEntry.efi`
+This does not prove that the three new modules or the ECAM relocation landed specifically in 1.0.0.3h.
 
-A real platform-wide PCI MMCONFIG/ECAM relocation `0xF0000000 -> 0xE0000000` has also been observed in `AmdNbioIOMMUDxe` and `PciRootBridge` while investigating the Intel-LAN branch. It is not Intel-specific and is at least as plausibly part of the PI/platform update.
+Recommended next task: use the public CVE/PI mapping to derive a **small candidate set of SMM communication components/GUIDs first**, then compare only those validation paths 1.12→1.15. Do not scan all changed SMM modules. Stop if the vulnerable component cannot be mapped narrowly from public AMD/EDK2 evidence.
 
-Recommended next task: do a **bounded normalized PI-component triage**, not a general firmware diff. Start from the three added modules and the MMCONFIG relocation, identify their immediate protocol/variable/DEPEX dependencies and nearby changed providers/consumers, and determine which deltas form a coherent PI/platform-update cluster versus unrelated 1.14/1.15 work. Stop after the first evidence-backed cluster is localized.
-
-Use `docs/findings/changelog-mapping.md`, `data/module-diff-summary.csv`, `data/pcd-db-1.12-to-1.15-diff.json`, and the current research status as the handoff.
+See `docs/checkpoints/2026-09-11-pi-1.0.0.3h-first-pass.md` and `docs/findings/changelog-mapping.md`.
 
 ## Completed enough to stop
+
+### PI 1.0.0.3h — first new-module triage
+
+The three newly named PE modules are classified and do not form a single functional cluster. The first immediate dependency edge is normalized. Do not repeat broad triage of those three modules; continue only through a new evidence-backed dependency such as the CVE-directed SMM path above.
 
 ### `Set TCC to 100`
 
