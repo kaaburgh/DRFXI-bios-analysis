@@ -12,9 +12,24 @@ Other valuable bounded branches remain:
 
 - recover missing official firmware 1.13 / 1.14 / 1.16;
 - classify a remaining normalized PE/FFS change only when driven by a concrete changelog or unexplained released feature;
-- derive a clean, version-aware unlock for hidden memory controls and AMI Save/Restore User Defaults without transplanting donor-board state.
+- if the clean 1.17 unlock is ever considered for hardware use, perform a **separate** bounded pre-flash integrity/recovery pass before discussing a flashing procedure.
 
 ## Completed enough to stop
+
+### DRFXI 1.17 clean HII unlock — static construction
+
+A fail-closed version-specific patcher now exists at `scripts/patch_drfxi_117_clean_hii_unlock.py` for the exact official DRFXI 1.17 image.
+
+The first minimal target set makes 24 semantic edits before recompression:
+
+- 22 `AMITSESetupData` access-byte edits for the selected UMC/DDR tree and `SMU Common Options` form;
+- 2 `Setup` IFR constant edits exposing AMI Save/Restore User Defaults.
+
+The two nested LZMA containers are rebuilt inside their existing allocations, with FFS/section sizes preserved. UEFIExtract A75 reports identical structure before/after. Recursive extraction yields 6926 leaves in each image with identical path sets and only two differing leaf payloads: `Setup` PE32 and `AMITSESetupData`. Patched IFR changes only the two intended unconditional `Uint64 1 -> 0` suppressors.
+
+The reference output hash and validation are recorded in `data/drfxi-1.17-clean-hii-unlock-validation.json` and `docs/findings/clean-hii-unlock.md`.
+
+This closes the **static construction** branch. Do not expand the unlock to unrelated CPU/power/SmartShift pages by default. Flash safety and hardware behavior are separate, unproven questions.
 
 ### PI 1.0.0.3h — first new-module triage
 
