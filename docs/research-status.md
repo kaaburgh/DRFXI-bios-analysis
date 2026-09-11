@@ -82,23 +82,25 @@ A real platform-wide PCI MMCONFIG/ECAM relocation remains established:
 
 It occurs in at least `AmdNbioIOMMUDxe` and `PciRootBridge`. The first PI pass found no immediate dependency tying this relocation to the three newly added modules, so it remains a **separate platform-init delta**.
 
-#### Attribution boundary
+#### CVE-2024-36311 mapping boundary
 
-High confidence:
+A second bounded pass attempted to use CVE-2024-36311 as an implementation fingerprint before touching DRFXI SMM binaries.
 
-- `1.0.0.3h` is the DragonRangeFL1PI revision relevant to this board family;
-- the release contains known upstream security/platform changes.
+Direct public evidence establishes only:
 
-Not proven:
+- TOCTOU (`CWE-367`);
+- an SMM communications buffer as the affected object class;
+- high-privilege local attacker model;
+- out-of-bounds read/write impact;
+- Dragon Range mitigation level `DragonRangeFL1PI 1.0.0.3h`.
 
-- that AMD Variable Protection first landed in DRFXI 1.13 rather than 1.14/1.15;
-- that `HardwareSignatureEntry` is part of AMD PI rather than adjacent AMI integration;
-- that the ECAM relocation belongs to 1.0.0.3h;
-- that any inspected delta implements CVE-2024-36311.
+The authoritative AMD/CVE record does **not** publish a communication GUID, handler GUID, module name, function, source path, communication structure name beyond the generic description, exact race shape, or patch. Focused GitHub/public searches found mirrors of the advisory but no researcher write-up, PoC or implementation fingerprint.
 
-Next evidence-driven PI step: derive the SMM communication component implicated by CVE-2024-36311 from public AMD/EDK2 evidence, then compare only that small validation path 1.12→1.15. Do not resume broad changed-module triage.
+Generic EDK2 components such as `PiSmmCommunication`, `PiSmmCore`, and `SmmMemLib` demonstrate the relevant class of communication-buffer validation code, but there is no public evidence tying CVE-2024-36311 specifically to those implementations. Therefore the CVE branch is intentionally paused rather than expanded into a generic SMM diff.
 
-See `checkpoints/2026-09-11-pi-1.0.0.3h-first-pass.md` and `findings/changelog-mapping.md`.
+Resume this path only with a concrete handler/module/GUID/patch fingerprint, a strong cross-platform pre/post mitigation comparison, or recovered 1.13 plus independent narrowing evidence.
+
+See `checkpoints/2026-09-11-pi-1.0.0.3h-first-pass.md`, `checkpoints/2026-09-11-pi-1.0.0.3h-cve-2024-36311.md`, and `findings/changelog-mapping.md`.
 
 ### 1.13 Intel LAN OPROM POST-logo fix
 
@@ -180,13 +182,13 @@ Examples now include:
 
 Highest-value unresolved work outside paused branches:
 
-1. use AMD's `DragonRangeFL1PI 1.0.0.3h` / CVE-2024-36311 mapping to identify and compare the smallest relevant SMM communication-validation path;
-2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
-3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
-4. derive a clean, version-aware unlock strategy for hidden memory controls and Save/Restore User Defaults without transplanting donor-board state.
+1. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
+2. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
+3. derive a clean, version-aware unlock strategy for hidden memory controls and Save/Restore User Defaults without transplanting donor-board state.
 
 ## Deferred / paused branches
 
+- PI 1.0.0.3h / CVE-2024-36311: wait for a concrete implementation fingerprint, strong cross-platform pre/post mitigation evidence, or recovered 1.13 plus independent narrowing evidence.
 - Intel LAN OPROM: wait for exact NIC/ROM or X710-DA2 ROM surrogate.
 - `Update SMU for power limit` internals: wait for justified reusable Xtensa-le tooling.
 - S3 / PCIe power-resume: wait for DRFXI 1.16 or useful runtime evidence.
