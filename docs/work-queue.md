@@ -10,26 +10,35 @@ No evidence-backed follow-up is currently ready for `CVE-2024-36311`: public dis
 
 Other valuable bounded branches remain:
 
-- build a **read-only UEFI probe** for the newly localized `AmdVariableProtection` lifecycle: observe the authenticated `AmdVariableProtection` gate, invoke the installed/hooked `EFI_HII_CONFIG_ROUTING_PROTOCOL.ExtractConfig()`, and verify whether the gate disappears on real BD790i hardware; do not write protected setup variables in the first experiment;
+- perform the **first read-only hardware run** of the now-built `AmdVariableProtectionProbe.efi`: record gate state before/after the hooked HII Config Routing `ExtractConfig()` call, then reboot/power-cycle without writing any BIOS variable;
 - recover missing official firmware 1.13 / 1.14 / 1.16;
 - classify a remaining normalized PE/FFS change only when driven by a concrete changelog or unexplained released feature;
 - if the clean 1.17 unlock is ever considered for hardware use, perform a **separate** bounded pre-flash integrity/recovery pass before discussing a flashing procedure.
 
 ### AMD Variable Protection / no-flash setup editing
 
-A bounded static pass established the relevant lifecycle well enough to justify a hardware probe:
+The first runtime probe is now implemented and statically validated under `tools/amd-variable-protection-probe/`.
+
+Established static behavior:
 
 - `AmdVariableProtection.efi` starts during DXE after `VariableWriteArch`, PCD and either VariablePolicy or VarCheck are available;
 - the protected variables include `AMD_PBS_SETUP`, `AmdSetupRPL` and `AodSetupRpl`;
 - the runtime lock state is controlled by the authenticated `AmdVariableProtection` variable, GUID `408F573D-65EE-49ED-8BC5-5A32BBEAE745`, value `1`;
 - the VariablePolicy backend uses `LOCK_ON_VAR_STATE`; the VarCheck fallback returns `EFI_WRITE_PROTECTED` while the gate is active;
 - the driver wraps `EFI_HII_CONFIG_ROUTING_PROTOCOL.ExtractConfig()` and authenticated-deletes the gate before forwarding to the original implementation;
-- a ReadyToBoot callback authenticated-creates the gate again with value `1` when needed;
-- the separate PBS setup option at offset `0x91` defaults to enabled, but the static bridge from that option to the feature/PCD/gate lifecycle was not localized in the bounded pass.
+- ReadyToBoot authenticated-creates the gate again when absent;
+- gate creation also occurs in normal DXE initialization after backend registration, so next-boot recovery is not ReadyToBoot-only;
+- the separate PBS setup option at offset `0x91` defaults to enabled, but the static bridge from that option to the feature/PCD/gate lifecycle remains unlocalized.
 
-Next experiment: a read-only EFI application that records gate state, calls the real hooked `ExtractConfig()`, records gate state again, and exits without modifying `AmdSetupRPL`/`AMD_PBS_SETUP`. Stop after establishing whether the unlocked window is reproducible on hardware.
+Probe trigger: call the installed `ExtractConfig()` with `Request == NULL` and valid `Progress`/`Results`. This intentionally makes the original EDK II router return `EFI_INVALID_PARAMETER` before routing to any HII Config Access driver, while DRFXI's AMD wrapper has already executed its gate-removal logic.
 
-See `docs/findings/amd-variable-protection.md` and `docs/checkpoints/2026-09-11-amd-variable-protection-shell-path.md`.
+Reference probe SHA-256:
+
+`8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431`
+
+Next experiment: run the probe once on stock 1.17 hardware, capture all output, perform no variable write, reboot/power-cycle immediately, and on a later boot verify that Phase 1 sees the gate restored. Stop after establishing whether the unlocked window and recovery are reproducible on hardware.
+
+See `docs/findings/amd-variable-protection.md` and `docs/checkpoints/2026-09-12-amd-variable-protection-runtime-probe.md`.
 
 ## Completed enough to stop
 
