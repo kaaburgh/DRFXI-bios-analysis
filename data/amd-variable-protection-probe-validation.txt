@@ -1,0 +1,38 @@
+AmdVariableProtectionProbe static validation
+Date: 2026-09-12
+
+SHA-256:
+8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431  AmdVariableProtectionProbe.efi
+
+file:
+AmdVariableProtectionProbe.efi: PE32+ executable for EFI (application), x86-64, 4 sections
+
+PE summary:
+architecture: i386:x86-64, flags 0x0000012f:
+Magic                   020b    (PE32+)
+MajorSubsystemVersion   6
+MinorSubsystemVersion   0
+Subsystem               0000000a        (EFI application)
+Entry 1 0000000000000000 00000000 Import Directory [parts of .idata]
+Entry 5 0000000000006000 0000000c Base Relocation Directory [.reloc]
+Entry b 0000000000000000 00000000 Bound Import Directory
+Entry d 0000000000000000 00000000 Delay Import Directory
+        reloc    0 offset    0 [5000] DIR64
+
+forbidden source invocations:
+none
+
+forbidden indirect call offsets (0x10/0x58/0x68):
+none
+
+forbidden API names in binary strings:
+none
+
+validator:
+SHA-256: 8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431
+validation: PASS
+
+reproducibility:
+8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431  /tmp/avp-before.efi
+8991966a546960265287ab1e4804658d4e879680ce47c50f29350d0ab4016431  AmdVariableProtectionProbe.efi
+byte-for-byte identical: yes
