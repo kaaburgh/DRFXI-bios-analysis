@@ -6,31 +6,19 @@ This file records which branches are active, complete enough to stop, or intenti
 
 ## Ready for next bounded investigation
 
-### DRFXI 1.13 `Update PI 1.0.0.3h` — CVE-directed SMM validation pass
+No evidence-backed follow-up is currently ready for `CVE-2024-36311`: public disclosure does not identify a concrete SMM handler/module/GUID, so a binary pass would become generic SMM reverse engineering.
 
-The first bounded PI pass is complete.
+Other valuable bounded branches remain:
 
-Confirmed from the 1.12→1.15 boundary:
-
-- `AmdVariableProtection.efi` is a genuinely new AMD VariablePolicy/VarCheck consumer protecting AMD setup variables;
-- `GenerateTimeBaseVariable.efi` is its companion EFI application for generating authenticated create/delete payloads for the same `AmdVariableProtection` variable;
-- `HardwareSignatureEntry.efi` is a separate AMI HardwareChange/FACS hardware-signature feature, not part of the AMD variable-protection dependency cluster;
-- the immediate generic VariablePolicy/VarCheck provider `NvramDxe` has only PCD-token/build-time differences and no relevant semantic delta;
-- PCI MMCONFIG/ECAM `0xF0000000→0xE0000000` remains a separate platform-init delta rather than part of the three-module cluster.
-
-External AMD documentation now identifies the changelog version precisely as **DragonRangeFL1PI 1.0.0.3h** for Ryzen 7045/Dragon Range. AMD lists that PI revision as the mitigation level for **CVE-2024-36311**, an SMM communications-buffer TOCTOU validation issue, with a 2025-03-18 release date.
-
-This does not prove that the three new modules or the ECAM relocation landed specifically in 1.0.0.3h.
-
-Recommended next task: use the public CVE/PI mapping to derive a **small candidate set of SMM communication components/GUIDs first**, then compare only those validation paths 1.12→1.15. Do not scan all changed SMM modules. Stop if the vulnerable component cannot be mapped narrowly from public AMD/EDK2 evidence.
-
-See `docs/checkpoints/2026-09-11-pi-1.0.0.3h-first-pass.md` and `docs/findings/changelog-mapping.md`.
+- recover missing official firmware 1.13 / 1.14 / 1.16;
+- classify a remaining normalized PE/FFS change only when driven by a concrete changelog or unexplained released feature;
+- derive a clean, version-aware unlock for hidden memory controls and AMI Save/Restore User Defaults without transplanting donor-board state.
 
 ## Completed enough to stop
 
 ### PI 1.0.0.3h — first new-module triage
 
-The three newly named PE modules are classified and do not form a single functional cluster. The first immediate dependency edge is normalized. Do not repeat broad triage of those three modules; continue only through a new evidence-backed dependency such as the CVE-directed SMM path above.
+The three newly named PE modules are classified and do not form a single functional cluster. The first immediate dependency edge is normalized. Do not repeat broad triage of those three modules.
 
 ### `Set TCC to 100`
 
@@ -49,6 +37,28 @@ Further work is optional only: source-level PCD CName or runtime effective-limit
 See `docs/findings/tcc-pcd-consumer.md`.
 
 ## Deferred / paused deep dives
+
+### PI 1.0.0.3h / CVE-2024-36311 SMM TOCTOU
+
+**Paused on 2026-09-11 due to an external-evidence blocker.**
+
+AMD directly establishes:
+
+- `CVE-2024-36311` is a TOCTOU in an SMM communications buffer;
+- Dragon Range / Ryzen 7045 is mitigated by `DragonRangeFL1PI 1.0.0.3h`.
+
+However the public AMD/CVE record does not identify a communication GUID, handler GUID, module, function, source path, or exact TOCTOU shape. Focused public/GitHub searches found mirrors of the advisory but no patch, PoC, researcher write-up, or concrete implementation fingerprint.
+
+Generic EDK2 SMM communication code (`PiSmmCommunication`, `PiSmmCore`, `SmmMemLib`) is only a source-family correlation; there is no evidence that CVE-2024-36311 resides in those components. Do **not** map the CVE into DRFXI by scanning all SMM modules or by selecting every caller of `SmmIsBufferOutsideSmmValid`.
+
+Resume only if one of these appears:
+
+1. an AMD/researcher disclosure naming the affected module/handler/function/GUID;
+2. a source patch explicitly tied to CVE-2024-36311 or DragonRangeFL1PI 1.0.0.3h;
+3. a strong cross-platform pre/post mitigation firmware comparison that isolates one common SMM component;
+4. recovered DRFXI 1.13 plus an independent fingerprint narrowing the SMM target.
+
+See `docs/checkpoints/2026-09-11-pi-1.0.0.3h-cve-2024-36311.md`.
 
 ### Intel LAN OPROM POST-hang fix
 
@@ -73,9 +83,3 @@ See `docs/deferred/smu-power-limit-deep-dive.md` and `docs/checkpoints/2026-09-1
 Paused after the AML/ACPICA investigation. Resume primarily when DRFXI 1.16 is recovered or when runtime ACPI evidence becomes useful.
 
 See `docs/findings/s3-workaround.md`.
-
-## Other valuable future branches
-
-- recover missing official firmware 1.13 / 1.14 / 1.16;
-- classify remaining normalized PE/FFS changes as changelog-explained, likely-related, or undocumented;
-- derive a clean, version-aware unlock for hidden memory controls and AMI Save/Restore User Defaults without transplanting donor-board state.
