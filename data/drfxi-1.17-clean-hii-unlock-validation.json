@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "subject": "DRFXI 1.17 clean HII unlock static validation",
+  "date": "2026-09-11",
+  "input": {
+    "size": 33554432,
+    "sha256": "99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51"
+  },
+  "output": {
+    "size": 33554432,
+    "sha256": "dc70d7d94d146fa3a8f75233f729648695dba07eef7245514121e2fffe7d879f"
+  },
+  "scope": {
+    "access_changes": 22,
+    "setup_suppression_changes": 2,
+    "total_semantic_byte_changes_before_recompression": 24
+  },
+  "target_payloads": {
+    "setup_pe32": {
+      "stock_sha256": "23a776d601ec4b0ca086abfb7a5529dfad33dda37be6b0561a509e6b264fa9e1",
+      "patched_sha256": "d79ecb9e8cd48af2ce48d1bfb3480e188ed8131e42afe7ab5935233a610e09c7",
+      "semantic_byte_changes": 2,
+      "ifr_semantic_diff": [
+        {
+          "label": "Save as User Defaults",
+          "opcode": "Uint64",
+          "old": 1,
+          "new": 0
+        },
+        {
+          "label": "Restore User Defaults",
+          "opcode": "Uint64",
+          "old": 1,
+          "new": 0
+        }
+      ]
+    },
+    "amitse_setupdata": {
+      "stock_sha256": "22879575d33dbe6d711b3f3d45c7bd46f09757d2284ad51aef7ba9358f183973",
+      "patched_sha256": "b981b71de6570fb240f8f43996210e81b56283dc47109267f36893efa4c65684",
+      "semantic_byte_changes": 22,
+      "transformation": "set access bit 0x04 only"
+    }
+  },
+  "repacking": {
+    "outer_allocated_compressed_bytes": 4272454,
+    "outer_recompressed_bytes": 4262005,
+    "inner_allocated_compressed_bytes": 19715,
+    "inner_recompressed_bytes": 19527,
+    "section_and_ffs_sizes_preserved": true
+  },
+  "uefiextract_a75": {
+    "stock_parse_errors": 0,
+    "patched_parse_errors": 0,
+    "structural_reports_identical": true
+  },
+  "leaf_diff": {
+    "stock_leaf_count": 6926,
+    "patched_leaf_count": 6926,
+    "relative_path_sets_identical": true,
+    "differing_leaf_count": 2,
+    "differing_leaf_roles": [
+      "Setup / PE32 image section / body.bin",
+      "AMITSESetupData / decompressed freeform SetupData / body.bin"
+    ],
+    "all_other_leaves_byte_identical": true
+  },
+  "fail_closed_tests": {
+    "already_patched_input_rejected_by_sha256": true,
+    "one_byte_corrupted_stock_input_rejected_by_sha256": true,
+    "output_not_written_on_rejected_input": true
+  },
+  "reference_patcher_output_is_deterministic_for_test_runtime": {
+    "rerun_byte_identical": true,
+    "sha256": "dc70d7d94d146fa3a8f75233f729648695dba07eef7245514121e2fffe7d879f"
+  },
+  "limitations": [
+    "Static validation does not establish flash safety.",
+    "No hardware boot/runtime validation has been performed.",
+    "Visible controls may still be ineffective or unsafe on specific hardware."
+  ]
+}
