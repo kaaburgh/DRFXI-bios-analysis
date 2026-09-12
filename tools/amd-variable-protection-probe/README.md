@@ -86,9 +86,9 @@ If the probe causes the hook to delete the gate after that point, do not assume 
 
 Static DRFXI 1.17 analysis also shows that gate creation is not ReadyToBoot-only. During the next DXE startup, after the variable-protection backend is located/registered, `AmdVariableProtection.efi` invokes its gate-state helper with desired state `1`. ReadyToBoot is an additional restoration point later in the boot.
 
-Therefore, with the feature enabled and the driver loading normally, both warm and cold reboot enter a fresh DXE execution and should recreate the gate even if the authenticated deletion persisted in NVRAM from the previous Shell session. This remains a static prediction until verified on hardware.
+The recovered gate-management path uses variable attributes `0x26` (`BOOTSERVICE_ACCESS | RUNTIME_ACCESS | TIME_BASED_AUTHENTICATED_WRITE_ACCESS`), which does not include `NON_VOLATILE`. The probe deliberately prints the runtime attributes so the actual instantiated variable can be checked on hardware. Recovery of the first experiment does not rely on persistence semantics: with the feature enabled and the driver/backend loading normally, a fresh warm or cold boot should recreate the gate during DXE, and ReadyToBoot provides a second create-if-absent point.
 
-For the first hardware test, reboot or power-cycle immediately after recording the post-trigger result. On the next Shell boot, use the Shell's read-only `dmpstore AmdVariableProtection` display command to check that the variable exists again. This is preferable to running the probe a second time because a second probe run would intentionally delete the gate again after its Phase 1 observation.
+This next-boot recovery remains a static prediction until verified on hardware. For the first hardware test, reboot or power-cycle immediately after recording the post-trigger result. On the next Shell boot, use the Shell's read-only `dmpstore AmdVariableProtection` display command to check that the variable exists again. This is preferable to running the probe a second time because a second probe run would intentionally delete the gate again after its Phase 1 observation.
 
 ## Build
 
