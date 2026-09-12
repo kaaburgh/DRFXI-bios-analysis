@@ -32,6 +32,8 @@ A PCD Boolean gates installation (`PcdProtocol->GetBool()` token `6`), but the s
 
 The driver embeds authenticated create/delete payloads for `AmdVariableProtection` and uses Runtime Services `SetVariable()` with time-based authenticated-write attributes.
 
+The recovered gate-management calls use attributes `0x26`, i.e. `EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS`. `EFI_VARIABLE_NON_VOLATILE` (`0x01`) is not set. The first hardware probe therefore prints the runtime attributes so this static interpretation can be checked on the actual board. This is an additional recovery signal, but the test procedure does not rely on persistence semantics alone.
+
 It also hooks `EFI_HII_CONFIG_ROUTING_PROTOCOL->ExtractConfig()`:
 
 ```text
@@ -95,7 +97,7 @@ A plain late Shell `SetVariable()` against `AMD_PBS_SETUP`, `AmdSetupRPL`, or `A
 
 A normal Shell launched as a boot option usually starts after ReadyToBoot has already been signaled. If the probe then causes the AMD hook to delete the gate, protection may remain open for the rest of that Shell session. The first hardware procedure therefore requires no variable writes and an immediate reboot/power-cycle after recording the result.
 
-On the next warm/cold boot, the fresh DXE execution should recreate the gate before ReadyToBoot, provided the feature remains enabled and the driver/backend loads normally. This recovery is strong static evidence, not yet hardware-confirmed.
+On the next warm/cold boot, the fresh DXE execution should recreate the gate before ReadyToBoot, provided the feature remains enabled and the driver/backend loads normally. ReadyToBoot provides a second create-if-absent point. This recovery is strong static evidence, not yet hardware-confirmed.
 
 ## PBS option `AMD Variable Protection`
 
