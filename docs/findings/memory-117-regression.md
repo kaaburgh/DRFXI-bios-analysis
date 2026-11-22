@@ -35,6 +35,10 @@ The shipped command `/p /b /n /k /r /l /RLC:E` rewrites **the whole 32 MiB**: Sm
 
 Status: SPI coverage **STRONG EVIDENCE** (firmware classification confirmed, AFU flag semantics from its own help text); settings/training reset mechanism **STRONG EVIDENCE**; causation of the BD790i observation **INFERENCE** pending hardware data. A visible proxy: the update should also reset fTPM state (PSP NV data is in the rewritten range).
 
+## Real-data validation (community 795iX3D readback, 1.12-based)
+
+`evidence/memory-117/17-…`: on a board configured and saved through Setup, `AmdSetupRPL` carries signature `0xFC4053AA` and generation `0x4B9D5809` equal to the override-APCB token (no pending resync), the live NVRAM store sits in the backup NV area `0x1BC0000`, APOB NV is populated (ABL recorded APCB instance 0x60, recovery flag 0), and a runtime APCB write raised the override APCB's `UniqueAPCBInstance` from 0x2732 to 0x2733. `memory_state_report.py` now scans both NV areas.
+
 ## BD790i X3D
 
 Same image, same APCB, same code: the reset/retrain behaviour and MCR default apply identically. Nothing predicts that a complete, re-entered DDR5-6000 configuration behaves differently on 1.17; it must be re-entered in full and re-validated on fresh training.

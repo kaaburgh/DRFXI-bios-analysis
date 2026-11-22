@@ -36,6 +36,7 @@ This document records release metadata and artifact provenance separately from i
 Community reference dump:
 
 - `795iX3D.bin`: `c63971eedd2e03005aaeba2786aa7834b38c8ac006978e9a011156ee61122b15`
+- provenance: the community package's `assets/readme.txt` (preserved in the 2026-09-10 acquisition archive) points to the modder's Google Drive folder `https://drive.google.com/drive/folders/159JoEDjwaGg6DbRgxXzg0Z4wW_uoCYMO`; the readme instructs flashing with a CH341A programmer (W25Q256JW), i.e. it is a programmer-written full-chip image, not an AFU package.
 
 ## Acquired distribution-package hashes
 

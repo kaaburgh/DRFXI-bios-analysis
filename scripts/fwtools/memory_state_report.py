@@ -25,8 +25,9 @@ import apcb, nvar  # noqa: E402
 
 KNOWN_APCB_IDS = {0x09CC: "1.04", 0x5BBC: "1.07", 0x272F: "1.12", 0x69FF: "1.15", 0x4E98: "1.17"}
 APCB_MAIN, APCB_USER, APCB_USER_BAK, APOB_NV, APOB_NV_SIZE = 0x51D400, 0x522000, 0x525000, 0x125000, 0x28000
-NV_MAIN, NV_SIZE = 0x1BE0000, 0x20000
+NV_MAIN, NV_BACKUP, NV_SIZE = 0x1BE0000, 0x1BC0000, 0x20000
 SETUP_GUID = "3a997502-647a-4c82-998e-52ef9486a247"
+AOD_GUID = "5ed15dc0-edef-4161-9151-6014c4cc630c"
 REGVAL = {"r13b": 1, "bpl": 0xFF, "r15b": 0xF}
 WIDTH = {"SetBool": 1, "Set8": 1, "Set16": 2, "Set32": 4}
 
@@ -80,19 +81,32 @@ def main():
             print("override APCB @%X UniqueAPCBInstance=0x%04X size=0x%X" % (base, u["unique_id"], u["size"]))
             for g in u["groups"]:
                 for t in g["types"]:
+                    if g["gid"] != 0x3000:
+                        print("   inst=%d prio=0x%02X type gid=0x%04X tid=0x%04X size=0x%X (non-token override)" % (t["inst"], t["prio"], t["gid"], t["tid"], t["size"]))
                     for tid, val in t["tokens"]:
                         print("   inst=%d prio=0x%02X token 0x%08X = 0x%X  %s" % (t["inst"], t["prio"], tid, val, names.get(tid) or ("CBS sync generation id" if tid == 0xB331378E else "")))
                         if base == APCB_USER: spi_tokens[tid] = val
         apob = d[APOB_NV:APOB_NV + APOB_NV_SIZE]
         print("APOB NV @%X: %s" % (APOB_NV, "blank (all 0xFF) -> next boot trains from scratch" if apob.count(0xFF) == len(apob) else "populated, first bytes %s" % apob[:16].hex()))
-        nv = d[NV_MAIN:NV_MAIN + NV_SIZE]
         import uuid
-        f = nv.find(uuid.UUID("cef5b9a3-476d-497f-9fdc-e98143e0422c").bytes_le)   # NVRAM store FFS file
-        if f >= 0:
+        store_guid = uuid.UUID("cef5b9a3-476d-497f-9fdc-e98143e0422c").bytes_le   # NVRAM store FFS file
+        best = None
+        for base in (NV_MAIN, NV_BACKUP):          # AMI alternates the live store between the two NV areas
+            nv = d[base:base + NV_SIZE]
+            f = nv.find(store_guid)
+            if f < 0:
+                print("NVRAM area @%X: no store (blank or foreign)" % base); continue
             fsize = int.from_bytes(nv[f + 20:f + 23], "little")
             vars_ = nvar_variables(nv[f + 24:f + fsize])
-            print("NVRAM @%X: %d named variables: %s" % (NV_MAIN, len(vars_), ", ".join(sorted(k[0] for k in vars_))))
-            setup = vars_.get(("AmdSetupRPL", SETUP_GUID))
+            print("NVRAM area @%X: %d named variables%s" % (base, len(vars_), (": " + ", ".join(sorted(k[0] for k in vars_))) if len(vars_) < 6 else ""))
+            if best is None or len(vars_) > len(best[1]): best = (base, vars_)
+        if best:
+            print("   using area @%X as the live store" % best[0])
+            setup = best[1].get(("AmdSetupRPL", SETUP_GUID))
+            aod = best[1].get(("AodSetupRpl", AOD_GUID))
+            if aod is not None:
+                print("   AodSetupRpl: %d bytes; VDDIO Ctrl[0x192]=%d DIMM VDD[0x193]=%d DIMM VDDQ[0x195]=%d APU VDDIO[0x197]=%d VPP[0x199]=%d UCLK DIV1[0x96]=0x%02X Active Mem Timing[0x3C]=0x%02X" % (
+                    len(aod), aod[0x192], struct.unpack_from("<H", aod, 0x193)[0], struct.unpack_from("<H", aod, 0x195)[0], struct.unpack_from("<H", aod, 0x197)[0], struct.unpack_from("<H", aod, 0x199)[0], aod[0x96], aod[0x3C]))
             if setup is None: print("   AmdSetupRPL not stored -> CbsSetupDxeRPL recreates it from code defaults (generation 0x4B9D5809);\n"
                                     "   a resync runs only if the override APCB token 0xB331378E differs from 0x4B9D5809")
     if a.amdsetup:

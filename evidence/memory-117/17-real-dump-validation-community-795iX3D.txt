@@ -1,0 +1,49 @@
+# Validation of the memory-state report on a real configured-board SPI readback (community 795iX3D.bin)
+# sha256 c63971eedd2e03005aaeba2786aa7834b38c8ac006978e9a011156ee61122b15 (1.12-based donor board, see docs/findings/community-795ix3d-mod.md)
+# command: python3 -I scripts/fwtools/memory_state_report.py --spi 795iX3D.bin   (DRAM table truncated to the first rows)
+
+main APCB UniqueAPCBInstance=0x272F (1.12), payload sha256 a82c627383d2c56e
+override APCB @522000 UniqueAPCBInstance=0x2733 size=0x348
+   inst=0 prio=0x10 type gid=0x1705 tid=0x1002 size=0x210 (non-token override)
+   inst=1 prio=0x04 token 0x1FB35295 = 0x1  iGPU Configuration
+   inst=1 prio=0x04 token 0x37B1F8CF = 0x800  UMA Frame buffer Size
+   inst=1 prio=0x04 token 0xB331378E = 0x4B9D5809  CBS sync generation id
+override APCB @525000 UniqueAPCBInstance=0x2732 size=0x128
+   inst=1 prio=0x04 token 0x1FB35295 = 0x1  iGPU Configuration
+   inst=1 prio=0x04 token 0x37B1F8CF = 0x800  UMA Frame buffer Size
+   inst=1 prio=0x04 token 0xB331378E = 0x4B9D5809  CBS sync generation id
+APOB NV @125000: populated, first bytes 41504f4218000000801b0100a8000000
+NVRAM area @1BE0000: 1 named variables: StdDefaults
+NVRAM area @1BC0000: 77 named variables
+   using area @1BC0000 as the live store
+   AodSetupRpl: 428 bytes; VDDIO Ctrl[0x192]=0 DIMM VDD[0x193]=1100 DIMM VDDQ[0x195]=1100 APU VDDIO[0x197]=1100 VPP[0x199]=1800 UCLK DIV1[0x96]=0xFF Active Mem Timing[0x3C]=0xFF
+
+AmdSetupRPL: [0x08] sync generation = 0x4B9D5809; Active Memory Timing Settings [0x116] = 0xFF (Auto -> no timing token is pushed); Memory Context Restore [0x263] = 0xFF; Power Down [0x16F] = 0xFF; iGPU [0x44] = 0x01
+boot-time resync predicate: AmdSetupRPL[0x08]=0x4B9D5809 vs APCB 0xB331378E=0x4B9D5809 -> in sync (no automatic resync)
+
+DRAM-relevant CBS entries (expected after a CBS sync vs. stored in SPI override APCB):
+  0xD06DBAFB Memory Target Speed              setup=3200   pushed=no    spi=absent
+  0xFC195E5C Tcl                              setup=22     pushed=no    spi=absent
+  0xE31F1FCE Trcd                             setup=8      pushed=no    spi=absent
+  0x0DB8CB47 Trp                              setup=8      pushed=no    spi=absent
+  0x5E367ACA Tras                             setup=30     pushed=no    spi=absent
+  0x7F877269 Trc                              setup=32     pushed=no    spi=absent
+  0x082D6E55 Twr                              setup=48     pushed=no    spi=absent
+  0xBBEED68E Trfc1                            setup=50     pushed=no    spi=absent
+  0x2C5A76B2 Trfc2                            setup=50     pushed=no    spi=absent
+  0x32EB3B5B TrfcSb                           setup=50     pushed=no    spi=absent
+  0xE5AEA7D3 Trtp                             setup=9      pushed=no    spi=absent
+  ... (all 55 DRAM entries: pushed=no, spi=absent, no divergence)
+
+APOB NV header 'APOB' ver 0x18, 26 entries; group 1 / type 0x10 entry (read by ApobRplDxe):
+  ApobApcbInstance [+0x30] = 0x60 (BIOS-directory type 0x60 = active writable APCB, not backup 0x68)
+  ApobApcbRecoveryFlag [+0x65] = 0x00 (no APCB recovery)
+  32-byte field [+0x10..+0x30] is not a plain SHA-1/256/384/512/MD5 of the APCB blobs (tested); role unknown
+
+## observations
+- live NVRAM store is the *backup* NV area 0x1BC0000 (AMI alternates stores); 0x1BE0000 holds only StdDefaults -> the report scans both areas
+- AmdSetupRPL header signature 0xFC4053AA and generation [0x08] = 0x4B9D5809 = override-APCB token on a board configured and saved through Setup:
+  confirms that Setup saves do not change the generation and that no automatic resync is pending (corrected reading, checkpoint afu-coverage-and-dram-consumers)
+- override APCB @0x522000 grew to 0x348 bytes and UniqueAPCBInstance 0x2732 -> 0x2733 (backup copy unchanged): a runtime APCB write bumps the ID
+- the extra override type GNBG 0x1705/0x1002 sits in instance 0 with priority mask 0x10, the slot inferred for purpose-2 writes
+- donor ran DRAM at Auto (no CBS timing tokens; AOD VDDIO Ctrl Auto, DIMM VDD/VDDQ 1100 mV, APU VDDIO 1100 mV)
