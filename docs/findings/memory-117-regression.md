@@ -1,6 +1,6 @@
 # DDR5 tuning regression after DRFXI 1.15 → 1.17
 
-Last updated: 2026-11-22 (afternoon: AFU coverage + consumers, corrections)
+Last updated: 2026-11-22 (evening: owner re-entry sheet and before/after comparison)
 
 Living summary. Details, evidence references and the hypothesis table are in `../checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md`, corrected and extended by `../checkpoints/2026-11-22-memory-117-afu-coverage-and-dram-consumers.md` (and the earlier `2026-11-14-memory-117-regression-static-narrowing.md`). Evidence: `../../evidence/memory-117/`.
 
@@ -39,12 +39,16 @@ Status: SPI coverage **STRONG EVIDENCE** (firmware classification confirmed, AFU
 
 `evidence/memory-117/17-…`: on a board configured and saved through Setup, `AmdSetupRPL` carries signature `0xFC4053AA` and generation `0x4B9D5809` equal to the override-APCB token (no pending resync), the live NVRAM store sits in the backup NV area `0x1BC0000`, APOB NV is populated (ABL recorded APCB instance 0x60, recovery flag 0), and a runtime APCB write raised the override APCB's `UniqueAPCBInstance` from 0x2732 to 0x2733. `memory_state_report.py` now scans both NV areas.
 
+## Owner re-entry check (checkpoint `2026-11-22-memory-117-owner-baseline-and-reentry-check.md`, evidence 18)
+
+The re-entry path is unchanged in 1.17 (`AmdVariableProtection` byte-identical; CBS/AOD drivers and the APCB service PCD-renumbering only; question tables identical). Both menus carry the same 25 timing Ctrl/value pairs; tCWL, tREFI, tCKE, tSTAG, tMOD, Gear Down, Cmd2T and Nitro have no menu field. `memory_state_report.py` now prints a re-entry sheet (non-default CBS/AOD settings, Manual pairs only), flags stored-but-never-pushed settings as `DIVERGES`, accepts `--aodsetup`, and `--compare` gives a binary before/after verdict on the effective memory configuration.
+
 ## BD790i X3D
 
 Same image, same APCB, same code: the reset/retrain behaviour and MCR default apply identically. Nothing predicts that a complete, re-entered DDR5-6000 configuration behaves differently on 1.17; it must be re-entered in full and re-validated on fresh training.
 
 ## Next (read-only)
 
-Baseline on 1.15: efivarfs exports of `AmdSetupRPL` (`3a997502-647a-4c82-998e-52ef9486a247`), `AodSetupRpl` (`5ed15dc0-edef-4161-9151-6014c4cc630c`), `AMD_PBS_SETUP` (`a339d746-f678-49b3-9fc7-54ce0f9df226`), a saved SPI image, running timings and WHEA counts → `scripts/fwtools/memory_state_report.py`. Decisive comparison: Auto timings at the same target speed on 1.15 and 1.17.
+Baseline on 1.15: efivarfs exports of `AmdSetupRPL` (`3a997502-647a-4c82-998e-52ef9486a247`), `AodSetupRpl` (`5ed15dc0-edef-4161-9151-6014c4cc630c`), `AMD_PBS_SETUP` (`a339d746-f678-49b3-9fc7-54ce0f9df226`), a saved SPI image, running timings and WHEA counts → `scripts/fwtools/memory_state_report.py` (keep its re-entry sheet; after an update, `--compare` the new image against the 1.15 one). Decisive comparison: Auto timings at the same target speed on 1.15 and 1.17.
 
 Open: AFU-side behaviour beyond its help text (not disassembled), ABL internals (MCR, discard bit, CMOS VDDIO hand-off, AOD-vs-CBS priority, APCB-recovery conditions), the reporter's complete settings.

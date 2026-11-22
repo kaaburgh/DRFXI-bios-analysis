@@ -23,7 +23,7 @@ analysis environment; where results overlap with earlier UEFIExtract-based check
 | `straightline_eval.py` | evaluate straight-line x64 routines from objdump text (no execution): CBS code defaults (0x3E58) and fingerprint (0x5134) |
 | `run_x64_leaf.py` | optional native cross-check of a self-contained leaf function (`--exec-fingerprint`); not required |
 | `memory117_evidence.py` | regenerate `evidence/memory-117/` from the two official packages (fail-closed on hashes) |
-| `memory_state_report.py` | **read-only diagnostics**: offline report of effective memory configuration from an owner-made SPI dump and/or an efivarfs export of `AmdSetupRPL` |
+| `memory_state_report.py` | **read-only diagnostics**: offline report of effective memory configuration from an owner-made SPI dump and/or efivarfs exports of `AmdSetupRPL` / `AodSetupRpl`; re-entry sheet; `--compare` of two dumps |
 
 ## Reproducing the 2026-11-22 memory evidence
 
@@ -44,7 +44,15 @@ optional native cross-check of the fingerprint routine (same results).
 cat /sys/firmware/efi/efivars/AmdSetupRPL-3a997502-647a-4c82-998e-52ef9486a247 > AmdSetupRPL.var
 # SPI image saved by the owner with the flash utility's save-current-ROM function (reading only)
 python3 -I scripts/fwtools/memory_state_report.py --spi saved_rom.bin --amdsetup AmdSetupRPL.var
+# efivarfs exports only (no SPI image): re-entry sheet without APCB state
+cat /sys/firmware/efi/efivars/AodSetupRpl-5ed15dc0-edef-4161-9151-6014c4cc630c > AodSetupRpl.var
+python3 -I scripts/fwtools/memory_state_report.py --amdsetup AmdSetupRPL.var --aodsetup AodSetupRpl.var
+# after an update and re-entry: exit status 0 only if the effective memory configuration is unchanged
+python3 -I scripts/fwtools/memory_state_report.py --spi rom_115.bin --compare rom_117.bin
 ```
+
+The tool needs only the Python 3 standard library (also runs on Windows: `py -3 -I ...`). Owner dumps contain
+Secure Boot, TPM and Windows key-protector variables: run it locally and share only the text output.
 
 The report never writes anything. The NVAR chain walker has been exercised on official images and on
 synthetic update chains only; treat its first real-dump output as a validation run.

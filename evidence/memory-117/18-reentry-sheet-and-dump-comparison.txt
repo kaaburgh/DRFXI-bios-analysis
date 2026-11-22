@@ -1,0 +1,77 @@
+# Re-entry sheet / dump comparison in memory_state_report.py, and the owner re-entry path in 1.17 (manual run, not produced by the generator)
+# inputs: community 795iX3D.bin sha256 c63971eedd2e03005aaeba2786aa7834b38c8ac006978e9a011156ee61122b15
+#         official DRFXI 1.17 DRFXI.BIN sha256 99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51
+#         SYNTH = copy of 795iX3D.bin with only the stored AmdSetupRPL/AodSetupRpl bytes edited in the scratch file
+#                 (CBS: Active Memory Timing=Enabled, Target 6000, Tcl/Twr/Trfc1 Manual 36/48/480, MCR Enabled; AOD: FCLK 2000, UCLK DIV1=1);
+#                 APCB untouched = the state left by a variable edit that was never saved through Setup. Scratch file not committed.
+
+## 1. owner re-entry path modules, 1.15 -> 1.17
+  AmdVariableProtection  1.15 b3ae42f5abab17e5  1.17 b3ae42f5abab17e5  byte-identical
+  CbsSetupDxeRPL         1.15 0aafafee9e5f51d7  1.17 d5fe096d8d6c0a5a  differs: PCD-token renumbering only (04-module-classification.txt)
+  AodDxe                 1.15 2d0552fc73d134b9  1.17 423f3529106f69f0  differs: PCD-token renumbering only (04-module-classification.txt)
+  AodSmm                 1.15 d7d1a13f5bb7ef04  1.17 e57ac42c787aad2b  differs: PCD-token renumbering only (04-module-classification.txt)
+  AmdApcbDxeV3           1.15 7d42c7eefdb02ce2  1.17 2b64af679df42c41  differs: PCD-token renumbering only (04-module-classification.txt)
+  AmdApcbSmmV3           1.15 9dd2f6fc7be93f9f  1.17 ebcedaf6b3542fbb  differs: PCD-token renumbering only (04-module-classification.txt)
+  IFR question tables (CBS 574, AOD 118) identical (06); machine-readable copy: setup-questions.json
+
+## 2. what the menus can set (setup-questions.json)
+  AMD CBS (AmdSetupRPL): 25 Ctrl/value pairs: Tcl 22-64, Trcd 8-62, Trp 8-62, Tras 30-126, Trc 32-255, Twr 48-96, Trfc1 50-4095, Trfc2 50-4095, TrfcSb 50-2047, Trtp 5-31, TrrdL 4-32, TrrdS 4-20, Tfaw 20-80, TwtrL 8-48, TwtrS 2-16, TrdrdScL 1-15, TrdrdSc 1-15, TrdrdSd 1-15, TrdrdDd 1-15, TwrwrScL 1-63, TwrwrSc 1-15, TwrwrSd 1-15, TwrwrDd 1-15, Twrrd 1-15, Trdwr 1-31
+  AMD Overclocking (AodSetupRpl): 26 Ctrl/value pairs: Tcl 22-64 step 2, Trcd 8-62, Trp 8-62, Tras 30-126, Trc 32-255, Twr 48-96 step 6, Trfc1 50-4095, Trfc2 50-4095, TrfcSb 50-2047, Trtp 5-31, TrrdL 4-32, TrrdS 4-20, Tfaw 20-80, TwtrL 8-48, TwtrS 2-16, TrdrdScL 1-15, TrdrdSc 1-15, TrdrdSd 1-15, TrdrdDd 1-15, TwrwrScL 1-63, TwrwrSc 1-15, TwrwrSd 1-15, TwrwrDd 1-15, Twrrd 1-15, Trdwr 1-31, Precision Boost Overdrive Scalar 100-1000
+  no question in either menu matching: tCWL, tREFI, tCKE, tSTAG, tMOD, Gear Down, Cmd2T, Nitro -> AGESA-derived on both builds
+  CBS has 'BankSwapMode' (0x177: Auto/Disabled/Swap CPU/Swap APU); its mapping to ZenTimings 'BGS'/'BGS Alt' is not established
+  AmdSetupRPL FCLK option '2000 MHz' = [48]
+  AodSetupRpl FCLK option '2000 MHz' = [2000]
+  UCLK DIV1 MODE, SoC Voltage, DIMM VDD/VDDQ, VPP: AMD Overclocking (AodSetupRpl) only
+
+## 3. report on SYNTH: variable edited, APCB not synced
+boot-time resync predicate: AmdSetupRPL[0x08]=0x4B9D5809 vs APCB 0xB331378E=0x4B9D5809 -> in sync (no automatic resync)
+  0xD06DBAFB Memory Target Speed              setup=6000   pushed=yes   spi=absent   <-- DIVERGES
+  0xFC195E5C Tcl                              setup=36     pushed=yes   spi=absent   <-- DIVERGES
+  0x082D6E55 Twr                              setup=48     pushed=yes   spi=absent   <-- DIVERGES
+  0xBBEED68E Trfc1                            setup=480    pushed=yes   spi=absent   <-- DIVERGES
+  0xFEDB01F8 Memory Context Restore           setup=1      pushed=yes   spi=absent   <-- DIVERGES
+Re-entry sheet (stored value differs from default; Ctrl/value pairs only when Ctrl = Manual):
+  NOTE: AOD 'Active Memory Timing Settings' [0x3C] is not Enabled -> AOD speed/timing values are not applied
+  [AMD CBS / AmdSetupRPL] 6 non-default entries
+    0x0116 Active Memory Timing Settings                Enabled
+    0x0117 Memory Target Speed                          6000
+    0x0119 Tcl                                          36 (Tcl Ctrl = Manual)
+    0x0128 Twr                                          48 (Twr Ctrl = Manual)
+    0x012B Trfc1                                        480 (Trfc1 Ctrl = Manual)
+    0x0263 Memory Context Restore                       Enabled
+  [AMD Overclocking / AodSetupRpl] 2 non-default entries
+    0x0094 Infinity Fabric Frequency and Dividers       2000 MHz
+    0x0096 UCLK DIV1 MODE                               UCLK=MEMCLK
+
+## 4. --compare: identical dump
+RESULT: no difference in the effective memory configuration
+
+## 5. --compare: SYNTH (configured) vs official 1.17 image (= state right after a full-image flash, before re-entry)
+
+Comparison A=SYNTH  B=DRFXI-1.17.BIN
+  builds: A main APCB 1.12, B main APCB 1.17 (expected to differ across an update)
+  APOB NV: A populated, B blank (informational)
+[override APCB tokens @0x522000, keyed by instance/priority/token]
+  non-token override inst=0 prio=0x10 gid=0x1705 tid=0x1002 sha=f865c8f6767d only in A
+[AMD CBS / AmdSetupRPL non-default settings]
+  variable present: A=True B=False
+  0x0116 Active Memory Timing Settings            A=Enabled | B=default/Auto
+  0x0117 Memory Target Speed                      A=6000 | B=default/Auto
+  0x0119 Tcl                                      A=36 (Tcl Ctrl = Manual) | B=default/Auto
+  0x0128 Twr                                      A=48 (Twr Ctrl = Manual) | B=default/Auto
+  0x012B Trfc1                                    A=480 (Trfc1 Ctrl = Manual) | B=default/Auto
+  0x0263 Memory Context Restore                   A=Enabled | B=default/Auto
+[AMD Overclocking / AodSetupRpl non-default settings]
+  variable present: A=True B=False
+  0x0094 Infinity Fabric Frequency and Dividers   A=2000 MHz | B=default/Auto
+  0x0096 UCLK DIV1 MODE                           A=UCLK=MEMCLK | B=default/Auto
+
+RESULT: 11 difference(s) listed above
+
+## observations
+- the firmware components on the re-entry path are unchanged by 1.17: the variable-protection driver is byte-identical, the CBS/AOD drivers and APCB service differ only by PCD renumbering, the question tables are identical
+- every DDR5 primary/secondary timing and turnaround with a menu field is settable in both CBS and AOD with identical ranges (AOD adds step 2 for Tcl, step 6 for Twr);
+  tCWL, tREFI, tCKE, tSTAG, tMOD, GDM, Cmd2T and Nitro have no menu field and are AGESA-derived on both builds;
+  the stock Setup UI hides the DRAM tuning questions via AMITSE access metadata (findings/hii-ifr.md, clean-hii-unlock.md); the questions themselves are registered in HII identically on 1.15 and 1.17
+- a stored-variable edit that never went through a Setup save shows up as DIVERGES (setup value would be pushed, SPI APCB lacks the token)
+- --compare reduces 'did the re-entry reproduce the 1.15 configuration' to a binary result; build IDs and APOB state are informational only

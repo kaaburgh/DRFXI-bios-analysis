@@ -205,6 +205,14 @@ def main():
                 rows.append("%-12s 0x%04X w%d %-8s %-32s ifr_default=%s range=%s%s %s" % (q["varstore"], q["offset"], q["width"], q["kind"], q["prompt"], q["default"], tuple(q["range"]) if q["range"] else "", cur,
                             ", ".join("%s=0x%X" % (n, val) for n, val in q["options"][:5])))
     w(out, "06-ifr-dram-questions.txt", "\n".join(rows))
+    # question tables for scripts/fwtools/memory_state_report.py (owner re-entry sheet / dump comparison)
+    assert ifr[("CbsSetupDxeRPL", "115")] == ifr[("CbsSetupDxeRPL", "117")] and ifr[("AodDxe", "115")] == ifr[("AodDxe", "117")]
+    qt = dict(source="DRFXI 1.17 CbsSetupDxeRPL / AodDxe IFR (identical in 1.15); AmdSetupRPL defaults = shipped StdDefaults, AodSetupRpl defaults = IFR defaults",
+              AmdSetupRPL=[dict(offset=q["offset"], width=q["width"], kind=q["kind"], prompt=q["prompt"], options=q["options"], range=q["range"],
+                                default=int.from_bytes(dflt[q["offset"]:q["offset"] + q["width"]], "little")) for q in ifr[("CbsSetupDxeRPL", "117")]],
+              AodSetupRpl=[dict(offset=q["offset"], width=q["width"], kind=q["kind"], prompt=q["prompt"], options=q["options"], range=q["range"],
+                                default=q["default"]) for q in ifr[("AodDxe", "117")]])
+    json.dump(qt, open(os.path.join(out, "setup-questions.json"), "w"), indent=0)
 
     # 07 CBS -> APCB map
     maps = {}

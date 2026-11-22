@@ -1,0 +1,15368 @@
+{
+"source": "DRFXI 1.17 CbsSetupDxeRPL / AodDxe IFR (identical in 1.15); AmdSetupRPL defaults = shipped StdDefaults, AodSetupRpl defaults = IFR defaults",
+"AmdSetupRPL": [
+{
+"offset": 4,
+"width": 4,
+"kind": "numeric",
+"prompt": "NewRecordOffset",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 12,
+"width": 2,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 14,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 32,
+"width": 1,
+"kind": "numeric",
+"prompt": "Combo CBS",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 254
+},
+{
+"offset": 33,
+"width": 1,
+"kind": "oneof",
+"prompt": "L1 Stream HW Prefetcher",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 34,
+"width": 1,
+"kind": "oneof",
+"prompt": "L2 Stream HW Prefetcher",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 35,
+"width": 1,
+"kind": "oneof",
+"prompt": "Core Watchdog Timer Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 0
+},
+{
+"offset": 36,
+"width": 2,
+"kind": "oneof",
+"prompt": "Core Watchdog Timer Interval",
+"options": [
+[
+"21.461s",
+2304
+],
+[
+"10.730s",
+2048
+],
+[
+"5.364s",
+0
+],
+[
+"2.681s",
+256
+],
+[
+"1.340s",
+512
+],
+[
+"669.41ms",
+768
+],
+[
+"334.05ms",
+1024
+],
+[
+"166.37ms",
+1280
+],
+[
+"82.53ms",
+1536
+],
+[
+"40.61ms",
+1792
+],
+[
+"20.970ms",
+2305
+],
+[
+"10.484ms",
+2049
+],
+[
+"5.241ms",
+1
+],
+[
+"2.620ms",
+257
+],
+[
+"1.309ms",
+513
+],
+[
+"654.08us",
+769
+],
+[
+"326.4us",
+1025
+],
+[
+"162.56us",
+1281
+],
+[
+"80.64us",
+1537
+],
+[
+"39.68us",
+1793
+],
+[
+"Auto",
+65535
+]
+],
+"range": [
+0,
+65535,
+0
+],
+"default": 65535
+},
+{
+"offset": 38,
+"width": 1,
+"kind": "oneof",
+"prompt": "Core Watchdog Timer Severity",
+"options": [
+[
+"No Error",
+0
+],
+[
+"Transparent",
+1
+],
+[
+"Corrected",
+2
+],
+[
+"Deferred",
+3
+],
+[
+"Uncorrected",
+4
+],
+[
+"Fatal",
+5
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 39,
+"width": 1,
+"kind": "oneof",
+"prompt": "Platform First Error Handling",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 40,
+"width": 1,
+"kind": "oneof",
+"prompt": "Core Performance Boost",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Auto",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 41,
+"width": 1,
+"kind": "oneof",
+"prompt": "Global C-state Control",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 42,
+"width": 1,
+"kind": "oneof",
+"prompt": "Opcache grayout flag",
+"options": [
+[
+"0",
+0
+],
+[
+"1",
+1
+],
+[
+"Display",
+2
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 43,
+"width": 1,
+"kind": "oneof",
+"prompt": "Opcache Control",
+"options": [
+[
+"Disabled",
+1
+],
+[
+"Enabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 44,
+"width": 1,
+"kind": "oneof",
+"prompt": "Streaming Stores Control",
+"options": [
+[
+"Disabled",
+1
+],
+[
+"Enabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 45,
+"width": 1,
+"kind": "oneof",
+"prompt": "Local APIC Mode",
+"options": [
+[
+"Compatibility",
+0
+],
+[
+"xAPIC",
+1
+],
+[
+"x2APIC",
+2
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 46,
+"width": 1,
+"kind": "oneof",
+"prompt": "ACPI _CST C1 Declaration",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 47,
+"width": 1,
+"kind": "oneof",
+"prompt": "MCA error thresh enable",
+"options": [
+[
+"False",
+0
+],
+[
+"True",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 48,
+"width": 2,
+"kind": "numeric",
+"prompt": "MCA error thresh count",
+"options": [],
+"range": [
+1,
+4095,
+0
+],
+"default": 4094
+},
+{
+"offset": 50,
+"width": 1,
+"kind": "oneof",
+"prompt": "SMU and PSP Debug Mode",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 51,
+"width": 1,
+"kind": "oneof",
+"prompt": "PPIN Opt-in",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 52,
+"width": 1,
+"kind": "oneof",
+"prompt": "Enhanced REP MOVSB/STOSB",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 53,
+"width": 1,
+"kind": "oneof",
+"prompt": "SMT Control",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Auto",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 54,
+"width": 1,
+"kind": "oneof",
+"prompt": "Memory interleaving",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Auto",
+7
+]
+],
+"range": [
+0,
+7,
+0
+],
+"default": 7
+},
+{
+"offset": 55,
+"width": 1,
+"kind": "oneof",
+"prompt": "Memory interleaving size",
+"options": [
+[
+"256 Bytes",
+0
+],
+[
+"512 Bytes",
+1
+],
+[
+"1 KB",
+2
+],
+[
+"2 KB",
+3
+],
+[
+"Auto",
+7
+]
+],
+"range": [
+0,
+7,
+0
+],
+"default": 7
+},
+{
+"offset": 56,
+"width": 1,
+"kind": "oneof",
+"prompt": "DRAM map inversion",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 57,
+"width": 1,
+"kind": "oneof",
+"prompt": "Disable DF to external downstream IP Sync Flood Propagation",
+"options": [
+[
+"Sync flood disabled",
+1
+],
+[
+"Sync flood enabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 58,
+"width": 1,
+"kind": "oneof",
+"prompt": "Disable DF sync flood propagation",
+"options": [
+[
+"Sync flood disabled",
+1
+],
+[
+"Sync flood enabled",
+0
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 59,
+"width": 1,
+"kind": "oneof",
+"prompt": "Freeze DF module queues on error",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 60,
+"width": 1,
+"kind": "oneof",
+"prompt": "DF Cstates",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 61,
+"width": 1,
+"kind": "oneof",
+"prompt": "IOMMU",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 62,
+"width": 1,
+"kind": "oneof",
+"prompt": "Pre-boot DMA Protection",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 63,
+"width": 1,
+"kind": "oneof",
+"prompt": "Kernel DMA Protection Indicator",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 64,
+"width": 1,
+"kind": "oneof",
+"prompt": "SCPC attribute control",
+"options": [
+[
+"0",
+0
+],
+[
+"1",
+1
+],
+[
+"2",
+2
+],
+[
+"3",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 0
+},
+{
+"offset": 65,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe ARI Support",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 66,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe ARI Enumeration",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 67,
+"width": 1,
+"kind": "oneof",
+"prompt": "PSPP Policy",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Balanced",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 68,
+"width": 1,
+"kind": "oneof",
+"prompt": "iGPU Configuration",
+"options": [
+[
+"Auto",
+15
+],
+[
+"iGPU Disabled",
+0
+],
+[
+"UMA_SPECIFIED",
+1
+],
+[
+"UMA_GAME_OPTIMIZED",
+3
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 69,
+"width": 1,
+"kind": "oneof",
+"prompt": "UMA Version",
+"options": [
+[
+"Legacy",
+0
+],
+[
+"Non-Legacy",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 70,
+"width": 4,
+"kind": "oneof",
+"prompt": "UMA Frame buffer Size",
+"options": [
+[
+"Auto",
+4294967295
+],
+[
+"1G",
+1024
+],
+[
+"2G",
+2048
+],
+[
+"3G",
+3072
+],
+[
+"4G",
+4096
+],
+[
+"6G",
+6144
+],
+[
+"8G",
+8192
+],
+[
+"16G",
+16384
+]
+],
+"range": [
+1024,
+4294967295,
+0
+],
+"default": 2048
+},
+{
+"offset": 74,
+"width": 1,
+"kind": "oneof",
+"prompt": "GPU Host Translation Cache",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 75,
+"width": 1,
+"kind": "oneof",
+"prompt": "NB Azalia",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 76,
+"width": 1,
+"kind": "oneof",
+"prompt": "Audio IOs",
+"options": [
+[
+"Auto",
+255
+],
+[
+"HDA(3SDI) + PDM(2CH) (Default)",
+4
+],
+[
+"HDA(1SDI) + PDM(6CH)",
+5
+],
+[
+"HDA(1SDI) + SW0(1MDATA) + PDM(2CH)",
+6
+],
+[
+"SW0(4MDATA) + PDM(6CH)",
+7
+],
+[
+"SW0(4MDATA) +SW1(1MDATA)+ PDM(2CH)",
+8
+]
+],
+"range": [
+4,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 77,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C/I2C 0 Enable",
+"options": [
+[
+"Both Disabled",
+0
+],
+[
+"I3C Enabled",
+1
+],
+[
+"I2C Enabled",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 78,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C 0 Mode",
+"options": [
+[
+"I3C",
+0
+],
+[
+"I2C",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 79,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C/I2C 1 Enable",
+"options": [
+[
+"Both Disabled",
+0
+],
+[
+"I3C Enabled",
+1
+],
+[
+"I2C Enabled",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 80,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C 1 Mode",
+"options": [
+[
+"I3C",
+0
+],
+[
+"I2C",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 81,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C/I2C 2 Enable",
+"options": [
+[
+"Both Disabled",
+0
+],
+[
+"I3C Enabled",
+1
+],
+[
+"I2C Enabled",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 82,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C 2 Mode",
+"options": [
+[
+"I3C",
+0
+],
+[
+"I2C",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 83,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C/I2C 3 Enable",
+"options": [
+[
+"Both Disabled",
+0
+],
+[
+"I3C Enabled",
+1
+],
+[
+"I2C Enabled",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 84,
+"width": 1,
+"kind": "oneof",
+"prompt": "I3C 3 Mode",
+"options": [
+[
+"I3C",
+0
+],
+[
+"I2C",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 85,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB0 controller enable",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 86,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB1 controller enable",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 87,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 controller enable",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 88,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB0 2.0 Port 0",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 89,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB0 2.0 Port 1",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 90,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB1 2.0 Port 0",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 91,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB1 2.0 Port 1",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 92,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 2.0 Port 0",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 93,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB0 3.1 Port 0",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 94,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB0 3.1 Port 1",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 95,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB1 3.1 Port 0",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 96,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB1 3.1 Port 1",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 97,
+"width": 1,
+"kind": "oneof",
+"prompt": "Ac Loss Control",
+"options": [
+[
+"Always Off",
+0
+],
+[
+"Always On",
+1
+],
+[
+"Previous",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 0
+},
+{
+"offset": 98,
+"width": 1,
+"kind": "oneof",
+"prompt": "ESPI Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 99,
+"width": 1,
+"kind": "oneof",
+"prompt": "FCH Spread Spectrum",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 100,
+"width": 1,
+"kind": "oneof",
+"prompt": "Sustained Power Limit",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 101,
+"width": 4,
+"kind": "numeric",
+"prompt": "TDP",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 105,
+"width": 1,
+"kind": "oneof",
+"prompt": "PPT Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 106,
+"width": 1,
+"kind": "oneof",
+"prompt": "Thermal Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 107,
+"width": 4,
+"kind": "numeric",
+"prompt": "TjMax",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 111,
+"width": 1,
+"kind": "oneof",
+"prompt": "TDC Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 112,
+"width": 1,
+"kind": "oneof",
+"prompt": "EDC Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 113,
+"width": 4,
+"kind": "numeric",
+"prompt": "EDC_VDDCR_VDD",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 117,
+"width": 1,
+"kind": "oneof",
+"prompt": "PROCHOT Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 118,
+"width": 4,
+"kind": "numeric",
+"prompt": "PROCHOT Deassertion Ramp Time",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 122,
+"width": 1,
+"kind": "oneof",
+"prompt": "Fan Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 123,
+"width": 1,
+"kind": "oneof",
+"prompt": "Fan Table Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 124,
+"width": 4,
+"kind": "numeric",
+"prompt": "Low Temperature",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 128,
+"width": 4,
+"kind": "numeric",
+"prompt": "Medium Temperature",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 132,
+"width": 4,
+"kind": "numeric",
+"prompt": "High Temperature",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 136,
+"width": 4,
+"kind": "numeric",
+"prompt": "Critical Temperature",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 140,
+"width": 4,
+"kind": "numeric",
+"prompt": "Low Pwm",
+"options": [],
+"range": [
+0,
+100,
+0
+],
+"default": 0
+},
+{
+"offset": 144,
+"width": 4,
+"kind": "numeric",
+"prompt": "Medium Pwm",
+"options": [],
+"range": [
+0,
+101,
+0
+],
+"default": 0
+},
+{
+"offset": 148,
+"width": 4,
+"kind": "numeric",
+"prompt": "High Pwm",
+"options": [],
+"range": [
+0,
+102,
+0
+],
+"default": 0
+},
+{
+"offset": 152,
+"width": 4,
+"kind": "numeric",
+"prompt": "Temperature Hysteresis",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 156,
+"width": 1,
+"kind": "oneof",
+"prompt": "Pwm Frequency",
+"options": [
+[
+"Auto",
+15
+],
+[
+"1",
+1
+],
+[
+"0",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 157,
+"width": 1,
+"kind": "oneof",
+"prompt": "Fan polarity",
+"options": [
+[
+"Auto",
+15
+],
+[
+"1",
+1
+],
+[
+"0",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 158,
+"width": 1,
+"kind": "oneof",
+"prompt": "VDDP Voltage Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 159,
+"width": 4,
+"kind": "numeric",
+"prompt": "VDDP Voltage",
+"options": [],
+"range": [
+0,
+2000,
+0
+],
+"default": 0
+},
+{
+"offset": 163,
+"width": 1,
+"kind": "oneof",
+"prompt": "PSP RPMC Switch",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 164,
+"width": 1,
+"kind": "oneof",
+"prompt": "AIM-T / Moselle support",
+"options": [
+[
+"AIM-T / Moselle Both Disabled",
+0
+],
+[
+"AIM-T Enabled",
+1
+],
+[
+"Moselle Enabled",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 165,
+"width": 1,
+"kind": "oneof",
+"prompt": "Wireless Manageability",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 166,
+"width": 1,
+"kind": "oneof",
+"prompt": "KVM for Wireless Manageability",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 167,
+"width": 1,
+"kind": "oneof",
+"prompt": "TCR for Wireless Manageability",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 168,
+"width": 1,
+"kind": "oneof",
+"prompt": "KVM for Wired Manageability",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 169,
+"width": 1,
+"kind": "oneof",
+"prompt": "ABL Console Out Control",
+"options": [
+[
+"Auto",
+2
+],
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 2
+},
+{
+"offset": 170,
+"width": 1,
+"kind": "oneof",
+"prompt": "ABL Console Out Boot Mode Select",
+"options": [
+[
+"ALL",
+255
+],
+[
+"S3/S0i3 only",
+2
+],
+[
+"Normal boot only",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 171,
+"width": 1,
+"kind": "oneof",
+"prompt": "ABL PMU message Control",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Detailed debug message",
+3
+],
+[
+"Coarse debug message",
+10
+],
+[
+"Stage completion",
+200
+],
+[
+"Assertion message",
+201
+],
+[
+"Firmware completion message only",
+254
+]
+],
+"range": [
+3,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 172,
+"width": 1,
+"kind": "oneof",
+"prompt": "HFP Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 173,
+"width": 1,
+"kind": "oneof",
+"prompt": "HID Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 174,
+"width": 1,
+"kind": "oneof",
+"prompt": "REP-MOV/STOS Streaming",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 175,
+"width": 1,
+"kind": "oneof",
+"prompt": "L1 Stride Prefetcher",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 176,
+"width": 1,
+"kind": "oneof",
+"prompt": "L1 Region Prefetcher",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 177,
+"width": 1,
+"kind": "oneof",
+"prompt": "L2 Up/Down Prefetcher",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 178,
+"width": 1,
+"kind": "oneof",
+"prompt": "Xtrig7 Workaround",
+"options": [
+[
+"Auto",
+255
+],
+[
+"No Workaround",
+0
+],
+[
+"Bronze Workaround",
+1
+],
+[
+"Silver Workaround",
+2
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 179,
+"width": 1,
+"kind": "oneof",
+"prompt": "SNP Memory (RMP Table) Coverage",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Custom",
+2
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 180,
+"width": 4,
+"kind": "numeric",
+"prompt": "Amount of Memory to Cover",
+"options": [],
+"range": [
+0,
+1048576,
+0
+],
+"default": 0
+},
+{
+"offset": 184,
+"width": 1,
+"kind": "oneof",
+"prompt": "SMEE",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+3
+]
+],
+"range": [
+0,
+3,
+0
+],
+"default": 3
+},
+{
+"offset": 185,
+"width": 1,
+"kind": "oneof",
+"prompt": "Action on BIST Failure",
+"options": [
+[
+"Do nothing",
+0
+],
+[
+"Down-CCD",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 186,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 187,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 188,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 189,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 190,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 191,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 192,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 193,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 194,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 195,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 196,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 197,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 11",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 198,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Mode",
+"options": [
+[
+"AHCI",
+0
+],
+[
+"RAID",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 199,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 200,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 201,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 202,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 203,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 204,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 205,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 206,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 207,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 208,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 209,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 210,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 211,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 212,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 213,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 214,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 215,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 216,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 217,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 218,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 219,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 220,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 221,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 222,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 223,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 10",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 224,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 11",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 225,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 226,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 227,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 228,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 229,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 230,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 231,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 232,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 233,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 234,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 235,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 236,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 11",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 237,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Mode",
+"options": [
+[
+"AHCI",
+0
+],
+[
+"RAID",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 238,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 239,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 240,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 241,
+"width": 1,
+"kind": "oneof",
+"prompt": "Device Sleep for AHCI Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 242,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 243,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 244,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 245,
+"width": 1,
+"kind": "oneof",
+"prompt": "SATA Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 246,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 247,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 248,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 249,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 250,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 251,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 252,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 253,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 254,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 255,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 256,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 257,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 258,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 259,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 260,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 261,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 262,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 10",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 263,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 11",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 264,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 265,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 266,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 267,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 268,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 4",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 269,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 5",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 270,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 271,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 272,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 273,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 274,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 4",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 275,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 5",
+"options": [
+[
+"GEN1 (5G)",
+0
+],
+[
+"GEN2",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 278,
+"width": 1,
+"kind": "oneof",
+"prompt": "Active Memory Timing Settings",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 279,
+"width": 2,
+"kind": "numeric",
+"prompt": "Memory Target Speed",
+"options": [],
+"range": [
+2000,
+11200,
+0
+],
+"default": 3200
+},
+{
+"offset": 281,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tcl Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 282,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tcl",
+"options": [],
+"range": [
+22,
+64,
+0
+],
+"default": 22
+},
+{
+"offset": 284,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trcd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 285,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trcd",
+"options": [],
+"range": [
+8,
+62,
+0
+],
+"default": 8
+},
+{
+"offset": 287,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trp Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 288,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trp",
+"options": [],
+"range": [
+8,
+62,
+0
+],
+"default": 8
+},
+{
+"offset": 290,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tras Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 291,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tras",
+"options": [],
+"range": [
+30,
+126,
+0
+],
+"default": 30
+},
+{
+"offset": 293,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 294,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trc",
+"options": [],
+"range": [
+32,
+255,
+0
+],
+"default": 32
+},
+{
+"offset": 296,
+"width": 1,
+"kind": "oneof",
+"prompt": "Twr Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 297,
+"width": 2,
+"kind": "numeric",
+"prompt": "Twr",
+"options": [],
+"range": [
+48,
+96,
+0
+],
+"default": 48
+},
+{
+"offset": 299,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trfc1 Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 300,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trfc1",
+"options": [],
+"range": [
+50,
+4095,
+0
+],
+"default": 50
+},
+{
+"offset": 302,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trfc2 Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 303,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trfc2",
+"options": [],
+"range": [
+50,
+4095,
+0
+],
+"default": 50
+},
+{
+"offset": 305,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrfcSb Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 306,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrfcSb",
+"options": [],
+"range": [
+50,
+2047,
+0
+],
+"default": 50
+},
+{
+"offset": 308,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trtp Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 309,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trtp",
+"options": [],
+"range": [
+5,
+31,
+0
+],
+"default": 9
+},
+{
+"offset": 311,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrrdL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 312,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrrdL",
+"options": [],
+"range": [
+4,
+32,
+0
+],
+"default": 4
+},
+{
+"offset": 314,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrrdS Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 315,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrrdS",
+"options": [],
+"range": [
+4,
+20,
+0
+],
+"default": 4
+},
+{
+"offset": 317,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tfaw Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 318,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tfaw",
+"options": [],
+"range": [
+20,
+80,
+0
+],
+"default": 26
+},
+{
+"offset": 320,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwtrL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 321,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwtrL",
+"options": [],
+"range": [
+8,
+48,
+0
+],
+"default": 8
+},
+{
+"offset": 323,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwtrS Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 324,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwtrS",
+"options": [],
+"range": [
+2,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 326,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdScL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 327,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdScL",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 329,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdSc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 330,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdSc",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 332,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdSd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 333,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdSd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 335,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdDd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 336,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdDd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 338,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrScL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 339,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrScL",
+"options": [],
+"range": [
+1,
+63,
+0
+],
+"default": 1
+},
+{
+"offset": 341,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrSc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 342,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrSc",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 344,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrSd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 345,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrSd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 347,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrDd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 348,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrDd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 350,
+"width": 1,
+"kind": "oneof",
+"prompt": "Twrrd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 351,
+"width": 2,
+"kind": "numeric",
+"prompt": "Twrrd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 5
+},
+{
+"offset": 353,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trdwr Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 354,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trdwr",
+"options": [],
+"range": [
+1,
+31,
+0
+],
+"default": 5
+},
+{
+"offset": 356,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor CK drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"120.0 Ohm",
+120
+],
+[
+"60.0 Ohm",
+60
+],
+[
+"40.0 Ohm",
+40
+],
+[
+"30.0 Ohm",
+30
+]
+],
+"range": [
+30,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 357,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor CA drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"120.0 Ohm",
+120
+],
+[
+"60.0 Ohm",
+60
+],
+[
+"40.0 Ohm",
+40
+],
+[
+"30.0 Ohm",
+30
+]
+],
+"range": [
+30,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 358,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor CS drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"120.0 Ohm",
+120
+],
+[
+"60.0 Ohm",
+60
+],
+[
+"40.0 Ohm",
+40
+],
+[
+"30 Ohm",
+30
+]
+],
+"range": [
+30,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 359,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_NOM_WR",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 360,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_NOM_RD",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 361,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_WR",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 362,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_PARK",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 363,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance DQS_RTT_PARK",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 364,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor ODT impedance",
+"options": [
+[
+"Auto",
+255
+],
+[
+"High Impedance",
+0
+],
+[
+"480 ohm",
+1
+],
+[
+"240 ohm",
+2
+],
+[
+"160 ohm",
+3
+],
+[
+"120 ohm",
+4
+],
+[
+"96 ohm",
+5
+],
+[
+"80 ohm",
+6
+],
+[
+"68 ohm",
+7
+],
+[
+"60 ohm",
+12
+],
+[
+"53 ohm",
+13
+],
+[
+"48 ohm",
+14
+],
+[
+"43 ohm",
+15
+],
+[
+"40 ohm",
+28
+],
+[
+"36 ohm",
+29
+],
+[
+"34 ohm",
+30
+],
+[
+"32 ohm",
+31
+],
+[
+"30 Ohm",
+60
+],
+[
+"28 ohm",
+61
+],
+[
+"26 ohm",
+62
+],
+[
+"25 ohm",
+63
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 365,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor DQ drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"High Impedance",
+0
+],
+[
+"480 ohm",
+1
+],
+[
+"25.3 ohm",
+63
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 366,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram DQ drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"48 ohm",
+2
+],
+[
+"40 ohm",
+1
+],
+[
+"34 ohm",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 367,
+"width": 1,
+"kind": "oneof",
+"prompt": "Power Down Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 368,
+"width": 1,
+"kind": "oneof",
+"prompt": "Disable Memory Error Injection",
+"options": [
+[
+"False",
+0
+],
+[
+"True",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 369,
+"width": 1,
+"kind": "oneof",
+"prompt": "ECC",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 370,
+"width": 1,
+"kind": "oneof",
+"prompt": "TSME",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 371,
+"width": 1,
+"kind": "oneof",
+"prompt": "Data Scramble",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 372,
+"width": 1,
+"kind": "oneof",
+"prompt": "Chipselect Interleaving",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 373,
+"width": 1,
+"kind": "oneof",
+"prompt": "Address Hash Bank",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 374,
+"width": 1,
+"kind": "oneof",
+"prompt": "Address Hash CS",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 375,
+"width": 1,
+"kind": "oneof",
+"prompt": "BankSwapMode",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+],
+[
+"Swap CPU",
+1
+],
+[
+"Swap APU",
+2
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 376,
+"width": 1,
+"kind": "oneof",
+"prompt": "DFE Read Training",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 377,
+"width": 1,
+"kind": "oneof",
+"prompt": "MBIST Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 378,
+"width": 1,
+"kind": "oneof",
+"prompt": "MBIST Test Mode",
+"options": [
+[
+"Interface Mode",
+0
+],
+[
+"Data Eye Mode",
+1
+],
+[
+"Both",
+2
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 379,
+"width": 1,
+"kind": "oneof",
+"prompt": "MBIST Aggressors",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 380,
+"width": 1,
+"kind": "oneof",
+"prompt": "MBIST Per Bit Slave Die Reporting",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 381,
+"width": 1,
+"kind": "oneof",
+"prompt": "Pattern Select",
+"options": [
+[
+"Auto",
+255
+],
+[
+"PRBS",
+0
+],
+[
+"SSO",
+1
+],
+[
+"Both",
+2
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 382,
+"width": 1,
+"kind": "numeric",
+"prompt": "Pattern Length",
+"options": [],
+"range": [
+3,
+12,
+0
+],
+"default": 6
+},
+{
+"offset": 383,
+"width": 1,
+"kind": "oneof",
+"prompt": "Aggressor Channel",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+],
+[
+"1 Aggressor Channel",
+1
+],
+[
+"3 Aggressor Channels",
+3
+],
+[
+"7 Aggressor Channels",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 384,
+"width": 1,
+"kind": "oneof",
+"prompt": "HID Spi Read Mode",
+"options": [
+[
+"Quad IO 1-4-4",
+5
+],
+[
+"Dual IO 1-2-2",
+4
+],
+[
+"Fast Read 1-1-1",
+7
+]
+],
+"range": [
+4,
+7,
+0
+],
+"default": 5
+},
+{
+"offset": 385,
+"width": 1,
+"kind": "oneof",
+"prompt": "HID Spi Speed",
+"options": [
+[
+"33MHz",
+1
+],
+[
+"22MHz",
+2
+],
+[
+"17.6MHz",
+3
+],
+[
+"800KHz",
+5
+],
+[
+"spi_spd6",
+6
+],
+[
+"spi_spd7",
+7
+]
+],
+"range": [
+1,
+7,
+0
+],
+"default": 7
+},
+{
+"offset": 386,
+"width": 1,
+"kind": "numeric",
+"prompt": "HID Spi Speed6 N",
+"options": [],
+"range": [
+4,
+63,
+0
+],
+"default": 4
+},
+{
+"offset": 387,
+"width": 1,
+"kind": "numeric",
+"prompt": "HID Spi Speed7 N",
+"options": [],
+"range": [
+4,
+63,
+0
+],
+"default": 50
+},
+{
+"offset": 388,
+"width": 1,
+"kind": "oneof",
+"prompt": "PSP error injection support",
+"options": [
+[
+"False",
+0
+],
+[
+"True",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 389,
+"width": 1,
+"kind": "oneof",
+"prompt": "FAR enforcement state",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 390,
+"width": 4,
+"kind": "numeric",
+"prompt": "SPL value in the CPU fuse",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 394,
+"width": 4,
+"kind": "numeric",
+"prompt": "SPL value in the SPL table",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 398,
+"width": 4,
+"kind": "numeric",
+"prompt": "Initial SPL value for FAR",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 402,
+"width": 1,
+"kind": "oneof",
+"prompt": "FAR Switch",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 408,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 409,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 410,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 411,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 412,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 413,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 414,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 415,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 416,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 417,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 418,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 419,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 420,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 421,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 422,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 423,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 424,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 425,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 426,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 0",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 427,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 1",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 428,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 2",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 429,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 3",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 430,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 4",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 431,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 5",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 432,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 6",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 433,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 7",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 434,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 8",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 435,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB2 Port 9",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 436,
+"width": 4,
+"kind": "numeric",
+"prompt": "PPT",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 440,
+"width": 4,
+"kind": "numeric",
+"prompt": "TDC_VDDCR_VDD",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 444,
+"width": 1,
+"kind": "oneof",
+"prompt": "Location of private memory regions",
+"options": [
+[
+"Distributed",
+0
+],
+[
+"Consolidated",
+1
+],
+[
+"Consolidated to 1st DRAM pair",
+2
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 445,
+"width": 1,
+"kind": "oneof",
+"prompt": "ACPI SRAT L3 Cache As NUMA Domain",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 446,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe loopback Mode",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 447,
+"width": 1,
+"kind": "oneof",
+"prompt": "PROM21 Chipset Revision",
+"options": [
+[
+"A1",
+1
+],
+[
+"A2",
+2
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 448,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dual PROM21 port number/disable",
+"options": [
+[
+"Port 0",
+0
+],
+[
+"Port 4",
+4
+],
+[
+"Port 8",
+8
+],
+[
+"Disable",
+14
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 449,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Power Management Features",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 450,
+"width": 1,
+"kind": "oneof",
+"prompt": "Enable Program SI values",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 451,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 452,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 453,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 454,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 455,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 456,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 457,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 458,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 459,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 460,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 461,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 462,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 463,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 464,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 465,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 466,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 467,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 468,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 469,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 470,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 471,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 472,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 473,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 474,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 475,
+"width": 1,
+"kind": "oneof",
+"prompt": "Enable Program SI values",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 476,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 477,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 478,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 479,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 480,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 481,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 482,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 483,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 484,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 485,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 486,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 487,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 488,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 489,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 490,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 491,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 492,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 493,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 494,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 495,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 496,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 497,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 498,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 1
+},
+{
+"offset": 499,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen3 Emphasis Level",
+"options": [],
+"range": [
+0,
+32,
+0
+],
+"default": 10
+},
+{
+"offset": 500,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 501,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 502,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 503,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 504,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 505,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 506,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 507,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 508,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 509,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 510,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 511,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 512,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 513,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 514,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 515,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 516,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 517,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 518,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 519,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 520,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 521,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 522,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 523,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 524,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 525,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 526,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 527,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 528,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 529,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 530,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 531,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 532,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 533,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 534,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 535,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 536,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 537,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 538,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 539,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 540,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 541,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 542,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 543,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 544,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 545,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 546,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 547,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 548,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 549,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 550,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 551,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 552,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 553,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 554,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 555,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 556,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 557,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 558,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 559,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 560,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 561,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 562,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 563,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 564,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 565,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 566,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 567,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Swing",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 15
+},
+{
+"offset": 568,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 569,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Emphasis Level",
+"options": [],
+"range": [
+0,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 570,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen1 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 571,
+"width": 1,
+"kind": "numeric",
+"prompt": "Gen2 Preshoot Level",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 1
+},
+{
+"offset": 572,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 573,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 574,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 575,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 576,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 577,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 578,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 579,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 580,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 581,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 582,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 583,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 584,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 585,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 586,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 587,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 588,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 589,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 590,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 591,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 592,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 593,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 594,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 595,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 596,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 597,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 598,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 599,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 600,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 601,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 602,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 603,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 604,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 605,
+"width": 1,
+"kind": "numeric",
+"prompt": "Slew Rate",
+"options": [],
+"range": [
+0,
+4,
+0
+],
+"default": 2
+},
+{
+"offset": 606,
+"width": 1,
+"kind": "numeric",
+"prompt": "Driving Current",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 0
+},
+{
+"offset": 607,
+"width": 1,
+"kind": "numeric",
+"prompt": "Termination",
+"options": [],
+"range": [
+0,
+8,
+0
+],
+"default": 3
+},
+{
+"offset": 608,
+"width": 1,
+"kind": "oneof",
+"prompt": "Infinity Fabric Frequency and Dividers",
+"options": [
+[
+"Auto",
+255
+],
+[
+"100 MHz",
+0
+],
+[
+"200 MHz",
+1
+],
+[
+"400 MHz",
+2
+],
+[
+"500 MHz",
+3
+],
+[
+"667 MHz",
+4
+],
+[
+"800 MHz",
+5
+],
+[
+"933 MHz",
+6
+],
+[
+"1067 MHz",
+7
+],
+[
+"1100 MHz",
+8
+],
+[
+"1120 MHz",
+9
+],
+[
+"1143 MHz",
+10
+],
+[
+"1200 MHz",
+11
+],
+[
+"1250 MHz",
+12
+],
+[
+"1257 MHz",
+13
+],
+[
+"1280 MHz",
+14
+],
+[
+"1300 MHz",
+15
+],
+[
+"1320 MHz",
+16
+],
+[
+"1333 MHz",
+17
+],
+[
+"1367 MHz",
+18
+],
+[
+"1371 MHz",
+19
+],
+[
+"1400 MHz",
+20
+],
+[
+"1433 MHz",
+21
+],
+[
+"1440 MHz",
+22
+],
+[
+"1467 MHz",
+23
+],
+[
+"1485 MHz",
+24
+],
+[
+"1500 MHz",
+25
+],
+[
+"1533 MHz",
+26
+],
+[
+"1560 MHz",
+27
+],
+[
+"1567 MHz",
+28
+],
+[
+"1600 MHz",
+29
+],
+[
+"1633 MHz",
+30
+],
+[
+"1650 MHz",
+31
+],
+[
+"1667 MHz",
+32
+],
+[
+"1680 MHz",
+33
+],
+[
+"1700 MHz",
+34
+],
+[
+"1733 MHz",
+35
+],
+[
+"1750 MHz",
+36
+],
+[
+"1760 MHz",
+37
+],
+[
+"1767 MHz",
+38
+],
+[
+"1800 MHz",
+39
+],
+[
+"1833 MHz",
+40
+],
+[
+"1867 MHz",
+41
+],
+[
+"1900 MHz",
+42
+],
+[
+"1920 MHz",
+43
+],
+[
+"1933 MHz",
+44
+],
+[
+"1950 MHz",
+45
+],
+[
+"1960 MHz",
+46
+],
+[
+"1967 MHz",
+47
+],
+[
+"2000 MHz",
+48
+],
+[
+"2033 MHz",
+49
+],
+[
+"2067 MHz",
+50
+],
+[
+"2100 MHz",
+51
+],
+[
+"2133 MHz",
+52
+],
+[
+"2167 MHz",
+53
+],
+[
+"2200 MHz",
+54
+],
+[
+"2233 MHz",
+55
+],
+[
+"2267 MHz",
+56
+],
+[
+"2300 MHz",
+57
+],
+[
+"2333 MHz",
+58
+],
+[
+"2367 MHz",
+59
+],
+[
+"2400 MHz",
+60
+],
+[
+"2433 MHz",
+61
+],
+[
+"2467 MHz",
+62
+],
+[
+"2500 MHz",
+63
+],
+[
+"2550 MHz",
+64
+],
+[
+"2600 MHz",
+65
+],
+[
+"2650 MHz",
+66
+],
+[
+"2700 MHz",
+67
+],
+[
+"2750 MHz",
+68
+],
+[
+"2800 MHz",
+69
+],
+[
+"2850 MHz",
+70
+],
+[
+"2900 MHz",
+71
+],
+[
+"2950 MHz",
+72
+],
+[
+"3000 MHz",
+73
+],
+[
+"333 MHz",
+74
+],
+[
+"533 MHz",
+75
+],
+[
+"1050 MHz",
+76
+],
+[
+"1066 MHz",
+77
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 609,
+"width": 1,
+"kind": "oneof",
+"prompt": "DRAM PDA Enumerate ID Programming Mode",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Sequential PDA enumeration mode",
+1
+],
+[
+"Legacy PDA enumeration mode",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 610,
+"width": 1,
+"kind": "oneof",
+"prompt": "FEATURE FCLK DPM",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 611,
+"width": 1,
+"kind": "oneof",
+"prompt": "Memory Context Restore",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 612,
+"width": 1,
+"kind": "oneof",
+"prompt": "SyncFifo Mode Override",
+"options": [
+[
+"Disable",
+1
+],
+[
+"Enable",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 613,
+"width": 1,
+"kind": "oneof",
+"prompt": "Mixed DIMM config extended NUMA domain",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 614,
+"width": 1,
+"kind": "oneof",
+"prompt": "SmartShift Control",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 615,
+"width": 1,
+"kind": "oneof",
+"prompt": "SmartShift Enable",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 616,
+"width": 1,
+"kind": "oneof",
+"prompt": "STAPM Control",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 617,
+"width": 1,
+"kind": "oneof",
+"prompt": "System Temperature Tracking",
+"options": [
+[
+"Auto",
+15
+],
+[
+"1",
+1
+],
+[
+"0",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 618,
+"width": 1,
+"kind": "oneof",
+"prompt": "STAPM Boost Override",
+"options": [
+[
+"Auto",
+15
+],
+[
+"0",
+0
+],
+[
+"1",
+1
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 619,
+"width": 1,
+"kind": "oneof",
+"prompt": "STAPM Boost",
+"options": [
+[
+"Auto",
+15
+],
+[
+"1",
+1
+],
+[
+"0",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 620,
+"width": 4,
+"kind": "numeric",
+"prompt": "Tskin Time Constant",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 624,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 625,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 1 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 626,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 627,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 3 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 628,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 629,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 5 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 630,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 631,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 7 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 632,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 633,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 9 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 634,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 635,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 11 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 636,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 637,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 1 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 638,
+"width": 1,
+"kind": "oneof",
+"prompt": "System Configuration",
+"options": [
+[
+"45W",
+1
+],
+[
+"55W",
+2
+],
+[
+"75W",
+3
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 639,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 640,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 3 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 641,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 642,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 5 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 643,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 644,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 7 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 645,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 646,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 9 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 647,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 648,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 11 Target Speed",
+"options": [
+[
+"GEN1",
+1
+],
+[
+"GEN2",
+2
+],
+[
+"GEN3",
+3
+],
+[
+"GEN4",
+4
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+1,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 649,
+"width": 1,
+"kind": "oneof",
+"prompt": "Address Hash Subchannel",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 650,
+"width": 1,
+"kind": "oneof",
+"prompt": "SVM Lock",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 651,
+"width": 1,
+"kind": "oneof",
+"prompt": "SVM Enable",
+"options": [
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 652,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 653,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 654,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 655,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 656,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 657,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 658,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 0 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 659,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 2 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 660,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 4 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 661,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 6 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 662,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 8 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 663,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe Port 10 Lane Reversal",
+"options": [
+[
+"Disable",
+0
+],
+[
+"Enable",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 664,
+"width": 1,
+"kind": "oneof",
+"prompt": "STT Control",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 665,
+"width": 1,
+"kind": "numeric",
+"prompt": "STT_PCB_SENSOR_COUNT",
+"options": [],
+"range": [
+0,
+15,
+0
+],
+"default": 0
+},
+{
+"offset": 666,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_MIN_POWER_LIMIT",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 668,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M1",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 670,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M2",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 672,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M3",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 674,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M4",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 676,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M5",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 678,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_M6",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 680,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_C_APU",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 682,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_C_HS2",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 684,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_ALPHA_APU",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 686,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_ALPHA_HS2",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 688,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_SKIN_TEMPERATURE_LIMIT_APU",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 690,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_SKIN_TEMPERATURE_LIMIT_HS2",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 692,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_ERROR_COEFF",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 694,
+"width": 2,
+"kind": "numeric",
+"prompt": "STT_ERROR_RATE_COEFF",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 696,
+"width": 4,
+"kind": "numeric",
+"prompt": "APU Only sPPT Limit",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 700,
+"width": 4,
+"kind": "numeric",
+"prompt": "Sustained PowerLimit",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 704,
+"width": 4,
+"kind": "numeric",
+"prompt": "Fast PPT Limit",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 708,
+"width": 4,
+"kind": "numeric",
+"prompt": "Slow PPT Limit",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 712,
+"width": 1,
+"kind": "oneof",
+"prompt": "TX DFE Taps",
+"options": [
+[
+"Auto",
+255
+],
+[
+"1 Tap",
+1
+],
+[
+"2 Taps",
+2
+],
+[
+"3 Taps",
+3
+],
+[
+"4 Taps",
+4
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 713,
+"width": 1,
+"kind": "oneof",
+"prompt": "Secured-core Auto enablement",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 714,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Gen Select",
+"options": [
+[
+"Gen2x2",
+0
+],
+[
+"Gen2x1",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 715,
+"width": 1,
+"kind": "oneof",
+"prompt": "USB3 Gen Select",
+"options": [
+[
+"Gen2x2",
+0
+],
+[
+"Gen2x1",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 716,
+"width": 1,
+"kind": "oneof",
+"prompt": "PAUSE Delay",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+],
+[
+"16 Cycles",
+1
+],
+[
+"32 Cycles",
+2
+],
+[
+"64 Cycles",
+3
+],
+[
+"128 Cycles",
+4
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 717,
+"width": 1,
+"kind": "oneof",
+"prompt": "PCIe All Port ECRC",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 718,
+"width": 1,
+"kind": "oneof",
+"prompt": "Pattern Length Select",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 719,
+"width": 1,
+"kind": "oneof",
+"prompt": "Advanced Error Reporting (AER)",
+"options": [
+[
+"Not Supported",
+0
+],
+[
+"Supported",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 720,
+"width": 1,
+"kind": "oneof",
+"prompt": "Microsoft Security Levels",
+"options": [
+[
+"Customized",
+0
+],
+[
+"dTPM Level1",
+1
+],
+[
+"dTPM Level2",
+2
+],
+[
+"dTPM Level3",
+3
+],
+[
+"PSP fTPM Level1",
+10
+],
+[
+"PSP fTPM Level2",
+11
+]
+],
+"range": [
+0,
+11,
+0
+],
+"default": 0
+},
+{
+"offset": 721,
+"width": 1,
+"kind": "oneof",
+"prompt": "ECO Mode",
+"options": [
+[
+"Enable",
+1
+],
+[
+"Enable - 105W",
+2
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 722,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trusted Platform Module",
+"options": [
+[
+"Auto",
+254
+],
+[
+"Disabled",
+255
+],
+[
+"Enable dTPM",
+0
+],
+[
+"Enable PSP fTPM",
+1
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 254
+},
+{
+"offset": 723,
+"width": 1,
+"kind": "oneof",
+"prompt": "CPPC Dynamic Preferred Cores",
+"options": [
+[
+"Frequency",
+0
+],
+[
+"Cache",
+1
+],
+[
+"Driver",
+2
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 724,
+"width": 1,
+"kind": "oneof",
+"prompt": "PPT Control",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 725,
+"width": 1,
+"kind": "oneof",
+"prompt": "SecureBio Support",
+"options": [
+[
+"Auto",
+15
+],
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 726,
+"width": 1,
+"kind": "oneof",
+"prompt": "SecureBio Camera Support",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"XHCI Camera",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+},
+{
+"offset": 727,
+"width": 1,
+"kind": "oneof",
+"prompt": "ESPI ABL Init",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+15
+]
+],
+"range": [
+0,
+15,
+0
+],
+"default": 15
+}
+],
+"AodSetupRpl": [
+{
+"offset": 2,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 3,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 4,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 5,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 7,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 8,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 9,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 10,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 11,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 44,
+"width": 4,
+"kind": "numeric",
+"prompt": "CPU Frequency",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 48,
+"width": 2,
+"kind": "numeric",
+"prompt": "CPU Voltage",
+"options": [],
+"range": [
+0,
+2500,
+5
+],
+"default": 0
+},
+{
+"offset": 50,
+"width": 1,
+"kind": "oneof",
+"prompt": "SMT Control",
+"options": [
+[
+"Auto",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 1
+},
+{
+"offset": 51,
+"width": 1,
+"kind": "oneof",
+"prompt": "Down Core Mode",
+"options": [
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 54,
+"width": 2,
+"kind": "numeric",
+"prompt": "GFX Clock Frequency",
+"options": [],
+"range": [
+0,
+65535,
+0
+],
+"default": 0
+},
+{
+"offset": 56,
+"width": 2,
+"kind": "numeric",
+"prompt": "GFX Voltage",
+"options": [],
+"range": [
+0,
+2800,
+0
+],
+"default": 0
+},
+{
+"offset": 58,
+"width": 1,
+"kind": "numeric",
+"prompt": "#0",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": null
+},
+{
+"offset": 60,
+"width": 1,
+"kind": "oneof",
+"prompt": "Active Memory Timing Settings",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 61,
+"width": 2,
+"kind": "numeric",
+"prompt": "Memory Target Speed",
+"options": [],
+"range": [
+2000,
+12000,
+200
+],
+"default": 3200
+},
+{
+"offset": 63,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tcl Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 64,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tcl",
+"options": [],
+"range": [
+22,
+64,
+2
+],
+"default": 22
+},
+{
+"offset": 66,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trcd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 67,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trcd",
+"options": [],
+"range": [
+8,
+62,
+0
+],
+"default": 8
+},
+{
+"offset": 69,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trp Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 70,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trp",
+"options": [],
+"range": [
+8,
+62,
+0
+],
+"default": 8
+},
+{
+"offset": 72,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tras Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 73,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tras",
+"options": [],
+"range": [
+30,
+126,
+0
+],
+"default": 30
+},
+{
+"offset": 75,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 76,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trc",
+"options": [],
+"range": [
+32,
+255,
+0
+],
+"default": 32
+},
+{
+"offset": 78,
+"width": 1,
+"kind": "oneof",
+"prompt": "Twr Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 79,
+"width": 2,
+"kind": "numeric",
+"prompt": "Twr",
+"options": [],
+"range": [
+48,
+96,
+6
+],
+"default": 48
+},
+{
+"offset": 81,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trfc1 Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 82,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trfc1",
+"options": [],
+"range": [
+50,
+4095,
+0
+],
+"default": 50
+},
+{
+"offset": 84,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trfc2 Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 85,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trfc2",
+"options": [],
+"range": [
+50,
+4095,
+0
+],
+"default": 50
+},
+{
+"offset": 87,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrfcSb Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 88,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrfcSb",
+"options": [],
+"range": [
+50,
+2047,
+0
+],
+"default": 50
+},
+{
+"offset": 90,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trtp Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 91,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trtp",
+"options": [],
+"range": [
+5,
+31,
+0
+],
+"default": 9
+},
+{
+"offset": 93,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrrdL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 94,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrrdL",
+"options": [],
+"range": [
+4,
+32,
+0
+],
+"default": 4
+},
+{
+"offset": 96,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrrdS Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 97,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrrdS",
+"options": [],
+"range": [
+4,
+20,
+0
+],
+"default": 4
+},
+{
+"offset": 99,
+"width": 1,
+"kind": "oneof",
+"prompt": "Tfaw Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 100,
+"width": 2,
+"kind": "numeric",
+"prompt": "Tfaw",
+"options": [],
+"range": [
+20,
+80,
+0
+],
+"default": 26
+},
+{
+"offset": 102,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwtrL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 103,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwtrL",
+"options": [],
+"range": [
+8,
+48,
+0
+],
+"default": 8
+},
+{
+"offset": 105,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwtrS Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 106,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwtrS",
+"options": [],
+"range": [
+2,
+16,
+0
+],
+"default": 3
+},
+{
+"offset": 108,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdScL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 109,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdScL",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 111,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdSc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 112,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdSc",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 114,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdSd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 115,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdSd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 117,
+"width": 1,
+"kind": "oneof",
+"prompt": "TrdrdDd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 118,
+"width": 2,
+"kind": "numeric",
+"prompt": "TrdrdDd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 120,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrScL Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 121,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrScL",
+"options": [],
+"range": [
+1,
+63,
+0
+],
+"default": 1
+},
+{
+"offset": 123,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrSc Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 124,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrSc",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 1
+},
+{
+"offset": 126,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrSd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 127,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrSd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 129,
+"width": 1,
+"kind": "oneof",
+"prompt": "TwrwrDd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 130,
+"width": 2,
+"kind": "numeric",
+"prompt": "TwrwrDd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 3
+},
+{
+"offset": 132,
+"width": 1,
+"kind": "oneof",
+"prompt": "Twrrd Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 133,
+"width": 2,
+"kind": "numeric",
+"prompt": "Twrrd",
+"options": [],
+"range": [
+1,
+15,
+0
+],
+"default": 5
+},
+{
+"offset": 135,
+"width": 1,
+"kind": "oneof",
+"prompt": "Trdwr Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 136,
+"width": 2,
+"kind": "numeric",
+"prompt": "Trdwr",
+"options": [],
+"range": [
+1,
+31,
+0
+],
+"default": 5
+},
+{
+"offset": 138,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor CA drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"120.0 Ohm",
+120
+],
+[
+"60.0 Ohm",
+60
+],
+[
+"40.0 Ohm",
+40
+],
+[
+"30.0 Ohm",
+30
+]
+],
+"range": [
+30,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 139,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor DQ drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"High Impedance",
+0
+],
+[
+"240 ohm",
+2
+],
+[
+"120 ohm",
+4
+],
+[
+"80 ohm",
+6
+],
+[
+"60 ohm",
+12
+],
+[
+"48 ohm",
+14
+],
+[
+"40 ohm",
+28
+],
+[
+"34.3 ohm",
+30
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 140,
+"width": 1,
+"kind": "oneof",
+"prompt": "Processor ODT impedance",
+"options": [
+[
+"Auto",
+255
+],
+[
+"High Impedance",
+0
+],
+[
+"480 ohm",
+1
+],
+[
+"240 ohm",
+2
+],
+[
+"160 ohm",
+3
+],
+[
+"120 ohm",
+4
+],
+[
+"96 ohm",
+5
+],
+[
+"80 ohm",
+6
+],
+[
+"68.6 ohm",
+7
+],
+[
+"60 ohm",
+12
+],
+[
+"53.3 ohm",
+13
+],
+[
+"48 ohm",
+14
+],
+[
+"43.6 ohm",
+15
+],
+[
+"40 ohm",
+28
+],
+[
+"36.9 ohm",
+29
+],
+[
+"34.3 ohm",
+30
+],
+[
+"32 ohm",
+31
+],
+[
+"30 ohm",
+60
+],
+[
+"28.2 ohm",
+61
+],
+[
+"26.7 ohm",
+62
+],
+[
+"25.3 ohm",
+63
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 141,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram DQ drive strengths",
+"options": [
+[
+"Auto",
+255
+],
+[
+"48 ohm",
+2
+],
+[
+"40 ohm",
+1
+],
+[
+"34 ohm",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 142,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_NOM_WR",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 143,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_NOM_RD",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 144,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_WR",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 145,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance RTT_PARK",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 146,
+"width": 1,
+"kind": "oneof",
+"prompt": "Dram ODT impedance DQS_RTT_PARK",
+"options": [
+[
+"Auto",
+255
+],
+[
+"RTT_OFF",
+0
+],
+[
+"RZQ (240)",
+1
+],
+[
+"RZQ/2 (120)",
+2
+],
+[
+"RZQ/3 (80)",
+3
+],
+[
+"RZQ/4 (60)",
+4
+],
+[
+"RZQ/5 (48)",
+5
+],
+[
+"RZQ/6 (40)",
+6
+],
+[
+"RZQ/7 (34)",
+7
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 147,
+"width": 1,
+"kind": "oneof",
+"prompt": "Power Down Enable",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Auto",
+255
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 148,
+"width": 2,
+"kind": "oneof",
+"prompt": "Infinity Fabric Frequency and Dividers",
+"options": [
+[
+"Auto",
+65535
+],
+[
+"100 MHz",
+100
+],
+[
+"200 MHz",
+200
+],
+[
+"400 MHz",
+400
+],
+[
+"500 MHz",
+500
+],
+[
+"800 MHz",
+800
+],
+[
+"933 MHz",
+933
+],
+[
+"1100 MHz",
+1100
+],
+[
+"1120 MHz",
+1120
+],
+[
+"1143 MHz",
+1143
+],
+[
+"1200 MHz",
+1200
+],
+[
+"1250 MHz",
+1250
+],
+[
+"1257 MHz",
+1257
+],
+[
+"1280 MHz",
+1280
+],
+[
+"1300 MHz",
+1300
+],
+[
+"1320 MHz",
+1320
+],
+[
+"1333 MHz",
+1333
+],
+[
+"1371 MHz",
+1371
+],
+[
+"1400 MHz",
+1400
+],
+[
+"1440 MHz",
+1440
+],
+[
+"1467 MHz",
+1467
+],
+[
+"1485 MHz",
+1485
+],
+[
+"1500 MHz",
+1500
+],
+[
+"1560 MHz",
+1560
+],
+[
+"1600 MHz",
+1600
+],
+[
+"1650 MHz",
+1650
+],
+[
+"1680 MHz",
+1680
+],
+[
+"1733 MHz",
+1733
+],
+[
+"1750 MHz",
+1750
+],
+[
+"1760 MHz",
+1760
+],
+[
+"1800 MHz",
+1800
+],
+[
+"2000 MHz",
+2000
+],
+[
+"2033 MHz",
+2033
+],
+[
+"2067 MHz",
+2067
+],
+[
+"2100 MHz",
+2100
+],
+[
+"2133 MHz",
+2133
+],
+[
+"2167 MHz",
+2167
+],
+[
+"2200 MHz",
+2200
+],
+[
+"2233 MHz",
+2233
+],
+[
+"2267 MHz",
+2267
+],
+[
+"2400 MHz",
+2400
+],
+[
+"2433 MHz",
+2433
+],
+[
+"2467 MHz",
+2467
+],
+[
+"2500 MHz",
+2500
+],
+[
+"2550 MHz",
+2550
+],
+[
+"2600 MHz",
+2600
+],
+[
+"2650 MHz",
+2650
+],
+[
+"2700 MHz",
+2700
+],
+[
+"2750 MHz",
+2750
+],
+[
+"2800 MHz",
+2800
+],
+[
+"2850 MHz",
+2850
+],
+[
+"2900 MHz",
+2900
+],
+[
+"2950 MHz",
+2950
+],
+[
+"3000 MHz",
+3000
+]
+],
+"range": [
+100,
+65535,
+0
+],
+"default": 65535
+},
+{
+"offset": 150,
+"width": 1,
+"kind": "oneof",
+"prompt": "UCLK DIV1 MODE",
+"options": [
+[
+"Auto",
+255
+],
+[
+"UCLK=MEMCLK",
+1
+],
+[
+"UCLK=MEMCLK/2",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 151,
+"width": 1,
+"kind": "oneof",
+"prompt": "VDD Misc Control",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 152,
+"width": 2,
+"kind": "numeric",
+"prompt": "VDD Misc Voltage",
+"options": [],
+"range": [
+1100,
+1650,
+10
+],
+"default": 1100
+},
+{
+"offset": 154,
+"width": 1,
+"kind": "oneof",
+"prompt": "Precision Boost Overdrive",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disable",
+0
+],
+[
+"Enabled",
+1
+],
+[
+"Advanced",
+2
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 155,
+"width": 1,
+"kind": "oneof",
+"prompt": "PBO Limits",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disable",
+0
+],
+[
+"Motherboard",
+1
+],
+[
+"Manual",
+2
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 156,
+"width": 4,
+"kind": "numeric",
+"prompt": "PPT Limit [mW]",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 160,
+"width": 4,
+"kind": "numeric",
+"prompt": "TDC Limit [mA]",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 164,
+"width": 4,
+"kind": "numeric",
+"prompt": "EDC Limit [mA]",
+"options": [],
+"range": [
+0,
+4294967295,
+0
+],
+"default": 0
+},
+{
+"offset": 168,
+"width": 1,
+"kind": "oneof",
+"prompt": "Precision Boost Overdrive Scalar Ctrl",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 169,
+"width": 4,
+"kind": "oneof",
+"prompt": "Precision Boost Overdrive Scalar",
+"options": [
+[
+"1X",
+100
+],
+[
+"2X",
+200
+],
+[
+"3X",
+300
+],
+[
+"4X",
+400
+],
+[
+"5X",
+500
+],
+[
+"6X",
+600
+],
+[
+"7X",
+700
+],
+[
+"8X",
+800
+],
+[
+"9X",
+900
+],
+[
+"10X",
+1000
+]
+],
+"range": [
+100,
+1000,
+0
+],
+"default": 100
+},
+{
+"offset": 173,
+"width": 1,
+"kind": "oneof",
+"prompt": "CPU Boost Clock Override",
+"options": [
+[
+"Disabled",
+0
+],
+[
+"Enabled (Positive)",
+1
+],
+[
+"Enabled (Negative)",
+2
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 174,
+"width": 1,
+"kind": "numeric",
+"prompt": "Max CPU Boost Clock Override(+)",
+"options": [],
+"range": [
+25,
+200,
+25
+],
+"default": 25
+},
+{
+"offset": 175,
+"width": 2,
+"kind": "numeric",
+"prompt": "Max CPU Boost Clock Override(-)",
+"options": [],
+"range": [
+25,
+1000,
+25
+],
+"default": 25
+},
+{
+"offset": 177,
+"width": 1,
+"kind": "oneof",
+"prompt": "Platform Thermal Throttle Ctrl",
+"options": [
+[
+"Manual",
+1
+],
+[
+"Auto",
+0
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 178,
+"width": 1,
+"kind": "numeric",
+"prompt": "Platform Thermal Throttle Limit",
+"options": [],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 179,
+"width": 1,
+"kind": "oneof",
+"prompt": "GFX Curve Optimizer",
+"options": [
+[
+"Disable",
+0
+],
+[
+"GFX Curve Optimizer",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 180,
+"width": 1,
+"kind": "oneof",
+"prompt": "GFX Curve Optimizer Sign",
+"options": [
+[
+"Positive",
+0
+],
+[
+"Negative",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 181,
+"width": 1,
+"kind": "numeric",
+"prompt": "GFX Curve Optimizer Magnitude",
+"options": [],
+"range": [
+0,
+30,
+0
+],
+"default": 0
+},
+{
+"offset": 182,
+"width": 1,
+"kind": "oneof",
+"prompt": "Curve Optimizer",
+"options": [
+[
+"Disable",
+0
+],
+[
+"All Cores",
+1
+],
+[
+"Per Core",
+2
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 183,
+"width": 1,
+"kind": "oneof",
+"prompt": "All Core Curve Optimizer Sign",
+"options": [
+[
+"Positive",
+0
+],
+[
+"Negative",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 184,
+"width": 2,
+"kind": "numeric",
+"prompt": "All Core Curve Optimizer Magnitude",
+"options": [],
+"range": [
+0,
+30,
+0
+],
+"default": 0
+},
+{
+"offset": 378,
+"width": 1,
+"kind": "oneof",
+"prompt": "VDDG Voltage Control",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Global VDDG Voltage Control",
+1
+],
+[
+"Per-CCD VDDG Voltage Control",
+2
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 379,
+"width": 2,
+"kind": "numeric",
+"prompt": "Global VDDG CCD Voltage",
+"options": [],
+"range": [
+650,
+1650,
+10
+],
+"default": 850
+},
+{
+"offset": 381,
+"width": 2,
+"kind": "numeric",
+"prompt": "Global VDDG IOD Voltage",
+"options": [],
+"range": [
+650,
+1650,
+10
+],
+"default": 850
+},
+{
+"offset": 391,
+"width": 1,
+"kind": "oneof",
+"prompt": "VDDP Voltage Control",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+1,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 392,
+"width": 2,
+"kind": "numeric",
+"prompt": "VDDP Voltage Adjust",
+"options": [],
+"range": [
+0,
+1300,
+5
+],
+"default": 0
+},
+{
+"offset": 394,
+"width": 1,
+"kind": "oneof",
+"prompt": "SoC/Uncore OC Mode",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enabled",
+1
+],
+[
+"Disabled",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 395,
+"width": 4,
+"kind": "numeric",
+"prompt": "SoC Voltage",
+"options": [],
+"range": [
+0,
+1300,
+5
+],
+"default": 0
+},
+{
+"offset": 399,
+"width": 1,
+"kind": "oneof",
+"prompt": "LN2 Mode",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disabled",
+0
+],
+[
+"Enabled",
+1
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 402,
+"width": 1,
+"kind": "oneof",
+"prompt": "VDDIO Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+],
+[
+"Separate",
+2
+]
+],
+"range": [
+0,
+2,
+0
+],
+"default": 0
+},
+{
+"offset": 403,
+"width": 2,
+"kind": "numeric",
+"prompt": "DIMM VDD Adjust",
+"options": [],
+"range": [
+800,
+1430,
+10
+],
+"default": 1100
+},
+{
+"offset": 405,
+"width": 2,
+"kind": "numeric",
+"prompt": "DIMM VDDQ Adjust",
+"options": [],
+"range": [
+800,
+1430,
+10
+],
+"default": 1100
+},
+{
+"offset": 409,
+"width": 2,
+"kind": "numeric",
+"prompt": "VPP Adjust",
+"options": [],
+"range": [
+1500,
+2130,
+10
+],
+"default": 1800
+},
+{
+"offset": 411,
+"width": 1,
+"kind": "oneof",
+"prompt": "VPP Ctrl",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 419,
+"width": 1,
+"kind": "oneof",
+"prompt": "LCLK Frequency Control",
+"options": [
+[
+"Auto",
+0
+],
+[
+"Manual",
+1
+]
+],
+"range": [
+0,
+1,
+0
+],
+"default": 0
+},
+{
+"offset": 422,
+"width": 2,
+"kind": "numeric",
+"prompt": "Maximum Frequency",
+"options": [],
+"range": [
+1029,
+2500,
+0
+],
+"default": 1029
+},
+{
+"offset": 424,
+"width": 1,
+"kind": "oneof",
+"prompt": "Prochot VRM Throttling",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disable",
+1
+],
+[
+"Enable",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+},
+{
+"offset": 425,
+"width": 1,
+"kind": "oneof",
+"prompt": "Enable Platform PMIC Control",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Enable",
+1
+],
+[
+"Disable",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 255
+},
+{
+"offset": 426,
+"width": 1,
+"kind": "oneof",
+"prompt": "Peak Current Control",
+"options": [
+[
+"Auto",
+255
+],
+[
+"Disable",
+1
+],
+[
+"Enable",
+0
+]
+],
+"range": [
+0,
+255,
+0
+],
+"default": 0
+}
+]
+}

@@ -10,7 +10,7 @@ No evidence-backed follow-up is currently ready for `CVE-2024-36311`: public dis
 
 Other valuable bounded branches remain:
 
-- **DDR5 1.17 regression — hardware read-only baseline** (static branch is complete enough to stop): on stock 1.15 export `AmdSetupRPL`, `AodSetupRpl`, `AMD_PBS_SETUP` from efivarfs, save the SPI image with the flash utility's save-ROM function, record running timings and WHEA counts, and run `scripts/fwtools/memory_state_report.py`. Repeat only if/when the owner updates. Discriminating datum: Auto timings at the same target speed on 1.15 vs 1.17. See `docs/checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md` §10.
+- **DDR5 1.17 regression — hardware read-only baseline** (static branch is complete enough to stop): on stock 1.15 export `AmdSetupRPL`, `AodSetupRpl`, `AMD_PBS_SETUP` from efivarfs, save the SPI image with the flash utility's save-ROM function, record running timings and WHEA counts, and run `scripts/fwtools/memory_state_report.py` (re-entry sheet; `--compare` the post-update image against the 1.15 one). Repeat only if/when the owner updates. Discriminating datum: Auto timings at the same target speed on 1.15 vs 1.17. See `docs/checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md` §10.
 
 - perform the **first read-only hardware run** of the now-built `AmdVariableProtectionProbe.efi`: record gate state before/after the hooked HII Config Routing `ExtractConfig()` call, then reboot/power-cycle without writing any BIOS variable;
 - recover missing official firmware 1.13 / 1.14 / 1.16;
