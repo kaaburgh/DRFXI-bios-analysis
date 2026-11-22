@@ -11,13 +11,16 @@ Inputs are files the owner produced with read-only operations (nothing here touc
                         effective memory configuration between --spi (A) and --compare (B)
   --map JSON            evidence/memory-117/cbs-apcb-map.json (default: repository copy)
   --questions JSON      evidence/memory-117/setup-questions.json (default: repository copy)
+  --aodmap JSON         evidence/memory-117/aod-apcb-map.json (default: repository copy)
 
 What it reports
   * which official build the dump's APCB belongs to (UniqueAPCBInstance),
   * APCB override tokens actually stored in SPI (purpose-3 CBS / other instances) with setup names,
   * whether APOB NV (saved training data, flash 0x125000) is blank or populated,
   * AmdSetupRPL (from the dump's NVRAM or from --amdsetup): DRAM fields, Ctrl gates,
-  * the APCB tokens a CBS sync would produce from that variable and every divergence from SPI,
+  * the APCB tokens a CBS sync would produce from that variable (purpose 3 -> override instance 1, priority 0x04)
+    and the tokens AMD Overclocking would write from AodSetupRpl (AodSmm, purpose 2 -> instance 0, priority 0x02),
+    each checked against its own slot in the SPI override APCB,
   * the boot-time resync predicate: AmdSetupRPL[0x08] vs APCB token 0xB331378E ('RECV' = recovery reset),
   * the AmdSetupRPL header signature (0xFC4053AA; anything else is migrated over code defaults on the next boot),
   * a re-entry sheet: every CBS (AmdSetupRPL) and AMD Overclocking (AodSetupRpl) question whose stored value differs
@@ -43,6 +46,8 @@ NV_STORE_FFS = uuid.UUID("cef5b9a3-476d-497f-9fdc-e98143e0422c").bytes_le
 REGVAL = {"r13b": 1, "bpl": 0xFF, "r15b": 0xF}
 WIDTH = {"SetBool": 1, "Set8": 1, "Set16": 2, "Set32": 4}
 AMDSETUP_SIZE, AODSETUP_SIZE = 0x6D5, 0x1AC
+CBS_SLOT, AOD_SLOT = (1, 0x04), (0, 0x02)   # (instance, priority mask); AOD slot observed on a real 1.15 owner dump
+CBS_INTERNAL = {0x20: "internal combo selector, not a user setting (INFERENCE)"}
 GEN_TOKEN, GEN_CODE_DEFAULT, RECV = 0xB331378E, 0x4B9D5809, 0x56434552
 # AodSetupRpl fields that only take effect when another field selects them (from the AOD IFR layout)
 AOD_GATES = {0x193: (0x192, "VDDIO Ctrl"), 0x195: (0x192, "VDDIO Ctrl"), 0x197: (0x192, "VDDIO Ctrl"),
@@ -125,11 +130,16 @@ def collect_spi(path):
         fsize = int.from_bytes(nv[f + 20:f + 23], "little")
         vars_ = nvar_variables(nv[f + 24:f + fsize])
         st["nv_areas"].append((base, sorted(k[0] for k in vars_)))
+        st.setdefault("area_vars", {})[base] = {n: vars_.get((n, g)) for n, g in (("AmdSetupRPL", SETUP_GUID), ("AodSetupRpl", AOD_GUID))}
         if best is None or len(vars_) > len(best[1]): best = (base, vars_)
     if best:
         st["live_nv"] = best[0]
         st["vars"]["AmdSetupRPL"] = best[1].get(("AmdSetupRPL", SETUP_GUID))
         st["vars"]["AodSetupRpl"] = best[1].get(("AodSetupRpl", AOD_GUID))
+        for n in ("AmdSetupRPL", "AodSetupRpl"):
+            copies = [v[n] for v in st.get("area_vars", {}).values() if v[n] is not None]
+            if len(copies) > 1 and any(c != copies[0] for c in copies):
+                st["notes"].append("%s differs between the two NV areas; the area with more variables (0x%X) was taken as live - check the APCB cross-check below" % (n, best[0]))
     return st
 
 
@@ -169,7 +179,7 @@ def sheet(buf, questions, varname):
         v = _val(buf, q)
         if v is None or v == q["default"]: continue
         if varname == "AodSetupRpl" and o in AOD_GATES and buf[AOD_GATES[o][0]] == 0: continue
-        out[o] = (q["prompt"], _fmt(q, v))
+        out[o] = (q["prompt"], _fmt(q, v) + (("   [" + CBS_INTERNAL[o] + "]") if varname == "AmdSetupRPL" and o in CBS_INTERNAL else ""))
     return out
 
 
@@ -219,6 +229,59 @@ def report(st, cmap, qt, names):
                   "   a resync runs only if the override APCB token 0xB331378E differs from 0x4B9D5809")
 
 
+def aod_expected(aod, amap, qt):
+    """{token: (ok, value, name)} for the DRAM-relevant AodSmm purpose-2 writes (ok None = not modelled)."""
+    aq = {q["offset"]: q for q in qt["AodSetupRpl"]}; cq = {q["offset"]: q for q in qt["AmdSetupRPL"]}
+    out = {}
+    for r in amap:
+        off = r["offset"]
+        dram = (off is not None and (0x3D <= off <= 0x96 or off in (0x193, 0x195, 0x199, 0x1A9))) or \
+               (r["const"] is not None and any(g[0] == 0x192 for g in r["guards"]))
+        if not dram: continue
+        tid = int(r["token"], 16)
+        ok = all(aod[g] in allowed for g, allowed in r["guards"])
+        val = r["const"] if r["const"] is not None else int.from_bytes(aod[off:off + r["width"]], "little")
+        if r["skip_if"] is not None and val == r["skip_if"]: ok = False
+        if ok and r["transform"] == "fclk_mhz_to_cbs_option_code":
+            name = {v: n for n, v in aq[0x94]["options"]}.get(val)
+            code = {n: v for n, v in cq[0x260]["options"]}.get(name)
+            val = code if code is not None else val
+            if code is None: ok = None
+        name = (aq[off]["prompt"] if off in aq else "") if off is not None else "flag TRUE (VDDIO Ctrl Manual/Separate)"
+        out[tid] = (ok, val, name)
+    return out
+
+
+def print_tokens(setup, aod, toks, cmap, amap, qt):
+    """toks: {(inst, prio, tid): value} from the SPI override APCB."""
+    def section(title, exp, slot, names):
+        stored = {tid: v for (i, p, tid), v in toks.items() if (i, p) == slot}
+        print("\n%s - expected vs stored in override APCB slot inst=%d prio=0x%02X:" % (title, slot[0], slot[1]))
+        quiet = div = 0
+        for tid, (ok, val, name) in exp.items():
+            have = stored.get(tid)
+            if ok is False and have is None: quiet += 1; continue
+            bad = ok is not None and (have != val if ok else have is not None)
+            div += bad
+            print("  0x%08X %-34s setting=%-6s pushed=%-4s apcb=%s%s" % (tid, (names.get(tid) or name)[:34], val, {True: "yes", False: "no", None: "?"}[ok],
+                  "0x%X" % have if have is not None else "absent", "   <-- DIVERGES" if bad else ""))
+        extra = [tid for tid in stored if tid not in exp and tid != GEN_TOKEN]
+        for tid in extra: print("  0x%08X %-34s (not in the modelled set) apcb=0x%X" % (tid, names.get(tid, "")[:34], stored[tid]))
+        print("  (%d further entries on Auto: not pushed, absent; %d divergence(s))" % (quiet, div))
+        return stored
+    names = {int(r["token"], 16): r["prompt"] for r in cmap["entries"] if r["prompt"]}
+    sc = sa = {}
+    if setup is not None:
+        exp = {tid: e for tid, e in expected_tokens(setup, cmap).items()
+               if (lambda off: off in (0x44, 0x46, 0x260, 0x263) or 0x116 <= off <= 0x17F)([r["setup_offset"] for r in cmap["entries"] if int(r["token"], 16) == tid][0])}
+        sc = section("CBS (AmdSetupRPL) DRAM entries, CBS sync purpose 3", exp, CBS_SLOT, names)
+    if aod is not None and amap is not None:
+        sa = section("AMD Overclocking (AodSetupRpl) DRAM entries, AodSmm purpose 2", aod_expected(aod, amap, qt), AOD_SLOT, names)
+    both = sorted(set(sc) & set(sa) - {GEN_TOKEN})
+    if both:
+        print("  NOTE: %d token(s) stored by both CBS and AMD Overclocking; ABL picks by priority (0x02 AOD vs 0x04 CBS; order per fiano levels, INFERENCE)" % len(both))
+
+
 def report_setup(setup, spi_tokens, cmap, qt, aod):
     if len(setup) != 0x6D5: print("WARNING: AmdSetupRPL length 0x%X != 0x6D5" % len(setup))
     sig = struct.unpack_from("<I", setup, 0)[0]
@@ -237,16 +300,6 @@ def report_setup(setup, spi_tokens, cmap, qt, aod):
             gen, "0x%08X" % tok if tok is not None else "absent",
             "in sync (no automatic resync)" if tok == gen else
             ("'RECV' -> CbsSetupDxeRPL resets CBS to code defaults and resyncs" if tok == RECV else "MISMATCH -> CbsSetupDxeRPL resyncs APCB on next boot (APCB flush -> memory context discarded)")))
-    exp = expected_tokens(setup, cmap)
-    print("\nDRAM-relevant CBS entries (expected after a CBS sync vs. stored in SPI override APCB):")
-    for tid, (ok, val, name) in exp.items():
-        off = [r["setup_offset"] for r in cmap["entries"] if int(r["token"], 16) == tid][0]
-        if not (off in (0x44, 0x46, 0x260, 0x263) or 0x116 <= off <= 0x17F): continue
-        want = val if ok else None
-        have = spi_tokens.get(tid) if spi_tokens else "n/a"
-        flag = "" if not spi_tokens or have == want or ok is None else "   <-- DIVERGES"
-        print("  0x%08X %-32s setup=%-6s pushed=%-5s spi=%s%s" % (tid, name[:32], val, {True: "yes", False: "no", None: "?"}[ok], ("0x%X" % have) if isinstance(have, int) else ("absent" if spi_tokens else "n/a"), flag))
-    print_sheet(setup, aod, qt)
 
 
 def compare(a, b, qt, names):
@@ -286,24 +339,28 @@ def main():
     ap.add_argument("--spi"); ap.add_argument("--amdsetup"); ap.add_argument("--aodsetup"); ap.add_argument("--compare")
     ap.add_argument("--map", default=os.path.join(HERE, "..", "..", "evidence", "memory-117", "cbs-apcb-map.json"))
     ap.add_argument("--questions", default=os.path.join(HERE, "..", "..", "evidence", "memory-117", "setup-questions.json"))
+    ap.add_argument("--aodmap", default=os.path.join(HERE, "..", "..", "evidence", "memory-117", "aod-apcb-map.json"))
     a = ap.parse_args()
-    cmap = json.load(open(a.map)); qt = json.load(open(a.questions))
+    cmap = json.load(open(a.map)); qt = json.load(open(a.questions)); amap = json.load(open(a.aodmap))["entries"]
     names = {int(r["token"], 16): r["prompt"] for r in cmap["entries"]}
     if a.compare:
         if not a.spi: ap.error("--compare needs --spi")
         sys.exit(1 if compare(collect_spi(a.spi), collect_spi(a.compare), qt, names) else 0)
-    setup = aod = None; spi_tokens = {}
+    setup = aod = None; spi_tokens = {}; toks = None
     if a.spi:
         st = collect_spi(a.spi)
         report(st, cmap, qt, names)
-        spi_tokens = {tid: v for (inst, prio, tid), v in st["overrides"].get(APCB_USER, {}).get("tokens", {}).items()}
+        toks = st["overrides"].get(APCB_USER, {}).get("tokens", {})
+        spi_tokens = {tid: v for (inst, prio, tid), v in toks.items() if (inst, prio) == CBS_SLOT}
         setup, aod = st["vars"].get("AmdSetupRPL"), st["vars"].get("AodSetupRpl")
     if a.amdsetup: setup = read_efivar(a.amdsetup, AMDSETUP_SIZE)
     if a.aodsetup: aod = read_efivar(a.aodsetup, AODSETUP_SIZE)
-    if setup is None:
-        if aod is not None: print_sheet(None, aod, qt)
-        return
-    report_setup(setup, spi_tokens, cmap, qt, aod)
+    if setup is not None: report_setup(setup, spi_tokens, cmap, qt, aod)
+    if toks is not None:
+        print_tokens(setup, aod, toks, cmap, amap, qt)
+    else:
+        print("\n(no SPI image: APCB cross-check skipped)")
+    print_sheet(setup, aod, qt)
 
 
 if __name__ == "__main__":

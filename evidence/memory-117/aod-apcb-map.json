@@ -1,0 +1,1034 @@
+{
+ "source": "DRFXI 1.17 AodSmm (identical in 1.15 apart from code addresses)",
+ "purpose": 2,
+ "entries": [
+  {
+   "token": "0x3F7F8A94",
+   "setter": "call rbp",
+   "offset": 417,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x530BB305",
+   "setter": "call rbp",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xD06DBAFB",
+   "setter": "Set16/32",
+   "offset": 61,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     58,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xFC195E5C",
+   "setter": "Set16/32",
+   "offset": 64,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     63,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xE31F1FCE",
+   "setter": "Set16/32",
+   "offset": 67,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     66,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x0DB8CB47",
+   "setter": "Set16/32",
+   "offset": 70,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     69,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x5E367ACA",
+   "setter": "Set16/32",
+   "offset": 73,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     72,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x7F877269",
+   "setter": "Set16/32",
+   "offset": 76,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     75,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x082D6E55",
+   "setter": "Set16/32",
+   "offset": 79,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     78,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xBBEED68E",
+   "setter": "Set16/32",
+   "offset": 82,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     81,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x2C5A76B2",
+   "setter": "Set16/32",
+   "offset": 85,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     84,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x32EB3B5B",
+   "setter": "Set16/32",
+   "offset": 88,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     87,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xE5AEA7D3",
+   "setter": "Set16/32",
+   "offset": 91,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     90,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xA715EE94",
+   "setter": "Set16/32",
+   "offset": 94,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     93,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x89251A4E",
+   "setter": "Set16/32",
+   "offset": 97,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     96,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xD8690C08",
+   "setter": "Set16/32",
+   "offset": 100,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     99,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xABA4CB4A",
+   "setter": "Set16/32",
+   "offset": 103,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     102,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xF65089FD",
+   "setter": "Set16/32",
+   "offset": 106,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     105,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x796F2C65",
+   "setter": "Set16/32",
+   "offset": 109,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     108,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x91364DC6",
+   "setter": "Set16/32",
+   "offset": 112,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     111,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x627427BD",
+   "setter": "Set16/32",
+   "offset": 115,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     114,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x08E99B01",
+   "setter": "Set16/32",
+   "offset": 118,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     117,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x86E6A99A",
+   "setter": "Set16/32",
+   "offset": 121,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     120,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x275A3185",
+   "setter": "Set16/32",
+   "offset": 124,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     123,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x99B04933",
+   "setter": "Set16/32",
+   "offset": 127,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     126,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x10B50ABC",
+   "setter": "Set16/32",
+   "offset": 130,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     129,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x77AF3F93",
+   "setter": "Set16/32",
+   "offset": 133,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     132,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x1382572D",
+   "setter": "Set16/32",
+   "offset": 136,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     135,
+     [
+      1
+     ]
+    ],
+    [
+     60,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x82648A4F",
+   "setter": "Set8",
+   "offset": 138,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x62985EDE",
+   "setter": "Set8",
+   "offset": 139,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xB88F40C8",
+   "setter": "Set8",
+   "offset": 140,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xC4765F1F",
+   "setter": "Set8",
+   "offset": 141,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xA085FAD9",
+   "setter": "Set8",
+   "offset": 142,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x668AC7E7",
+   "setter": "Set8",
+   "offset": 143,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x29AD741F",
+   "setter": "Set8",
+   "offset": 144,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xDF253FE7",
+   "setter": "Set8",
+   "offset": 145,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xFFEDC3F7",
+   "setter": "Set8",
+   "offset": 146,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x6E6B60F7",
+   "setter": "Set8",
+   "offset": 147,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x8A109D3F",
+   "setter": "SetBool",
+   "offset": 394,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x86C4F334",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xF1823F38",
+   "setter": "Set8",
+   "offset": 148,
+   "width": 2,
+   "const": null,
+   "transform": "fclk_mhz_to_cbs_option_code",
+   "skip_if": 65535,
+   "guards": []
+  },
+  {
+   "token": "0xF0947E37",
+   "setter": "Set8",
+   "offset": 150,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0x814A6C32",
+   "setter": "Set16/32",
+   "offset": 405,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     402,
+     [
+      1,
+      2
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x66CAD59B",
+   "setter": "Set16/32",
+   "offset": 403,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     402,
+     [
+      1,
+      2
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x6CD36DBE",
+   "setter": "SetBool",
+   "offset": null,
+   "width": null,
+   "const": 1,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     402,
+     [
+      1,
+      2
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x72958E2C",
+   "setter": "SetBool",
+   "offset": null,
+   "width": null,
+   "const": 1,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     402,
+     [
+      1,
+      2
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x0386C490",
+   "setter": "Set16/32",
+   "offset": 409,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     411,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xB0A37D17",
+   "setter": "Set8",
+   "offset": 50,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xE033C709",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xAB4BABF4",
+   "setter": "Set16/32",
+   "offset": 392,
+   "width": 2,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     391,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0xC286E57A",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xC74D6F5B",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x93CA7EA3",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x74BB23EF",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xC286E57A",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0xC74D6F5B",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x93CA7EA3",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x74BB23EF",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x359597F5",
+   "setter": "SetBool",
+   "offset": 399,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  },
+  {
+   "token": "0xE753A04C",
+   "setter": "Set8",
+   "offset": null,
+   "width": null,
+   "const": 1,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     58,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x244E47D0",
+   "setter": "Set8",
+   "offset": 59,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": [
+    [
+     58,
+     [
+      1
+     ]
+    ]
+   ]
+  },
+  {
+   "token": "0x9E2AAC61",
+   "setter": "Set16/32",
+   "offset": null,
+   "width": null,
+   "const": null,
+   "transform": null,
+   "skip_if": null,
+   "guards": []
+  },
+  {
+   "token": "0x288F8A28",
+   "setter": "Set8",
+   "offset": 425,
+   "width": 1,
+   "const": null,
+   "transform": null,
+   "skip_if": 255,
+   "guards": []
+  }
+ ]
+}

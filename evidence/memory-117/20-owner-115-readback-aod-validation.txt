@@ -1,0 +1,46 @@
+# Owner's stock-1.15 SPI readback (AFUWINx64 /O, BD790i X3D) - validation of the AOD path model (manual; dump not committed)
+# source: owner-run memory_state_report.py output (pre-fix version); AodSetupRpl values from its re-entry sheet
+
+## override APCB @0x522000 slots in the readback
+  inst=0 prio=0x02: 21 token(s)
+  inst=1 prio=0x04: 1 token(s)
+  CBS (AmdSetupRPL): Active Memory Timing Settings = Auto; only the generation token in the CBS slot (purpose 3, inst 1 prio 0x04)
+  AMD Overclocking (AodSetupRpl): Active Memory Timing Settings = Enabled; 21 tokens in inst 0 prio 0x02
+
+## static AodSmm map (aod-apcb-map.json) applied to the owner's AMD Overclocking settings
+  0x082D6E55 AodSetupRpl[0x4F]                    predicted=48     stored=48     ok
+  0x0DB8CB47 AodSetupRpl[0x46]                    predicted=40     stored=40     ok
+  0x288F8A28 AodSetupRpl[0x1A9]                   predicted=0      stored=0      ok
+  0x5E367ACA AodSetupRpl[0x49]                    predicted=64     stored=64     ok
+  0x66CAD59B AodSetupRpl[0x193]                   predicted=1200   stored=1200   ok
+  0x6CD36DBE const (VDDIO Ctrl Manual/Separate)   predicted=1      stored=1      ok
+  0x72958E2C const (VDDIO Ctrl Manual/Separate)   predicted=1      stored=1      ok
+  0x7F877269 AodSetupRpl[0x4C]                    predicted=104    stored=104    ok
+  0x814A6C32 AodSetupRpl[0x195]                   predicted=1200   stored=1200   ok
+  0x89251A4E AodSetupRpl[0x61]                    predicted=8      stored=8      ok
+  0xA715EE94 AodSetupRpl[0x5E]                    predicted=12     stored=12     ok
+  0xABA4CB4A AodSetupRpl[0x67]                    predicted=24     stored=24     ok
+  0xBBEED68E AodSetupRpl[0x52]                    predicted=480    stored=480    ok
+  0xD06DBAFB AodSetupRpl[0x3D]                    predicted=6000   stored=6000   ok
+  0xD8690C08 AodSetupRpl[0x64]                    predicted=32     stored=32     ok
+  0xE31F1FCE AodSetupRpl[0x43]                    predicted=40     stored=40     ok
+  0xE5AEA7D3 AodSetupRpl[0x5B]                    predicted=16     stored=16     ok
+  0xF0947E37 AodSetupRpl[0x96]                    predicted=1      stored=1      ok
+  0xF1823F38 AodSetupRpl[0x94]                    predicted=48     stored=48     ok
+  0xF65089FD AodSetupRpl[0x6A]                    predicted=7      stored=7      ok
+  0xFC195E5C AodSetupRpl[0x40]                    predicted=36     stored=36     ok
+
+RESULT: predicted == stored for all 21 tokens: True
+
+## observations
+- AMD Overclocking (AodSmm, purpose 2) writes land in override instance 0 with priority mask 0x02, not 0x10 as inferred earlier
+  from the community dump's GNBG entry; CBS (purpose 3) uses instance 1 / 0x04. With fiano's level order AOD would outrank CBS.
+- the owner's memory configuration lives entirely in AMD Overclocking; the APCB holds exactly what those settings produce,
+  no CBS resync is pending, APOB NV is populated (saved training), CBS Memory Context Restore is Auto (platform default TRUE).
+- FCLK is stored as the CBS option code (AOD 2000 MHz -> 0x30); DIMM VDD/VDDQ 1200 mV become tokens 0x66CAD59B/0x814A6C32 plus two
+  TRUE flags (0x6CD36DBE, 0x72958E2C); 'Enable Platform PMIC Control' = Disable becomes 0x288F8A28 = 0 (help text: when enabled,
+  DDR PMIC voltages are not adjusted by processor firmware). APU VDDIO 1200 has no APCB token (extended-CMOS hand-off, evidence 16).
+- ZenTimings on the same 1.15 setup reported MEM VDD/VDDQ 1.10 V while 1.20 V is requested: whether the request reaches the
+  SODIMM PMICs is UNKNOWN statically (ABL not readable); read-only check: DIMM PMIC sensors in HWiNFO.
+- the pre-fix report flagged every AOD token as DIVERGES because it compared all override slots against the CBS expectation;
+  memory_state_report.py now separates the slots and models the AOD path.

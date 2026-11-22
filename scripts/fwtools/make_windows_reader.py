@@ -15,6 +15,7 @@ REGVAL = {"r13b": 1, "bpl": 0xFF, "r15b": 0xF}
 WIDTH = {"SetBool": 1, "Set8": 1, "Set16": 2, "Set32": 4}
 DRAM_OFFS = lambda o: o in (0x44, 0x46, 0x260, 0x263) or 0x116 <= o <= 0x17F
 AOD_RUNTIME = (0x197, 2, 1100, "APU VDDIO Adjust (runtime question, AodDxe 0xC5C5)")
+# override-APCB slots (instance, priority): CBS sync purpose 3 -> (1, 0x04); AodSmm purpose 2 -> (0, 0x02)
 
 
 def table_lines():
@@ -41,6 +42,18 @@ def table_lines():
             p = g.split()
             gs.append("%X:%s" % (int(p[0][1:-1], 16), REGVAL[p[2]] if (len(p) == 3 and p[1] == "cmp" and p[2] in REGVAL) else "?"))
         out.append("M|%s|%d|%X|%s|%s|%s" % (r["token"][2:], WIDTH[r["setter"]], off, skv, ",".join(gs), r["prompt"] or "(unnamed)"))
+    aq = {q["offset"]: q["prompt"] for q in qt["AodSetupRpl"]}
+    cn = {int(r["token"], 16): r["prompt"] for r in cm["entries"] if r["prompt"]}
+    for r in json.load(open(os.path.join(EV, "aod-apcb-map.json")))["entries"]:
+        off = r["offset"]
+        dram = (off is not None and (0x3D <= off <= 0x96 or off in (0x193, 0x195, 0x199, 0x1A9))) or \
+               (r["const"] is not None and any(g[0] == 0x192 for g in r["guards"]))
+        if not dram: continue
+        tid = int(r["token"], 16)
+        name = cn.get(tid) or (aq.get(off, "") if off is not None else "flag TRUE (VDDIO Ctrl Manual/Separate)")
+        out.append("N|%08X|%s|%s|%s|%s|%s|%s|%s" % (tid, r["width"] or 0, "%X" % off if off is not None else "-", r["const"] if r["const"] is not None else "-",
+                   r["skip_if"] if r["skip_if"] is not None else "-", ",".join("%X:%s" % (g, "/".join(map(str, v))) for g, v in r["guards"]),
+                   r["transform"] or "-", name))
     return out
 
 
@@ -108,12 +121,14 @@ public static class DrfxiMem
     class M { public uint Token; public int Width; public int Off; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<long> GVal = new List<long>(); public bool GUnknown; public string Name; }
     static Dictionary<string, SortedDictionary<int, Q>> T = new Dictionary<string, SortedDictionary<int, Q>>();
     static List<M> Map = new List<M>();
+    class N { public uint Token; public int Width; public int Off; public bool HasConst; public long Const; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<List<long>> GVals = new List<List<long>>(); public bool Fclk; public string Name; }
+    static List<N> AodMap = new List<N>();
 
     public static void Load(string text)
     {
         T["AmdSetupRPL"] = new SortedDictionary<int, Q>();
         T["AodSetupRpl"] = new SortedDictionary<int, Q>();
-        Map.Clear();
+        Map.Clear(); AodMap.Clear();
         foreach (string raw in text.Split('\n'))
         {
             string line = raw.TrimEnd('\r');
@@ -145,6 +160,26 @@ public static class DrfxiMem
                     }
                 m.Name = f[6];
                 Map.Add(m);
+            }
+            else if (f[0] == "N")
+            {
+                N n = new N();
+                n.Token = Convert.ToUInt32(f[1], 16); n.Width = Int32.Parse(f[2]);
+                n.Off = f[3] == "-" ? -1 : Convert.ToInt32(f[3], 16);
+                if (f[4] != "-") { n.HasConst = true; n.Const = Int64.Parse(f[4]); }
+                if (f[5] != "-") { n.HasSkip = true; n.Skip = Int64.Parse(f[5]); }
+                if (f[6].Length > 0)
+                    foreach (string g in f[6].Split(','))
+                    {
+                        string[] p = g.Split(':');
+                        n.GOff.Add(Convert.ToInt32(p[0], 16));
+                        List<long> vals = new List<long>();
+                        foreach (string x in p[1].Split('/')) vals.Add(Int64.Parse(x));
+                        n.GVals.Add(vals);
+                    }
+                n.Fclk = f[7] == "fclk_mhz_to_cbs_option_code";
+                n.Name = f[8];
+                AodMap.Add(n);
             }
         }
     }
@@ -214,7 +249,7 @@ public static class DrfxiMem
         else sb.AppendLine("AmdSetupRPL: not available");
         sb.AppendLine(aod != null ? String.Format("AodSetupRpl: {0} bytes", aod.Length) : "AodSetupRpl: not available");
 
-        Dictionary<uint, long> tok = null;
+        Dictionary<uint, long> tok = null, aodTok = null;
         if (rom != null)
         {
             sb.AppendLine();
@@ -223,7 +258,7 @@ public static class DrfxiMem
             else sb.AppendLine("main APCB: no header at 0x51D400");
             if (IsApcb(rom, 0x522000))
             {
-                tok = new Dictionary<uint, long>();
+                tok = new Dictionary<uint, long>(); aodTok = new Dictionary<uint, long>();
                 int b = 0x522000;
                 int hsz = BitConverter.ToUInt16(rom, b + 4); int size = (int)BitConverter.ToUInt32(rom, b + 8); uint uid = BitConverter.ToUInt32(rom, b + 12);
                 sb.AppendLine(String.Format("override APCB @522000 UniqueAPCBInstance=0x{0:X4} size=0x{1:X}", uid, size));
@@ -244,9 +279,11 @@ public static class DrfxiMem
                             for (int k = 16; k + 8 <= tsz; k += 8)
                             {
                                 uint id = BitConverter.ToUInt32(rom, b + t + k); uint val = BitConverter.ToUInt32(rom, b + t + k + 4);
-                                tok[id] = val;
+                                if (inst == 1 && prio == 0x04) tok[id] = val;
+                                else if (inst == 0 && prio == 0x02) aodTok[id] = val;
                                 string nm = id == 0xB331378E ? "CBS sync generation id" : "";
                                 foreach (M m in Map) if (m.Token == id) nm = m.Name;
+                                foreach (N n2 in AodMap) if (n2.Token == id && nm.Length == 0) nm = n2.Name;
                                 sb.AppendLine(String.Format("   inst={0} prio=0x{1:X2} token 0x{2:X8} = 0x{3:X}  {4}", inst, prio, id, val, nm));
                             }
                         }
@@ -272,7 +309,7 @@ public static class DrfxiMem
                 else if (tok[0xB331378E] == 0x56434552) pred = "'RECV' -> CBS reset to code defaults and resync";
                 else pred = "MISMATCH -> CbsSetupDxeRPL resyncs APCB on next boot (memory context discarded)";
                 sb.AppendLine(String.Format("resync predicate: AmdSetupRPL[0x08]=0x{0:X8} vs APCB 0xB331378E -> {1}", gen, pred));
-                sb.AppendLine("CBS DRAM entries that are pushed to APCB or present in it (setup -> expected vs stored):");
+                sb.AppendLine("CBS DRAM entries (purpose 3, slot inst=1 prio=0x04) pushed or present:");
                 int quiet = 0, div = 0;
                 foreach (M m in Map)
                 {
@@ -289,6 +326,32 @@ public static class DrfxiMem
                         ok == 1 ? "yes" : (ok == 0 ? "no" : "?"), has ? "0x" + tok[m.Token].ToString("X") : "absent", diverges ? "   <-- DIVERGES" : ""));
                 }
                 sb.AppendLine(String.Format("  ({0} further DRAM entries on Auto: not pushed, absent; {1} divergence(s))", quiet, div));
+            }
+            if (aodTok != null && aod != null)
+            {
+                sb.AppendLine("AMD Overclocking DRAM entries (AodSmm purpose 2, slot inst=0 prio=0x02) pushed or present:");
+                int quiet = 0, div = 0;
+                Q fq = T["AodSetupRpl"].ContainsKey(0x94) ? T["AodSetupRpl"][0x94] : null;
+                Q cq = T["AmdSetupRPL"].ContainsKey(0x260) ? T["AmdSetupRPL"][0x260] : null;
+                foreach (N n in AodMap)
+                {
+                    long val = n.HasConst ? n.Const : Get(aod, n.Off, n.Width);
+                    int ok = 1;
+                    for (int i = 0; i < n.GOff.Count; i++) if (!n.GVals[i].Contains(Get(aod, n.GOff[i], 1))) ok = 0;
+                    if (n.HasSkip && val == n.Skip) ok = 0;
+                    if (ok == 1 && n.Fclk)
+                    {
+                        int k = (fq == null || cq == null) ? -1 : cq.ON.IndexOf(Fmt(fq, val));
+                        if (k >= 0) val = cq.OV[k]; else ok = 2;
+                    }
+                    bool has = aodTok.ContainsKey(n.Token);
+                    bool diverges = ok != 2 && (ok == 1 ? (!has || aodTok[n.Token] != val) : has);
+                    if (ok == 0 && !has) { quiet++; continue; }
+                    if (diverges) div++;
+                    sb.AppendLine(String.Format("  0x{0:X8} {1,-32} setting={2,-6} pushed={3,-4} apcb={4}{5}", n.Token, n.Name.Length > 32 ? n.Name.Substring(0, 32) : n.Name, val,
+                        ok == 1 ? "yes" : (ok == 0 ? "no" : "?"), has ? "0x" + aodTok[n.Token].ToString("X") : "absent", diverges ? "   <-- DIVERGES" : ""));
+                }
+                sb.AppendLine(String.Format("  ({0} further entries on Auto: not pushed, absent; {1} divergence(s))", quiet, div));
             }
         }
 

@@ -18,7 +18,7 @@ import hashlib, json, os, re, struct, subprocess, sys, uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-import un7z, fvparse, cmpidx, pcdnames, pspdir, apcb, nvar, ifrmini, cbs_apcb_map, getmod  # noqa: E402
+import un7z, fvparse, cmpidx, pcdnames, pspdir, apcb, nvar, ifrmini, cbs_apcb_map, getmod, aod_apcb_map  # noqa: E402
 import straightline_eval  # noqa: E402,F401
 
 EXPECTED = {
@@ -439,6 +439,23 @@ def main():
     rows.append("BctBaseSmmRPL protocol GUID references outside BctBaseSmmRPL: %s" % [rec.get("ui") for v in ("115", "117") for rec in json.load(open(os.path.join(T[v], "index.json")))
         if rec["kind"] not in ("FV",) and rec.get("ui") != "BctBaseSmmRPL" and uuid.UUID("147f8bda-da41-45bb-bc9b-827e72dc30a1").bytes_le in open(os.path.join(T[v], rec["file"]), "rb").read()])
     w(out, "16-dram-setting-consumers.txt", "\n".join(rows))
+
+    # 19 AodSetupRpl -> APCB token map (AodSmm purpose-2 writes)
+    am = {v: aod_apcb_map.main(mod(T[v], "AodSmm")) for v in ("115", "117")}
+    strip_a = lambda rows: [{k: r[k] for k in r if k != "addr"} for r in rows]
+    aq = {q["offset"]: q["prompt"] for q in ifr[("AodDxe", "117")]}
+    cn = {int(r["token"], 16): r["prompt"] for r in maps["117"] if r["prompt"]}
+    rows = ["# AodSetupRpl -> APCB token writes in AodSmm (purpose dl=2), tool: scripts/fwtools/aod_apcb_map.py",
+            "# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards [off]==v on AodSetupRpl; skip = value that suppresses the write",
+            "map identical 1.15 vs 1.17 (ignoring code addresses): %s (%d writes)" % (strip_a(am["115"]) == strip_a(am["117"]), len(am["117"])), ""]
+    for r in am["117"]:
+        src = ("[0x%X] w%d" % (r["offset"], r["width"])) if r["offset"] is not None else ("const %d" % r["const"] if r["const"] is not None else "computed")
+        rows.append("%-7s %s %-9s %-13s skip=%-6s guards=%-26s %-28s %s" % (r["addr"], r["token"], r["setter"], src, "0x%X" % r["skip_if"] if r["skip_if"] is not None else "-",
+                    ";".join("[0x%X] in %s" % (g, "/".join(map(str, vs))) for g, vs in r["guards"]) or "-", (r["transform"] or ""),
+                    cn.get(int(r["token"], 16)) or (aq.get(r["offset"], "") if r["offset"] is not None else "")))
+    w(out, "19-aod-to-apcb-token-map.txt", "\n".join(rows))
+    json.dump(dict(source="DRFXI 1.17 AodSmm (identical in 1.15 apart from code addresses)", purpose=2, entries=strip_a(am["117"])),
+              open(os.path.join(out, "aod-apcb-map.json"), "w"), indent=1)
 
     print("done")
 

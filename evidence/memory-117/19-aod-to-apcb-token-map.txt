@@ -1,0 +1,67 @@
+# AodSetupRpl -> APCB token writes in AodSmm (purpose dl=2), tool: scripts/fwtools/aod_apcb_map.py
+# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards [off]==v on AodSetupRpl; skip = value that suppresses the write
+map identical 1.15 vs 1.17 (ignoring code addresses): True (63 writes)
+
+0x5250  0x3F7F8A94 call rbp  [0x1A1] w1    skip=-      guards=-                                                       
+0x5260  0x530BB305 call rbp  computed      skip=-      guards=-                                                       
+0x5588  0xD06DBAFB Set16/32  [0x3D] w2     skip=-      guards=[0x3A] in 1;[0x3C] in 1                                 Memory Target Speed
+0x55AA  0xFC195E5C Set16/32  [0x40] w2     skip=-      guards=[0x3F] in 1;[0x3C] in 1                                 Tcl
+0x55CC  0xE31F1FCE Set16/32  [0x43] w2     skip=-      guards=[0x42] in 1;[0x3C] in 1                                 Trcd
+0x55EE  0x0DB8CB47 Set16/32  [0x46] w2     skip=-      guards=[0x45] in 1;[0x3C] in 1                                 Trp
+0x5610  0x5E367ACA Set16/32  [0x49] w2     skip=-      guards=[0x48] in 1;[0x3C] in 1                                 Tras
+0x5632  0x7F877269 Set16/32  [0x4C] w2     skip=-      guards=[0x4B] in 1;[0x3C] in 1                                 Trc
+0x5654  0x082D6E55 Set16/32  [0x4F] w2     skip=-      guards=[0x4E] in 1;[0x3C] in 1                                 Twr
+0x5676  0xBBEED68E Set16/32  [0x52] w2     skip=-      guards=[0x51] in 1;[0x3C] in 1                                 Trfc1
+0x5698  0x2C5A76B2 Set16/32  [0x55] w2     skip=-      guards=[0x54] in 1;[0x3C] in 1                                 Trfc2
+0x56BA  0x32EB3B5B Set16/32  [0x58] w2     skip=-      guards=[0x57] in 1;[0x3C] in 1                                 TrfcSb
+0x56DC  0xE5AEA7D3 Set16/32  [0x5B] w2     skip=-      guards=[0x5A] in 1;[0x3C] in 1                                 Trtp
+0x56FE  0xA715EE94 Set16/32  [0x5E] w2     skip=-      guards=[0x5D] in 1;[0x3C] in 1                                 TrrdL
+0x5720  0x89251A4E Set16/32  [0x61] w2     skip=-      guards=[0x60] in 1;[0x3C] in 1                                 TrrdS
+0x5742  0xD8690C08 Set16/32  [0x64] w2     skip=-      guards=[0x63] in 1;[0x3C] in 1                                 Tfaw
+0x5764  0xABA4CB4A Set16/32  [0x67] w2     skip=-      guards=[0x66] in 1;[0x3C] in 1                                 TwtrL
+0x5786  0xF65089FD Set16/32  [0x6A] w2     skip=-      guards=[0x69] in 1;[0x3C] in 1                                 TwtrS
+0x57A8  0x796F2C65 Set16/32  [0x6D] w2     skip=-      guards=[0x6C] in 1;[0x3C] in 1                                 TrdrdScL
+0x57CA  0x91364DC6 Set16/32  [0x70] w2     skip=-      guards=[0x6F] in 1;[0x3C] in 1                                 TrdrdSc
+0x57EC  0x627427BD Set16/32  [0x73] w2     skip=-      guards=[0x72] in 1;[0x3C] in 1                                 TrdrdSd
+0x580E  0x08E99B01 Set16/32  [0x76] w2     skip=-      guards=[0x75] in 1;[0x3C] in 1                                 TrdrdDd
+0x5830  0x86E6A99A Set16/32  [0x79] w2     skip=-      guards=[0x78] in 1;[0x3C] in 1                                 TwrwrScL
+0x5852  0x275A3185 Set16/32  [0x7C] w2     skip=-      guards=[0x7B] in 1;[0x3C] in 1                                 TwrwrSc
+0x5874  0x99B04933 Set16/32  [0x7F] w2     skip=-      guards=[0x7E] in 1;[0x3C] in 1                                 TwrwrSd
+0x5898  0x10B50ABC Set16/32  [0x82] w2     skip=-      guards=[0x81] in 1;[0x3C] in 1                                 TwrwrDd
+0x58BC  0x77AF3F93 Set16/32  [0x85] w2     skip=-      guards=[0x84] in 1;[0x3C] in 1                                 Twrrd
+0x58E0  0x1382572D Set16/32  [0x88] w2     skip=-      guards=[0x87] in 1;[0x3C] in 1                                 Trdwr
+0x58FA  0x82648A4F Set8      [0x8A] w1     skip=0xFF   guards=-                                                       Processor CA drive strengths
+0x5915  0x62985EDE Set8      [0x8B] w1     skip=0xFF   guards=-                                                       Processor DQ drive strengths
+0x5930  0xB88F40C8 Set8      [0x8C] w1     skip=0xFF   guards=-                                                       Processor ODT impedance
+0x594B  0xC4765F1F Set8      [0x8D] w1     skip=0xFF   guards=-                                                       Dram DQ drive strengths
+0x5966  0xA085FAD9 Set8      [0x8E] w1     skip=0xFF   guards=-                                                       Dram ODT impedance RTT_NOM_WR
+0x5981  0x668AC7E7 Set8      [0x8F] w1     skip=0xFF   guards=-                                                       Dram ODT impedance RTT_NOM_RD
+0x599C  0x29AD741F Set8      [0x90] w1     skip=0xFF   guards=-                                                       Dram ODT impedance RTT_WR
+0x59B7  0xDF253FE7 Set8      [0x91] w1     skip=0xFF   guards=-                                                       Dram ODT impedance RTT_PARK
+0x59D2  0xFFEDC3F7 Set8      [0x92] w1     skip=0xFF   guards=-                                                       Dram ODT impedance DQS_RTT_PARK
+0x59ED  0x6E6B60F7 Set8      [0x93] w1     skip=0xFF   guards=-                                                       Power Down Enable
+0x5A08  0x8A109D3F SetBool   [0x18A] w1    skip=0xFF   guards=-                                                       SoC/Uncore OC Mode
+0x5A45  0x86C4F334 Set16/32  computed      skip=-      guards=-                                                       
+0x5A70  0xF1823F38 Set8      [0x94] w2     skip=0xFFFF guards=-                          fclk_mhz_to_cbs_option_code  Infinity Fabric Frequency and Dividers
+0x5A86  0xF0947E37 Set8      [0x96] w1     skip=0xFF   guards=-                                                       UCLK DIV1 MODE
+0x5AAA  0x814A6C32 Set16/32  [0x195] w2    skip=-      guards=[0x192] in 1/2                                          DIMM VDDQ Adjust
+0x5ABF  0x66CAD59B Set16/32  [0x193] w2    skip=-      guards=[0x192] in 1/2                                          DIMM VDD Adjust
+0x5ACF  0x6CD36DBE SetBool   const 1       skip=-      guards=[0x192] in 1/2                                          
+0x5AE0  0x72958E2C SetBool   const 1       skip=-      guards=[0x192] in 1/2                                          
+0x5AFF  0x0386C490 Set16/32  [0x199] w2    skip=-      guards=[0x19B] in 1                                            VPP Adjust
+0x5B15  0xB0A37D17 Set8      [0x32] w1     skip=-      guards=-                                                       SMT Control
+0x5B2F  0xE033C709 Set16/32  computed      skip=-      guards=-                                                       
+0x5B4D  0xAB4BABF4 Set16/32  [0x188] w2    skip=-      guards=[0x187] in 1                                            VDDP Voltage Adjust
+0x5B7E  0xC286E57A Set16/32  computed      skip=-      guards=-                                                       
+0x5B9B  0xC74D6F5B Set16/32  computed      skip=-      guards=-                                                       
+0x5BB8  0x93CA7EA3 Set16/32  computed      skip=-      guards=-                                                       
+0x5BD5  0x74BB23EF Set16/32  computed      skip=-      guards=-                                                       
+0x5BFB  0xC286E57A Set16/32  computed      skip=-      guards=-                                                       
+0x5C18  0xC74D6F5B Set16/32  computed      skip=-      guards=-                                                       
+0x5C35  0x93CA7EA3 Set16/32  computed      skip=-      guards=-                                                       
+0x5C52  0x74BB23EF Set16/32  computed      skip=-      guards=-                                                       
+0x5C6C  0x359597F5 SetBool   [0x18F] w1    skip=0xFF   guards=-                                                       LN2 Mode
+0x5C83  0xE753A04C Set8      const 1       skip=-      guards=[0x3A] in 1                                             
+0x5C9B  0x244E47D0 Set8      [0x3B] w1     skip=-      guards=[0x3A] in 1                                             
+0x5D03  0x9E2AAC61 Set16/32  computed      skip=-      guards=-                                                       
+0x5D1D  0x288F8A28 Set8      [0x1A9] w1    skip=0xFF   guards=-                                                       Enable Platform PMIC Control

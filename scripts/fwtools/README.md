@@ -24,6 +24,7 @@ analysis environment; where results overlap with earlier UEFIExtract-based check
 | `run_x64_leaf.py` | optional native cross-check of a self-contained leaf function (`--exec-fingerprint`); not required |
 | `memory117_evidence.py` | regenerate `evidence/memory-117/` from the two official packages (fail-closed on hashes) |
 | `make_windows_reader.py` | generates `scripts/win/drfxi-mem.ps1` (read-only Windows PowerShell reader: no Python needed; reads `AmdSetupRPL`/`AodSetupRpl` via `GetFirmwareEnvironmentVariableEx`, saves them, prints the re-entry sheet; `-Rom` adds APCB/APOB state from an AFU `/O` image) |
+| `aod_apcb_map.py` | AodSetupRpl → APCB token map from `AodSmm` purpose-2 writes (offsets, guards, skip values, FCLK MHz→code, VDDIO block) |
 | `memory_state_report.py` | **read-only diagnostics**: offline report of effective memory configuration from an owner-made SPI dump and/or efivarfs exports of `AmdSetupRPL` / `AodSetupRpl`; re-entry sheet; `--compare` of two dumps |
 
 ## Reproducing the 2026-11-22 memory evidence
