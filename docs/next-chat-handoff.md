@@ -146,6 +146,15 @@ Paused.
 
 ## 4. Уже завершённые / почти завершённые результаты
 
+### DDR5-регрессия 1.15 → 1.17 (статика завершена, 2026-11-22)
+
+- `docs/findings/memory-117-regression.md`, `docs/checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md`, evidence в `evidence/memory-117/` (регенерируется `scripts/fwtools/memory117_evidence.py`).
+- Изменений в memory path нет (ABL/PMU/APCB payload/PEI/CBS/AOD/IFR/defaults идентичны; все дельты классифицированы).
+- Механизм: прошивка с `/N` = сброс настроек и тренировки (CBS resync по `AmdSetupRPL[0x08]` vs APCB `0xB331378E`, purge purpose-3 токенов, flush → discard memory context); MCR фактически включён платформенным дефолтом.
+- 1.17-специфично только: `OemDxe` пишет APCB-токен iGPU и делает flush (лишняя тренировка при смене dGPU).
+- Дальше — только read-only данные с железа (`scripts/fwtools/memory_state_report.py`).
+
+
 ### Set TCC to 100
 
 Практически закрыто:
@@ -286,6 +295,8 @@ Living docs:
 - сообщай commit SHA.
 
 ## 8. Локальные / firmware tools
+
+Если UEFIExtract/IFRExtractor недоступны, есть собственные инструменты `scripts/fwtools/` (FV/FFS/LZMA/AMD-zlib, PSP/APCB/NVAR/PCD/IFR).
 
 Для UEFI анализа ранее использовались:
 - UEFIExtract

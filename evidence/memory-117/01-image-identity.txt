@@ -1,0 +1,21 @@
+# Image identity (fail-closed check)
+
+package DRFXI_1.15_260105A.7z  sha256=52f2721a359a4066956e1dc57e14a4cd103f32108bf31086cb8d7ea053d42957
+  AFUWINx64.EXE            1155696  14e8d4f55333fb40d413efc18196e0b44d9a85e1be00fb046e9476ce7eec0bd8
+  AfuEfix64.efi             632136  1b2331021a2aa2e8feba97ceb0ecb322c4222bd9c376eab4c5f53994586038f0
+  DRFXI.BIN               33554432  3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88
+  EfiFlash.nsh                  56  0e11304902be56fd47a3b02bf25af50a27e45b65c58c8e0418a1c092690541f9
+  Release_Note.txt            6552  57dff2c2e36f69059addf351097974a983f50aa5cda3b1a42a7c3d68b38a02c1
+  WinFlash.bat                 409  ae342d0094f6b85123706d0a441cafbf46e9c41d01ab51d4999056677f98cbc4
+  amigendrv64.sys            37736  01eb0197c0dce9873f3dc0a5c3e8444b741c7661a8833537d645bb1349b084a0
+package DRFXI_1.17_260828A.7z  sha256=0cfdae53a641a0ea9b307f0a283dc912f46b92664d7cecea41f5c24417b2dc28
+  AFUWINx64.EXE            1155696  14e8d4f55333fb40d413efc18196e0b44d9a85e1be00fb046e9476ce7eec0bd8
+  AfuEfix64.efi             632136  1b2331021a2aa2e8feba97ceb0ecb322c4222bd9c376eab4c5f53994586038f0
+  DRFXI.BIN               33554432  99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51
+  EfiFlash.nsh                  56  0e11304902be56fd47a3b02bf25af50a27e45b65c58c8e0418a1c092690541f9
+  Release_Note.txt            7149  27c89f2ba54841e49c79f5ae0dc5236cb996f1391c5bbfa41968089ad6212bd8
+  WinFlash.bat                 409  ae342d0094f6b85123706d0a441cafbf46e9c41d01ab51d4999056677f98cbc4
+  amigendrv64.sys            37736  01eb0197c0dce9873f3dc0a5c3e8444b741c7661a8833537d645bb1349b084a0
+
+byte-identical non-image package files 1.15 vs 1.17: AFUWINx64.EXE, AfuEfix64.efi, EfiFlash.nsh, WinFlash.bat, amigendrv64.sys
+flash command (both): AfuEfix64.efi DRFXI.bin /p /b /n /k /r /l /RLC:E /reboot

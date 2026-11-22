@@ -12,6 +12,7 @@ Current topics:
 - [`flash-eip-and-tcg.md`](flash-eip-and-tcg.md) — AMI flash-driver/EIP changes and undocumented TCG Storage Security addition
 - [`smu-power-limit.md`](smu-power-limit.md) — current TCC/SMU power-limit investigation, including negative results
 - [`intel-lan-oprom.md`](intel-lan-oprom.md) — current state of the 1.13 Intel LAN OPROM POST-hang investigation
+- [`memory-117-regression.md`](memory-117-regression.md) — 1.15→1.17 DDR5 tuning regression: closure of static explanations, CBS→APCB→ABL lifecycle, Memory Context Restore default, read-only checks
 - [`changelog-mapping.md`](changelog-mapping.md) — compact changelog ↔ code/data evidence matrix
 
 Use `../research-status.md` as the project-level starting point.

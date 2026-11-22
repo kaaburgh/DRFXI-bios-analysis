@@ -1,0 +1,59 @@
+# APCB v3 blobs (header layout per linuxboot/fiano pkg/amd/apcb/internal.go: UniqueAPCBInstance @+0x0C)
+
+115 APCB@51D400 size=0x2920 UniqueAPCBInstance=0x69FF checksum=0x0E payload_sha256=7a1bfc4ac026cb94
+115 APCB@522000 size=0x128 UniqueAPCBInstance=0x6A06 checksum=0x0C payload_sha256=52d7a5179569dd4c
+115 APCB@525000 size=0x128 UniqueAPCBInstance=0x6A06 checksum=0x0C payload_sha256=52d7a5179569dd4c
+117 APCB@51D400 size=0x2920 UniqueAPCBInstance=0x4E98 checksum=0x90 payload_sha256=7a1bfc4ac026cb94
+117 APCB@522000 size=0x128 UniqueAPCBInstance=0x4E9F checksum=0x8F payload_sha256=52d7a5179569dd4c
+117 APCB@525000 size=0x128 UniqueAPCBInstance=0x4E9F checksum=0x8F payload_sha256=52d7a5179569dd4c
+payload (after header) identical 1.15 vs 1.17 @51D400: True
+payload (after header) identical 1.15 vs 1.17 @522000: True
+payload (after header) identical 1.15 vs 1.17 @525000: True
+
+## 1.17 type inventory (group, type, instance, priority mask, board mask)
+@51D400 PSPG gid=1701 tid=0060 inst=0 size=0x30 prio=0x21 board=0xFFFF tokens=0 body_sha=a477174516db
+@51D400 MEMG gid=1704 tid=0030 inst=0 size=0x1044 prio=0x20 board=0x0002 tokens=0 body_sha=17de3107c717
+@51D400 MEMG gid=1704 tid=0030 inst=0 size=0x10 prio=0x20 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@51D400 MEMG gid=1704 tid=0031 inst=0 size=0x30 prio=0x20 board=0x0002 tokens=0 body_sha=1a45828b0013
+@51D400 MEMG gid=1704 tid=0031 inst=0 size=0x30 prio=0x20 board=0xFFFF tokens=0 body_sha=1a45828b0013
+@51D400 MEMG gid=1704 tid=0033 inst=0 size=0x40 prio=0x20 board=0xFFFF tokens=0 body_sha=d001ecbf1750
+@51D400 MEMG gid=1704 tid=0033 inst=1 size=0x30 prio=0x20 board=0xFFFF tokens=0 body_sha=387809883ead
+@51D400 MEMG gid=1704 tid=0034 inst=0 size=0x150 prio=0x20 board=0xFFFF tokens=0 body_sha=249b26147a9f
+@51D400 MEMG gid=1704 tid=0035 inst=0 size=0x90 prio=0x20 board=0xFFFF tokens=0 body_sha=eed5fe2762fe
+@51D400 MEMG gid=1704 tid=0036 inst=0 size=0x160 prio=0x20 board=0xFFFF tokens=0 body_sha=5c9ae9452a38
+@51D400 MEMG gid=1704 tid=0037 inst=0 size=0xD0 prio=0x20 board=0xFFFF tokens=0 body_sha=c4b2dcb6e0eb
+@51D400 MEMG gid=1704 tid=0040 inst=0 size=0x50 prio=0x20 board=0x0002 tokens=0 body_sha=16115e0b59ac
+@51D400 MEMG gid=1704 tid=0040 inst=0 size=0x50 prio=0x20 board=0xFFFF tokens=0 body_sha=16115e0b59ac
+@51D400 MEMG gid=1704 tid=0050 inst=0 size=0x24 prio=0x20 board=0xFFFF tokens=0 body_sha=e399230e708c
+@51D400 MEMG gid=1704 tid=0052 inst=0 size=0x84 prio=0x20 board=0xFFFF tokens=0 body_sha=fa12d060e8d1
+@51D400 MEMG gid=1704 tid=0053 inst=0 size=0x30 prio=0x20 board=0xFFFF tokens=0 body_sha=035f8525c2b4
+@51D400 MEMG gid=1704 tid=005F inst=16462 size=0x50 prio=0x20 board=0xFFFF tokens=0 body_sha=be012e6f3286
+@51D400 MEMG gid=1704 tid=0075 inst=0 size=0x14 prio=0x20 board=0xFFFF tokens=0 body_sha=a1a87cbf33cd
+@51D400 MEMG gid=1704 tid=0088 inst=0 size=0x304 prio=0x20 board=0xFFFF tokens=0 body_sha=f356eae922a8
+@51D400 MEMG gid=1704 tid=008D inst=0 size=0x30 prio=0x20 board=0xFFFF tokens=0 body_sha=3bf0f14b4130
+@51D400 MEMG gid=1704 tid=0088 inst=44416 size=0x5A4 prio=0x20 board=0xFFFF tokens=0 body_sha=c74d99e1693d
+@51D400 GNBG gid=1705 tid=1001 inst=0 size=0x50 prio=0x20 board=0xFFFF tokens=0 body_sha=6c4f9aedafb1
+@51D400 GNBG gid=1705 tid=1002 inst=0 size=0x210 prio=0x20 board=0xFFFF tokens=0 body_sha=0b1b8d8e658d
+@51D400 FCHG gid=1706 tid=2001 inst=0 size=0x80 prio=0x20 board=0xFFFF tokens=0 body_sha=6cc61d79f7ef
+@51D400 TOKN gid=3000 tid=0000 inst=0 size=0x1E0 prio=0x20 board=0xFFFF tokens=58 body_sha=4972a4f5d97c
+@51D400 TOKN gid=3000 tid=0001 inst=0 size=0x288 prio=0x20 board=0xFFFF tokens=79 body_sha=ca415cdc4b8e
+@51D400 TOKN gid=3000 tid=0002 inst=0 size=0x68 prio=0x20 board=0xFFFF tokens=11 body_sha=1f9894a567ef
+@51D400 TOKN gid=3000 tid=0004 inst=0 size=0x88 prio=0x20 board=0xFFFF tokens=15 body_sha=219a9ae503a9
+@522000 TOKN gid=3000 tid=0000 inst=0 size=0x10 prio=0x10 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0000 inst=1 size=0x10 prio=0x04 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0001 inst=0 size=0x10 prio=0x10 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0001 inst=1 size=0x18 prio=0x04 board=0xFFFF tokens=1 body_sha=f3c346b44eb0
+@522000 TOKN gid=3000 tid=0002 inst=0 size=0x10 prio=0x10 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0002 inst=1 size=0x10 prio=0x04 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0004 inst=0 size=0x10 prio=0x10 board=0xFFFF tokens=0 body_sha=e3b0c44298fc
+@522000 TOKN gid=3000 tid=0004 inst=1 size=0x20 prio=0x04 board=0xFFFF tokens=2 body_sha=e9aa8b834614
+MEMG tid=0x30 board=0x0002: 4 DIMM entries
+   dimm0 SpdValid=0 DimmPresent=0 smbus=0xA0 nonzero_spd_bytes=31
+   dimm1 SpdValid=0 DimmPresent=0 smbus=0xA2 nonzero_spd_bytes=0
+   dimm2 SpdValid=0 DimmPresent=0 smbus=0xA4 nonzero_spd_bytes=0
+   dimm3 SpdValid=0 DimmPresent=0 smbus=0xA6 nonzero_spd_bytes=0
+
+## user/override APCB tokens (1.17 @522000; identical in 1.15)
+   inst=1 prio=0x04 token 0x1FB35295 = 0x1
+   inst=1 prio=0x04 token 0x37B1F8CF = 0x800
+   inst=1 prio=0x04 token 0xB331378E = 0x4B9D5809

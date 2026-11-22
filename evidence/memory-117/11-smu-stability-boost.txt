@@ -1,0 +1,21 @@
+# SmuV13Dxe: only non-renumbering code change 1.15 -> 1.17
+instructions: A=8197 B=8200, differing hunks=92, ratio=0.9882
+@@ replace A[1] B[3]
+  - 27e4: mov    rbx,QWORD PTR [rsp+0x68]
+  + 27e4: call   0x57c4
+  + 27e9: mov    ecx,0x496
+  + 27ee: call   QWORD PTR [rax+0x8]
+@@ insert A[0] B[2]
+  + 27fb: mov    BYTE PTR [rbx+0x4df],al
+  + 2801: mov    rbx,QWORD PTR [rsp+0x68]
+@@ insert A[0] B[4]
+  + 4f23: movzx  r8d,BYTE PTR [rbx+0x4df]
+  + 4f2b: lea    rdx,[rip+0x5dc6]
+  + 4f32: movabs rcx,0x4000000000000
+  + 4f3c: call   0x5b7c
+
+PCD 0x496 name: gEfiAmdAgesaPkgTokenSpaceGuid.PcdCfgSmuStabilityBoost (PEI name table)
+PcdDxe DB 1.17: initialized length 0xB18, local token entry 0x01000C70 -> DATA offset 0xC70 (zero-initialized area)
+modules containing a 'mov ecx|edx|r8d, 0x496' immediate (any PE/TE in 1.17): ['SmuV13Dxe']
+SMU config template (0x594 bytes, copied into the structure before fields are filled) identical 1.15/1.17: True; template[0x4DF] = 0x00/0x00
+=> with the PCD at its zero default the 0x594-byte table handed to the SMU is byte-identical to 1.15 at +0x4DF

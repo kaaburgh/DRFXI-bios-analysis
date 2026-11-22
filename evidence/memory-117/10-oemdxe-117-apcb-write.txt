@@ -1,0 +1,44 @@
+# OemDxe 1.17 (new in 1.17): after SetVariable(AmdSetupRPL) it mirrors iGPU Configuration into APCB token 0x1FB35295 and flushes
+# protocol GUID 7189e04e-6284-4953-a543-a31f89a1a7bf located via BS->LocateProtocol(+0x140); +0x80 Get8, +0x88 Set8 (purpose 3), +0x08 flush; then CF9h=06h hard reset
+   AE1: mov r9,QWORD PTR [rbp+0x658]
+   AE8: lea rax,[rsp+0x40]
+   AED: mov QWORD PTR [rsp+0x20],rax
+   AF2: lea rdx,[rsp+0x30]
+   AF7: mov rax,QWORD PTR [rip+0x107a] # 0x1b78
+   AFE: lea rcx,[rip+0xd93] # 0x1898
+   B05: mov r8d,0x7
+   B0B: call QWORD PTR [rax+0x58]
+   B0E: mov rax,QWORD PTR [rip+0x105b] # 0x1b70
+   B15: lea r8,[rbp+0x650]
+   B1C: and QWORD PTR [rbp+0x650],0x0
+   B24: lea rcx,[rip+0xcb5] # 0x17e0
+   B2B: xor edx,edx
+   B2D: call QWORD PTR [rax+0x140]
+   B33: mov r10,QWORD PTR [rbp+0x650]
+   B3A: mov rbx,rax
+   B3D: test r10,r10
+   B40: je 0xba3
+   B42: lea r9,[rbp+0x640]
+   B49: mov r8d,0x1fb35295
+   B4F: lea rdx,[rbp+0x648]
+   B56: mov rcx,r10
+   B59: call QWORD PTR [r10+0x80]
+   B60: test rbx,rbx
+   B63: js 0xba3
+   B65: mov r9b,BYTE PTR [rbp-0x7c]
+   B69: cmp BYTE PTR [rbp+0x640],r9b
+   B70: je 0xba3
+   B72: mov rax,QWORD PTR [rbp+0x650]
+   B79: mov r8d,0x1fb35295
+   B7F: mov dl,0x3
+   B81: mov BYTE PTR [rbp+0x640],r9b
+   B88: mov rcx,rax
+   B8B: call QWORD PTR [rax+0x88]
+   B91: test rax,rax
+   B94: js 0xba3
+   B96: mov rax,QWORD PTR [rbp+0x650]
+   B9D: mov rcx,rax
+   BA0: call QWORD PTR [rax+0x8]
+   BA3: mov edx,0xcf9
+   BA8: mov al,0x6
+   BAA: out dx,al

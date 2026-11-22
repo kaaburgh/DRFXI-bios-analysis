@@ -1,6 +1,6 @@
 # Research work queue
 
-Last updated: 2026-09-12
+Last updated: 2026-11-22
 
 This file records which branches are active, complete enough to stop, or intentionally deferred. Topic details remain in `docs/findings/`; immutable snapshots remain in `docs/checkpoints/`.
 
@@ -9,6 +9,8 @@ This file records which branches are active, complete enough to stop, or intenti
 No evidence-backed follow-up is currently ready for `CVE-2024-36311`: public disclosure does not identify a concrete SMM handler/module/GUID, so a binary pass would become generic SMM reverse engineering.
 
 Other valuable bounded branches remain:
+
+- **DDR5 1.17 regression — hardware read-only baseline** (static branch is complete enough to stop): on stock 1.15 export `AmdSetupRPL`, `AodSetupRpl`, `AMD_PBS_SETUP` from efivarfs, save the SPI image with the flash utility's save-ROM function, record running timings and WHEA counts, and run `scripts/fwtools/memory_state_report.py`. Repeat only if/when the owner updates. Discriminating datum: Auto timings at the same target speed on 1.15 vs 1.17. See `docs/checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md` §10.
 
 - perform the **first read-only hardware run** of the now-built `AmdVariableProtectionProbe.efi`: record gate state before/after the hooked HII Config Routing `ExtractConfig()` call, then reboot/power-cycle without writing any BIOS variable;
 - recover missing official firmware 1.13 / 1.14 / 1.16;
@@ -41,6 +43,12 @@ Next experiment: run the probe once on stock 1.17 hardware, capture all output, 
 See `docs/findings/amd-variable-protection.md` and `docs/checkpoints/2026-09-12-amd-variable-protection-runtime-probe.md`.
 
 ## Completed enough to stop
+
+### DDR5 1.15 → 1.17 regression — static analysis
+
+All 1.15→1.17 deltas are classified; none touches DRAM timing selection, training, APCB data or DRAM voltages. The causal candidate is the update-time configuration/training reset (identical in both versions) plus Memory Context Restore being effectively on by default; 1.17's only lifecycle addition is the `OemDxe` APCB flush on dGPU state changes. Do not repeat module-level diffs; resume only with hardware read-only data, AFU coverage evidence, or a 1.16 image.
+
+See `docs/findings/memory-117-regression.md`.
 
 ### DRFXI 1.17 clean HII unlock — static construction
 

@@ -1,0 +1,269 @@
+# PE/TE/RAW payload classification 1.15 -> 1.17 (whole image, DXE + both PEI copies)
+# tools: scripts/fwtools/fvparse.py, cmpidx.py, pcdnames.py, pcd_norm_diff.py
+
+## PCD name-table diff (by name)
+ADDED   0x3C7 gAmdCpmPkgTokenSpaceGuid.LanRootPortAslName
+ADDED   0x3CF gAmdCpmPkgTokenSpaceGuid.PcdReduceHardwareEnable
+ADDED   0x3D2 gAmdCpmPkgTokenSpaceGuid.WLanRootPortAslName
+ADDED   0x496 gEfiAmdAgesaPkgTokenSpaceGuid.PcdCfgSmuStabilityBoost
+shift +0: 966 tokens, old range 0x1..0x3C6
+shift +1: 7 tokens, old range 0x3C7..0x3CD
+shift +2: 2 tokens, old range 0x3CE..0x3CF
+shift +3: 195 tokens, old range 0x3D0..0x492
+shift +4: 153 tokens, old range 0x493..0x52B
+
+## memory-path modules
+  AmdMemFl1Pei                 TE   copy0  IDENTICAL
+  AmdMemFl1Pei                 TE   copy1  IDENTICAL
+  AmdSocFl1RplPei              TE   copy0  IDENTICAL
+  AmdSocFl1RplPei              TE   copy1  IDENTICAL
+  AmdMemRestorePei             TE   copy0  IDENTICAL
+  AmdMemRestorePei             TE   copy1  IDENTICAL
+  AmdAgesaParameterGroupPei    TE   copy0  IDENTICAL
+  AmdAgesaParameterGroupPei    TE   copy1  IDENTICAL
+  AmdMemoryHobInfoPeimRpl      TE   copy0  IDENTICAL
+  AmdMemoryHobInfoPeimRpl      TE   copy1  IDENTICAL
+  AodPei                       TE   copy0  IDENTICAL
+  AodPei                       TE   copy1  IDENTICAL
+  PcdPeim                      TE   copy0  IDENTICAL
+  PcdPeim                      TE   copy1  IDENTICAL
+  PcdPeim                      TE   copy2  IDENTICAL
+  AmdMemRestoreDxe             PE32 copy0  IDENTICAL
+  AmdMemRestoreDxeV2           PE32 copy0  differs (see classification)
+  AmdApcbDxeV3                 PE32 copy0  differs (see classification)
+  AmdApcbSmmV3                 PE32 copy0  differs (see classification)
+  ApobRplDxe                   PE32 copy0  differs (see classification)
+  CbsBaseDxeRPL                PE32 copy0  IDENTICAL
+  CbsSetupDxeRPL               PE32 copy0  differs (see classification)
+  AodDxe                       PE32 copy0  differs (see classification)
+  AodSmm                       PE32 copy0  differs (see classification)
+  AmdPspDxeV2Rpl               PE32 copy0  differs (see classification)
+  AmdMemFl1Dxe                 PE32 copy0  IDENTICAL
+
+## size changes / added modules
+DIFF_SIZE ('5af873b4-f489-4030-8e24-d859a86106f7', 'RAW', 0) 26059 26064
+DIFF_SIZE ('9221315b-30bb-46b5-813e-1b1bf4712bd3', 'RAW', 0) 3078 3038
+DIFF_SIZE ('AMITSE', 'PE32', 0) 190144 196448
+ONLY_B ('AmdCpmOemAcpi', 'DXE_DEPEX', 0) 90 3821290e-b8dd-4821-8182-0361de51609d
+ONLY_B ('AmdCpmOemAcpi', 'PE32', 0) 25536 3821290e-b8dd-4821-8182-0361de51609d
+ONLY_B ('AmdCpmOemAcpi', 'RAW', 0) 1228 3821290e-b8dd-4821-8182-0361de51609d
+ONLY_B ('AmdCpmOemAcpi', 'RAW', 1) 1754 3821290e-b8dd-4821-8182-0361de51609d
+ONLY_B ('AmdCpmOemAcpi', 'RAW', 2) 7449 3821290e-b8dd-4821-8182-0361de51609d
+ONLY_B ('AmdCpmOemAcpi', 'RAW', 3) 190556 3821290e-b8dd-4821-8182-0361de51609d
+DIFF_SIZE ('AmiAgesaAcpi', 'PE32', 0) 25888 26528
+DIFF_SIZE ('OemDxe', 'PE32', 0) 6976 7648
+DIFF_SIZE ('PcdDxe', 'RAW', 0) 2824 2840
+DIFF_SIZE ('ReFlash', 'PE32', 0) 59104 44704
+DIFF_SIZE ('Recovery', 'PE32', 0) 5888 5856
+DIFF_SIZE ('Recovery', 'PE32', 1) 5888 5856
+DIFF_SIZE ('Setup', 'PE32', 0) 231968 249152
+ONLY_B ('SmmTcgStorageSec', 'MM_DEPEX', 0) 90 6b85f263-f584-44f8-bb5d-f02c40795d8e
+ONLY_B ('SmmTcgStorageSec', 'PE32', 0) 22016 6b85f263-f584-44f8-bb5d-f02c40795d8e
+DIFF_SIZE ('SmuV13Dxe', 'PE32', 0) 48096 48128
+ONLY_B ('TcgStorageSecurity', 'DXE_DEPEX', 0) 54 7d6df4fd-3650-4e77-bf3a-84dc988a025c
+ONLY_B ('TcgStorageSecurity', 'PE32', 0) 47392 7d6df4fd-3650-4e77-bf3a-84dc988a025c
+ONLY_B ('TcgStorageSecurityPei', 'PE32', 0) 2592 8ed25add-7c2d-4326-9186-85ccf74c79f6
+ONLY_B ('TcgStorageSecurityPei', 'PE32', 1) 2592 8ed25add-7c2d-4326-9186-85ccf74c79f6
+ONLY_B ('TcgStorageSecurityPei', 'PEI_DEPEX', 0) 54 8ed25add-7c2d-4326-9186-85ccf74c79f6
+ONLY_B ('TcgStorageSecurityPei', 'PEI_DEPEX', 1) 54 8ed25add-7c2d-4326-9186-85ccf74c79f6
+DIFF_SIZE ('a2df5376-c2ed-49c0-90ff-8b173b0fd066', 'PE32', 0) 1574752 1580416
+DIFF_SIZE ('c118f50d-391d-45f4-b3d3-11bc931aa56d', 'RAW', 0) 26059 26064
+DIFF_SIZE ('d45f6c15-a525-4f32-9191-676fa086918b', 'FREEFORM_GUID', 0) 119096 119456
+DIFF_SIZE ('d45f6c15-a525-4f32-9191-676fa086918b', 'FREEFORM_GUID', 1) 119096 119456
+DIFF_SIZE ('d45f6c15-a525-4f32-9191-676fa086918b', 'FREEFORM_GUID', 2) 119096 119456
+DIFF_SIZE ('fe612b72-203c-47b1-8560-a66d946eb371', 'FREEFORM_GUID', 0) 157144 156412
+
+## same-size payloads: PCD-renumbering-only vs residual
+PCD-token-renumbering ONLY (95 modules):
+  ACPI(1), AcpiTableDxe(9), AcpiUpdateCpuInfo(1), Ahci(1), AmdAcpiDxe(44), AmdApcbDxeV3(11), AmdApcbSmmV3(11), AmdCpmABRecoveryDxe(5), AmdCpmABRecoverySmm(5), AmdCpmDisplayFeatureDxe(2), AmdCpmInitDxe(2), AmdCpmOemInitDxe(9), AmdCpmOemSmm(1), AmdCpmPmfDxe(3), AmdErrorLogDisplayDxe(3), AmdErrorLogDxe(3), AmdFabricRplDxe(12), AmdHspFtpmDxe(3), AmdMcaZen4Dxe(3), AmdMemRestoreDxeV2(3), AmdNbioAlibRPLDxe(3), AmdNbioBaseRplDxe(3), AmdNbioGfxRPLDxe(9), AmdNbioIOMMUDxe(38), AmdNbioPcieDxe(24), AmdPbsSetupDxe(9), AmdPspDxeV2Rpl(12), AmdPspP2CmboxV2(7), AmdPspSmmV2(5), AmdSmbiosDxe(6), AmdSmmCommunication(1), AmdSmmControl(4), AmdSocFl1RplDxe(2), AmiAgesaDxe(3), AmiAgesaGnbDxe(9), AmiCbsDxe(3), AmiCpmWrapperDxe(3), AmiExtraS3Memory(1), AmiHspFtpmAcpi(2), AmiPspNvramDxe(5), AmiPspNvramSmm(5), AmiTcgPlatformDxe(1), AodDxe(11), AodSmm(5), ApobRplDxe(3), BctBaseSmmRPL(5), BootScriptExecutorDxe(4), CbsSetupDxeRPL(5), CpuDxe(8), CrbSmbios(3), CrbSmi(3), FchProm21Dxe(6), FchProm21GpioDxe(3), FchProm21SsdtDxe(3), FchSmmDiagDispatcher(1), FchSmmDispatcher(3), FchYuntaiDxe(62), FchYuntaiSmmInit(5), FchYuntaiSsdt(5), FirmwarePerformanceDxe(4), FlashSmiDxe(4), GnbDxe(3), GnbRaphaelRouting(3), GnbSocRaphaelDxe(3), NbDxe(4), Nvme(1), OA3(2), OemWake(3), PciBus(2), PciDxeInit(9), PciRootBridge(5), PiSmmCore(4), PspPlatformDriver(5), PspResource(5), RsdpPlus(3), S3SaveStateDxe(4), SataController(3), SbDxe(4), SbRecoveryDeviceDxe(3), SbRun(4), SbRunSmm(4), SbSocRaphaelDxe(3), SecSMIFlash(4), SecureBioDxe(5), SleepSmi(4), SmmChildDispatcher2(3), SmmPciRbIo(3), SmmS3SaveState(4), Tcg2Dxe(5), TcgDxe(7), Tpm20Acpi(7), Tpm20PlatformDxe(13), TpmSmbiosDxe(11), UefiRaidRpl(3), WakeOnVoice(1)
+RESIDUAL (37 modules):
+  3fd1d3a2-99f7-420b-bc69-8bb1d492a332 FREEFORM_GUID: pcd_sites=0 residual_runs=2 residual_bytes=6
+      00002A 35 -> 37
+      00002E 0105101023 -> 081c110d25
+  3fd1d3a2-99f7-420b-bc69-8bb1d492a332 FREEFORM_GUID: pcd_sites=0 residual_runs=2 residual_bytes=6
+      00002A 35 -> 37
+      00002E 0105101023 -> 081c110d25
+  414d94ad-998d-47d2-bfcd-4e882241de32 FREEFORM_GUID: pcd_sites=0 residual_runs=2 residual_bytes=512
+      000148 28ef14f51bff908411fad2a794aac80abf242ee9622ca59f -> 25567c5a048b7be3af272c74d30f9bd774274245e3d24f30
+      000358 85c19c088dc1a31bfc9aba76ef5e0e3abd81d6f17e2f30ac -> 4f91a42fd6ad8ea5c91d8c389e08ec3f6aced636435fbcd6
+  709e6472-1bcd-43bd-8b6b-cd2d6d08b967 RAW: pcd_sites=0 residual_runs=2 residual_bytes=6
+      00004E 35 -> 37
+      000052 0105101023 -> 081c110d25
+  AmdCcxZen4Dxe PE32: pcd_sites=14 residual_runs=1 residual_bytes=1
+      00119B ed -> f0
+  AmdCpmOemInitPeim TE: pcd_sites=0 residual_runs=36 residual_bytes=105
+      0007B3 c681c01000000166c781d71200000c0f -> 66c781d71200000c0fc681c010000001
+      004694 02 -> 15
+      00469A 15 -> 16
+      0046A0 16008808 -> 1800c109
+      0046A6 1800c109 -> 1a00c808
+      0046AC 1a00c808 -> 1d008209
+  AmdCpmOemInitPeim TE: pcd_sites=0 residual_runs=36 residual_bytes=105
+      0007B3 c681c01000000166c781d71200000c0f -> 66c781d71200000c0fc681c010000001
+      004694 02 -> 15
+      00469A 15 -> 16
+      0046A0 16008808 -> 1800c109
+      0046A6 1800c109 -> 1a00c808
+      0046AC 1a00c808 -> 1d008209
+  AmiRedFishApi PE32: pcd_sites=0 residual_runs=3 residual_bytes=10
+      0018C4 0105 -> 081c
+      0018CD 101023 -> 110d25
+      0033D2 0105101023 -> 081c110d25
+  CmosPei TE: pcd_sites=0 residual_runs=48 residual_bytes=50
+      000010 f4 -> e4
+      00027E 34 -> 24
+      0002D2 d4 -> c4
+      000311 d4 -> c4
+      00032C 4c -> 3c
+      000336 74 -> 64
+  CmosPei TE: pcd_sites=0 residual_runs=48 residual_bytes=50
+      000010 f4 -> e4
+      00027E 34 -> 24
+      0002D2 d4 -> c4
+      000311 d4 -> c4
+      00032C 4c -> 3c
+      000336 74 -> 64
+  CrbDxe PE32: pcd_sites=3 residual_runs=1 residual_bytes=1
+      000AE5 0f -> 11
+  CrbPei TE: pcd_sites=0 residual_runs=88 residual_bytes=175
+      000010 cc68 -> 9470
+      00022D f87a -> c082
+      000236 f87a -> c082
+      00024F f87a -> c082
+      00026A 047b -> cc82
+      0002F7 3c7b -> 0483
+  CrbPei TE: pcd_sites=0 residual_runs=88 residual_bytes=175
+      000010 cc68 -> 9470
+      00022D f87a -> c082
+      000236 f87a -> c082
+      00024F f87a -> c082
+      00026A 047b -> cc82
+      0002F7 3c7b -> 0483
+  CryptoDXE PE32: pcd_sites=0 residual_runs=1 residual_bytes=5
+      00CEEA 0105101023 -> 081c110d25
+  CryptoPPI PE32: pcd_sites=0 residual_runs=1 residual_bytes=5
+      00A1D2 0105101023 -> 081c110d25
+  CryptoPPI PE32: pcd_sites=0 residual_runs=1 residual_bytes=5
+      00A1D2 0105101023 -> 081c110d25
+  CryptoSMM PE32: pcd_sites=0 residual_runs=1 residual_bytes=5
+      00DBDA 0105101023 -> 081c110d25
+  FboGroupForm PE32: pcd_sites=0 residual_runs=16 residual_bytes=32
+      006767 8627 -> 6f28
+      006777 8b27 -> 7428
+      00678E 7227 -> 5b28
+      0067A3 7727 -> 6028
+      0067A9 8c27 -> 7528
+      0067C0 7327 -> 5c28
+  FlashDriver PE32: pcd_sites=0 residual_runs=241 residual_bytes=15880
+      0001C8 ac -> a8
+      00065F 81 -> 7d
+      0006C0 2c -> 28
+      0006ED 8b -> 87
+      000722 52 -> 4e
+      000744 d0 -> cc
+  FlashDriverSmm PE32: pcd_sites=0 residual_runs=243 residual_bytes=15264
+      0001D0 a0 -> 9c
+      000406 22 -> 1e
+      000820 50 -> 4c
+      000869 43 -> 3f
+      0008D9 1b -> 17
+      00091C 4c -> 48
+  FwKeyHobPei TE: pcd_sites=0 residual_runs=19 residual_bytes=38
+      000010 4c9a -> 14a2
+      00017B 8ca1 -> 54a9
+      00024A 9ca1 -> 64a9
+      00025C 9ca1 -> 64a9
+      00027F 9ca1 -> 64a9
+      0002B5 6ca1 -> 34a9
+  FwKeyHobPei TE: pcd_sites=0 residual_runs=19 residual_bytes=38
+      000010 4c9a -> 14a2
+      00017B 8ca1 -> 54a9
+      00024A 9ca1 -> 64a9
+      00025C 9ca1 -> 64a9
+      00027F 9ca1 -> 64a9
+      0002B5 6ca1 -> 34a9
+  HardwareSignatureEntry PE32: pcd_sites=0 residual_runs=3 residual_bytes=5
+      000B9D 0105 -> 081c
+      000BC1 1010 -> 110d
+      000BD0 23 -> 25
+  NvramDxe PE32: pcd_sites=4 residual_runs=3 residual_bytes=10
+      00FBFC 0105 -> 081c
+      00FC05 101023 -> 110d25
+      010A82 0105101023 -> 081c110d25
+  NvramSmm PE32: pcd_sites=0 residual_runs=2 residual_bytes=5
+      00F3C4 0105 -> 081c
+      00F3CD 101023 -> 110d25
+  PrepareWhiteListSmm PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      000D04 85 -> 84
+      000D17 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      000D27 00fc48c1e320488bc74c0bf34823c18b1d342800004c23f1 -> fc48c1e320488bc74c0bf34823c18b1d352800004c23f149
+      000D4B ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      000D67 00e803feffff8b0d1f2800004032c622c3ffc9c1e91822c8 -> e804feffff8b0d202800004032c622c3ffc9c1e91822c840
+      000DB0 ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  RpmcDxe PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      000824 85 -> 84
+      000837 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      000847 00fc48c1e320488bc74c0bf34823c18b1de42b00004c23f1 -> fc48c1e320488bc74c0bf34823c18b1de52b00004c23f149
+      00086B ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      000887 00e803feffff8b0dcf2b00004032c622c3ffc9c1e91822c8 -> e804feffff8b0dd02b00004032c622c3ffc9c1e91822c840
+      0008D0 ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  RpmcSmm PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      000B08 85 -> 84
+      000B1B 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      000B2B 00fc48c1e320488bc74c0bf34823c18b1d383900004c23f1 -> fc48c1e320488bc74c0bf34823c18b1d393900004c23f149
+      000B4F ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      000B6B 00e803feffff8b0d233900004032c622c3ffc9c1e91822c8 -> e804feffff8b0d243900004032c622c3ffc9c1e91822c840
+      000BB4 ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  SecureBootDXE PE32: pcd_sites=0 residual_runs=3 residual_bytes=10
+      000DA0 0105 -> 081c
+      000DA9 101023 -> 110d25
+      00136A 0105101023 -> 081c110d25
+  SecurityStubDxe PE32: pcd_sites=1 residual_runs=1 residual_bytes=5
+      0077FA 0105101023 -> 081c110d25
+  Setup DXE_DEPEX: pcd_sites=0 residual_runs=1 residual_bytes=67
+      000045 2102e50daafaba4590b97bcc26ec60cf027469d90faa23dc -> 7469d90faa23dc4cb9cb98d17750322a0272c19fefb2a193
+  Smbios PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      00430C 85 -> 84
+      00431F 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      00432F 00fc48c1e320488bc74c0bf34823c18b1d9c2b00004c23f1 -> fc48c1e320488bc74c0bf34823c18b1d9d2b00004c23f149
+      004353 ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      00436F 00e803feffff8b0d872b00004032c622c3ffc9c1e91822c8 -> e804feffff8b0d882b00004032c622c3ffc9c1e91822c840
+      0043B8 ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  SmbiosBoard PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      000B20 85 -> 84
+      000B33 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      000B43 00fc48c1e320488bc74c0bf34823c18b1d882400004c23f1 -> fc48c1e320488bc74c0bf34823c18b1d892400004c23f149
+      000B67 ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      000B83 00e803feffff8b0d732400004032c622c3ffc9c1e91822c8 -> e804feffff8b0d742400004032c622c3ffc9c1e91822c840
+      000BCC ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  SmiFlash PE32: pcd_sites=0 residual_runs=6 residual_bytes=164
+      002BDC 85 -> 84
+      002BEF 0fb6d8e851feffff448bf048c7c1 -> 8bd8e852feffff448bf048c7c100
+      002BFF 00fc48c1e320488bc74c0bf34823c18b1d543a00004c23f1 -> fc48c1e320488bc74c0bf34823c18b1d553a00004c23f149
+      002C23 ff03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18 -> 03483bcb7305488bc7eb3affcb488befc1eb1848c1ed18b9
+      002C3F 00e803feffff8b0d3f3a00004032c622c3ffc9c1e91822c8 -> e804feffff8b0d403a00004032c622c3ffc9c1e91822c840
+      002C88 ff00400fb6c648c1e018480bc7490bc6ebcf -> 00400fb6c648c1e018480bc7490bc6ebcfcc
+  a59a0056-3341-44b5-9c9c-6d76f7673817 FREEFORM_GUID: pcd_sites=0 residual_runs=5 residual_bytes=8
+      000042 312f3035 -> 382f3238
+      00004D 36 -> 37
+      000050 36 -> 33
+      000053 35 -> 37
+      00005D 35 -> 37
+  cef5b9a3-476d-497f-9fdc-e98143e0422c RAWFILE: pcd_sites=0 residual_runs=43 residual_bytes=713
+      000004 e6 -> be
+      000416 1800 -> ec06
+      00041D 5365747570000000000101 -> 416d64536574757052504c
+      00042A 4e564152ec06ffffff820b416d64536574757052504c -> 00000000000000000000000000000000000000000000
+      000449 000000000000000000000000000000000000000000000000 -> fe030300ffffff03010300ffffff03fffe0f03ff01010707
+      000481 00 -> 0f
+  daf4bf89-ce71-4917-b522-c89d32fbc59f FREEFORM_GUID: pcd_sites=0 residual_runs=2 residual_bytes=5
+      000045 35 -> 37
+      000048 312f3035 -> 382f3238
+
+## manual classification of every residual (see checkpoint 2026-11-22 for details)
+  build timestamps (0105101023 -> 081c110d25 = 01-05 10:10:23 -> 08-28 17:13:37): Crypto*, Nvram*, SecureBoot*, HardwareSignatureEntry, AmiRedFishApi, SecurityStubDxe, 3fd1d3a2/709e6472/daf4bf89/a59a0056 version strings
+  shared flash-library function (same 164-byte change): Smbios, SmbiosBoard, SmiFlash, RpmcDxe, RpmcSmm, PrepareWhiteListSmm; plus FlashDriver/FlashDriverSmm (AMI flash driver EIP)
+  HII string-id shifts: FboGroupForm; Setup DEPEX gains TCG storage protocol; 414d94ad: two 256-byte signature/key blobs
+  AmdCcxZen4Dxe: PCD token computed as 0x400-k (0x3ED -> 0x3F0, same +3 shift); CrbDxe/CrbPei: function returning BIOS version 0x10F -> 0x111
+  AmdCpmOemInitPeim: GPIO table reordered, identical entry set; two stores swapped (compiler order)
+  cef5b9a3 NVRAM store: StdDefaults shrinks by the ReFlash 7-byte 'Setup' default (see 05)

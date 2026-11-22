@@ -1,6 +1,6 @@
 # Research status
 
-Last updated: 2026-09-12
+Last updated: 2026-11-22
 
 This is the **living checkpoint** for the investigation. Dated reports under `docs/checkpoints/` are historical snapshots and may contain conclusions later refined here.
 
@@ -190,6 +190,19 @@ This is **not** a flashing recommendation. Hardware boot/runtime validation and 
 - New executable logic is localized to `OemDxe.efi`.
 - It scans PCIe for a display-class device, accesses `AmdSetupRPL` offset `0x44` (`iGPU Configuration`), and changes/reset behavior according to dGPU presence.
 - This matches the 1.17 graphics changelog with high confidence.
+- 2026-11-22: on a transition it also mirrors the value into APCB token `0x1FB35295` (`Set8`, purpose 3) and calls the APCB flush member, which in `AmdApcbDxeV3` discards the saved memory context. Each dGPU state change therefore costs one extra full memory training. Timing tokens are not touched.
+
+### 1.15 → 1.17 DDR5 tuning regression (static work complete enough to stop)
+
+See `findings/memory-117-regression.md` and `checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md`.
+
+- **No memory-path delta:** ABL0, PMU firmware, microcode, SMU firmware, APCB payloads, all memory PEI modules, CBS/AOD IFR + defaults, the CBS→APCB token map and fingerprint routine are identical; every other 1.15→1.17 module delta is classified (95 PCD-renumbering-only, 27 residuals all non-memory). A 1.16 memory change cannot persist into 1.17 unseen.
+- **Update = configuration + training reset (both versions):** `/N` leaves only `StdDefaults` (no setup preservation support in firmware, no `/SP`); `AmdSetupRPL[0x08]=0` mismatches APCB token `0xB331378E`, so the next boot runs a full CBS→APCB resync that purges every CBS (purpose-3) token; the APCB flush discards the memory context (extended-CMOS index 0x0D), forcing full training.
+- **Memory Context Restore is effectively enabled by default:** Setup shows Auto, the sync skips it, and the main APCB platform token `0xFEDB01F8` is TRUE.
+- **Auto/manual gating:** timing tokens are pushed only with `Active Memory Timing Settings = Enabled` *and* per-timing `Ctrl = Manual`; Auto = token absent = ABL/SPD-derived values. Reported tWR 96 / tRFC 968 equal 30 ns / ~302 ns at DDR5-6400.
+- **STABILITY_BOOST:** byte sent to the SMU is identical to 1.15 (template 0, PCD zero-initialised, no setter).
+- **Board/CPU:** one main APCB; board-mask `0x0002` memory types are identical to their `0xFFFF` twins or inert (`SpdValid=0`), so BD790i and BD790i X3D get the same memory policy.
+- Remaining unknowns: AFU's exact SPI coverage (AOD purpose-2 tokens / APOB NV survival), ABL internals, and the reporter's complete settings. Read-only hardware checks and `scripts/fwtools/memory_state_report.py` are prepared.
 
 ### DMI
 
@@ -222,12 +235,14 @@ Examples now include:
 - TCC: `209→212` token renumbering with stable consumer semantics around a real `91→100` default change;
 - Intel LAN: large BDS growth separated into unrelated GOP code plus unchanged network path;
 - PI first pass: `NvramDxe` hashes differ, but only 28 bytes change and normalize to PCD/build metadata while the real behavior change is a newly added consumer module;
+- DDR5 1.17 regression: a first-party pipeline (`scripts/fwtools/`) classifies every whole-image delta; renumbering is verified per byte against the PCD name table rather than assumed;
 - clean HII unlock: whole-image recompression creates compressed-byte churn, while recursive extraction proves that the semantic modifications are confined to exactly two decompressed leaf payloads.
 
 ## Active open questions
 
 Highest-value unresolved work outside paused branches:
 
+0. DDR5 1.17 regression: capture a read-only baseline on 1.15 (efivarfs exports of `AmdSetupRPL`/`AodSetupRpl`/`AMD_PBS_SETUP`, saved SPI image, running timings) and analyse it with `scripts/fwtools/memory_state_report.py`; the decisive comparison is Auto timings at the same target speed on 1.15 vs 1.17;
 1. run the read-only `AmdVariableProtectionProbe.efi` on stock 1.17 hardware and verify gate deletion plus next-boot recovery without any setup-variable write;
 2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
 3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;

@@ -1,0 +1,14 @@
+# DDR5 timing arithmetic (AMD CBS/AOD timings are in MEMCLK cycles; tCK[ns] = 2000 / data-rate[MT/s])
+# JEDEC 16 Gb die: tRFC1 = 295 ns, tRFC2 = 160 ns, tWR = 30 ns
+
+MT/s     tCK ns   tRFC1 clk  tRFC2 clk  tWR clk  968 clk=ns   96 clk=ns    480 clk=ns  
+5200     0.3846   767        416        78       372.3        36.9         184.6       
+5600     0.3571   826        448        84       345.7        34.3         171.4       
+6000     0.3333   885        480        90       322.7        32.0         160.0       
+6200     0.3226   915        496        93       312.3        31.0         154.8       
+6400     0.3125   944        512        96       302.5        30.0         150.0       
+6600     0.3030   974        528        99       293.3        29.1         145.5       
+
+CBS/AOD Twr numeric range is 48..96 (IFR), so 96 is also the field maximum.
+tWR 96 clk equals exactly 30 ns at DDR5-6400; tRFC 968 clk is ~302 ns at 6400 (295 ns JEDEC 16 Gb + rounding/guard) - the pair is most consistent with ~6400 MT/s Auto (INFERENCE; the reporter's data rate is unknown).
+Reported 'auto' tRFC ~968 / tWR 96 are consistent with SPD/JEDEC-derived Auto values at a high data rate; they are not, by themselves, evidence that 1.17 computes Auto differently (no 1.15 Auto reading at the same frequency exists).

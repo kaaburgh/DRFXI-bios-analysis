@@ -1,6 +1,6 @@
 # DRFXI firmware lineage and provenance
 
-Last updated: 2026-09-10
+Last updated: 2026-11-22
 
 This document records release metadata and artifact provenance separately from interpretation of code changes.
 
@@ -45,7 +45,7 @@ Community reference dump:
 | DRFXI 1.07 package | 6,754,674 | `a91184bbdb9eef2d0c7cb6a9a22023683319c11ee9aef5d9e50ac4e18de97b64ac46` |
 | DRFXI 1.12 package | 6,768,601 | `5b71d15872c199879224dd12fcb03808d8acadb320acdf76f72a4262a92362ab` |
 | DRFXI 1.15 package | 6,845,094 | `52f2721a359a4066956e1dc57e14a4cd103f32108bf31086cb8d7ea053d42957` |
-| DRFXI 1.17 package | — | acquisition corpus retained outside this repository; DRFXI.BIN hash above is authoritative for current analysis |
+| DRFXI 1.17 package (`DRFXI_1.17_260828A.7z`) | 6,879,706 | `0cfdae53a641a0ea9b307f0a283dc912f46b92664d7cecea41f5c24417b2dc28` |
 
 For 1.15, independent vendor-origin Aliyun and AWS S3 URLs returned byte-identical archives with SHA-256 `52f2721a359a4066956e1dc57e14a4cd103f32108bf31086cb8d7ea053d42957`.
 

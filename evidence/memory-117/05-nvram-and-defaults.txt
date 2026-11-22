@@ -1,0 +1,26 @@
+# Shipped NVRAM store and StdDefaults (AMI NVAR), tool: scripts/fwtools/nvar.py
+
+115 NVRAM area @0x1BE0000 (FFS cef5b9a3): 1 NVAR entries: StdDefaults(3023 B)
+117 NVRAM area @0x1BE0000 (FFS cef5b9a3): 1 NVAR entries: StdDefaults(2983 B)
+
+StdDefaults AMITSESetup          c811fa38-42c8-4579-a9bb-60e94eddfb34   identical
+StdDefaults AmdSetupRPL          3a997502-647a-4c82-998e-52ef9486a247   identical sha256=e4c97468779e948fc9df86fe43a613bbc4ece4b32b0c9f85a5fc86d16fbacc51
+StdDefaults FixedBootPriorities  0c923ca9-df73-4ac8-b6d2-98ddc30d99fc   identical
+StdDefaults IT8613_SMF           d23c9c55-0098-42df-8395-dd610af91c6d   identical
+StdDefaults NetworkStackVar      d1405d16-7afc-4695-bb12-41459d3695a2   identical
+StdDefaults PcieSataModVar       5e9a565f-cdc0-413b-ad13-1fe8713ffdcd   identical
+StdDefaults PlatformLang         8be4df61-93ca-11d2-aa0d-00e098032b8c   identical
+StdDefaults ROM_CMN              97cdc6be-7792-4782-ba6d-e6e3bb56acd8   identical
+StdDefaults SecureBootSetup      7b59104a-c00d-4158-87ff-f04d6396a915   identical
+StdDefaults Setup                80e1202e-2697-4264-9cc9-80762c3e5863   only in 1.15
+StdDefaults Setup                ec87d643-eba4-4bb5-a1e5-3f3e36b20da9   identical
+StdDefaults SioSetupData         6b0cc1bc-910f-411e-b6cb-0e314d0bb8c1   identical
+StdDefaults Timeout              8be4df61-93ca-11d2-aa0d-00e098032b8c   identical
+StdDefaults UsbSupport           ec87d643-eba4-4bb5-a1e5-3f3e36b20da9   identical
+
+Not present in StdDefaults (created by their drivers when absent): AodSetupRpl, AMD_PBS_SETUP
+
+## ReFlash setup questions (GUID 80e1202e-..., the 7-byte 'Setup' removed from 1.17 StdDefaults)
+115: Setup        0x0003 w1 checkbox Reset NVRAM                                      def=1
+115: Setup        0x0004 w1 checkbox Boot Block Update                                def=1
+117: (no checkbox questions)

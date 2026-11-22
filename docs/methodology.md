@@ -102,6 +102,10 @@ Classify resulting differences as:
 - distinguish raw template NameSegs/method names from values that OEM DXE code patches at runtime;
 - use firmware debug strings only as supporting evidence, not proof by themselves.
 
+### 7. First-party fallback toolchain (2026-11-22)
+
+When the pinned UEFIExtract/IFRExtractor binaries are not available, `scripts/fwtools/` provides independent first-party walkers. Before relying on them for new claims, reproduce at least one result already established with the pinned toolchain (for the 2026-11-22 memory work: the 18-byte AMD/PSP delta, identical memory PEI modules and the `AmdSetupRPL` StdDefaults hash all matched). PCD renumbering is accepted only where every differing byte is explained by the name-derived token shift map (`pcd_norm_diff.py`). Native execution of vendor code is limited to hash-checked, self-contained leaf functions (`run_x64_leaf.py`) and is opt-in.
+
 ## Confidence vocabulary
 
 - **confirmed** — directly demonstrated by binary/HII/AML/code evidence;

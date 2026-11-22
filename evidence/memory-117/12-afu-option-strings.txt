@@ -1,0 +1,63 @@
+# AfuEfix64.efi (byte-identical in the 1.15 and 1.17 packages), sha256 1b2331021a2aa2e8feba97ceb0ecb322c4222bd9c376eab4c5f53994586038f0; selected strings
+# command used by both packages: /p /b /n /k /r /l /RLC:E /reboot  (no /SP, no PSP-block option, no /CLRCFG)
+RegisterPreserveConfigQueueItem
+PreserveConfigId
+<AFU afu5.16.01 build>\GdkCoreSourcePkg\Main.cpp
+|%*s - Program PSP block.                                           |
+<AFU afu5.16.01 build>\AfuModulePkg\pspflash\pspflash.cpp
+[%s(%d)] Check PSPFlash_BIOS_PreserveDataFunc
+[%s(%d)] Preserve SLP20
+[%s(%d)] Run BB_Proc_Preserve_SLPData()
+|%*s - Preserve SMBIOS type N during programming(n=0-255)           |
+|%*s - Preserve Setup setting.                                      |
+  Press "E"- This option will update entire BIOS region and exit.
+|%*s - To set default option for Rom layout change.(E:Entire BIOS   |
+<AFU afu5.16.01 build>\AfuModulePkg\nvram\nvramflash.cpp
+/CLRCFG
+<AFU afu5.16.01 build>\AfuModulePkg\preserveconfig\preserveconfig.cpp
+[%s(%d)] [DEBUG] Enable PreserveConfig ...
+/BCPALL
+[%s(%d)] [DEBUG] Enable All PreserveConfig ...
+[%s(%d)] BiosPreserveInfo.FlashOpType = 0x%x.
+[%s(%d)] BiosPreserveInfo.PldmFileName = %s.
+[%s(%d)] BiosPreserveInfo.Length = 0x%x.
+[%s(%d)] OFBD PLDM is not support RetStatus : 0x%x
+[%s(%d)] OFBD PLDM is support RetStatus : 0x%x
+Error: '/CLRCFG' and '/BCPALL' cannot be specified together.
+ Warning: Preserve will happen only for the default mapping languages x-AMI and x-UEFI-AMI
+WARNING : Preserving the setup configuration might not function properly due to insufficient NVRAM size!
+[%s(%d)] BiosPreserveInfo.FlashOpType.
+[%s(%d)] BiosPreserveInfo.PldmFileName.
+[%s(%d)] BiosPreserveInfo.Length.
+[%s(%d)] 1.BiosPreserveInfo.PldmFileName = %s
+[%s(%d)] 2.BiosPreserveInfo.PldmFileName = %s
+[%s(%d)] BiosPreserveInfo.PldmFileName : %s
+[%s(%d)] BiosPreserveInfo.Length : %0x%x
+[%s(%d)] BiosPreserveInfo.FlashOpType : 0x%x
+[%s(%d)] OFBD_SetBiosConfigPreserveInfo RetStatus : 0x%x
+[%s(%d)] OFBD_SetBiosConfigPreserveInfo Not Support.
+ - Preserve BIOS Setup Config........ Enable.
+[%s(%d)] eEID_PLDM_PRESERVE_CFG_FAILED
+|%*s - Program without preserving setup configuration               |
+|%*s - Program all non-critical blocks.                             |
+|%*s - Program Boot Block                                           |
+|%*s - Preserve ALL SMBIOS structure during programming             |
+|%*s - Program Main BIOS                                            |
+|%*s - Program NVRAM                                                |
+Error: Initialization failed for preserving setup configuration.
+Error: BIOS does not support preserving the setup configuration.
+ Use /CLRCFG option to flash without preserving.
+Error: Preserving setup configuration failed.
+Error: BIOS does not support ACAU-SSB function.
+Error: BIOS does not support ACAU Module.
+Error: BIOS does not support ME Entire Firmware update.
+Error: Non-critical blocks in ROM image file do not match those in the system.
+Error: No non-critical blocks found in ROM file.
+Error: BIOS does not support ME Ignition Firmware update.
+Error: BIOS don't support NVRAM/SETUP preserve funtion.
+Error: This BIOS version has more Non-Critical blocks than supported.
+ - Warning: System doesn't have Type-%d structure to preserve
+<AFU afu5.16.01 build>\AfuModulePkg\preserveconfig\preserveconfigfunc.cpp
+ Warning: BIOS does not support %s mapping language
+
+# firmware side: no PLDM/BCP preserve handler strings in any 1.15/1.17 module (searched PLDM, Bcp/BCP handler names); OFBD core present (Ofbd.efi)

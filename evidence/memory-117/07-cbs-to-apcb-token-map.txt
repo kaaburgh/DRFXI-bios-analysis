@@ -1,0 +1,94 @@
+# CBS setup -> APCB token push (CbsSetupDxeRPL sync routine @0x45c4..0x5112), tool: scripts/fwtools/cbs_apcb_map.py
+# protocol members (AMD APCB service, table in AmdApcbDxeV3 .data): +0x60 acquire, +0xC0(purpose) purge tokens, +0x78 SetBool, +0x88 Set8, +0x98 Set16, +0xA8 Set32, +0x08 flush, +0x68 release
+# every Set uses purpose dl=3; the routine starts with +0xC0(3), i.e. all purpose-3 tokens are purged before re-adding non-Auto values
+map identical 1.15 vs 1.17: True (89 tokens)
+
+0xB331378E Set32   setup_off=0x8    skip_if=None        guards=                                   platform_default_in_main_APCB=-          
+0x9DA294C2 Set8    setup_off=0x28   skip_if=r13b        guards=                                   platform_default_in_main_APCB=-          Core Performance Boost
+0xD1091CD0 Set8    setup_off=0x32   skip_if=0x3         guards=[0x20] cmp 0xff                    platform_default_in_main_APCB=u8:0x1     SMU and PSP Debug Mode
+0x6A6700FD SetBool setup_off=0x33   skip_if=0xff        guards=[0x20] cmp 0xff                    platform_default_in_main_APCB=-          PPIN Opt-in
+0x2762E77B Set8    setup_off=0xB2   skip_if=0xff        guards=[0x20] cmp 0xff                    platform_default_in_main_APCB=u32:0x1    Xtrig7 Workaround
+0xCBC2C0DD Set8    setup_off=0xB9   skip_if=0xff        guards=[0x20] cmp 0xff                    platform_default_in_main_APCB=-          Action on BIST Failure
+0xB0A37D17 Set8    setup_off=0x35   skip_if=r13b        guards=                                   platform_default_in_main_APCB=-          SMT Control
+0xFFFE0B07 Set8    setup_off=0x39   skip_if=0xff        guards=                                   platform_default_in_main_APCB=-          Disable DF to external downstream IP Sync Flood Propagation
+0x49639134 Set8    setup_off=0x3A   skip_if=0x3         guards=                                   platform_default_in_main_APCB=-          Disable DF sync flood propagation
+0xCE0176EF Set8    setup_off=0x36   skip_if=0x7         guards=                                   platform_default_in_main_APCB=u8:0x2     Memory interleaving
+0x2606C42E Set8    setup_off=0x37   skip_if=0x7         guards=                                   platform_default_in_main_APCB=u8:0x7     Memory interleaving size
+0x6574B2C0 Set8    setup_off=0x38   skip_if=0x3         guards=                                   platform_default_in_main_APCB=u8:0x3     DRAM map inversion
+0x249E08D5 Set8    setup_off=0x1BC  skip_if=0xff        guards=                                   platform_default_in_main_APCB=-          Location of private memory regions
+0xD06DBAFB Set16   setup_off=0x117  skip_if=None        guards=[0x116] cmp r13b                   platform_default_in_main_APCB=-          Memory Target Speed
+0xFC195E5C Set16   setup_off=0x11A  skip_if=None        guards=[0x119] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Tcl
+0xE31F1FCE Set16   setup_off=0x11D  skip_if=None        guards=[0x11C] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trcd
+0x0DB8CB47 Set16   setup_off=0x120  skip_if=None        guards=[0x11F] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trp
+0x5E367ACA Set16   setup_off=0x123  skip_if=None        guards=[0x122] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Tras
+0x7F877269 Set16   setup_off=0x126  skip_if=None        guards=[0x125] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trc
+0x082D6E55 Set16   setup_off=0x129  skip_if=None        guards=[0x128] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Twr
+0xBBEED68E Set16   setup_off=0x12C  skip_if=None        guards=[0x12B] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trfc1
+0x2C5A76B2 Set16   setup_off=0x12F  skip_if=None        guards=[0x12E] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trfc2
+0x32EB3B5B Set16   setup_off=0x132  skip_if=None        guards=[0x131] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrfcSb
+0xE5AEA7D3 Set16   setup_off=0x135  skip_if=None        guards=[0x134] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trtp
+0xA715EE94 Set16   setup_off=0x138  skip_if=None        guards=[0x137] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrrdL
+0x89251A4E Set16   setup_off=0x13B  skip_if=None        guards=[0x13A] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrrdS
+0xD8690C08 Set16   setup_off=0x13E  skip_if=None        guards=[0x13D] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Tfaw
+0xABA4CB4A Set16   setup_off=0x141  skip_if=None        guards=[0x140] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwtrL
+0xF65089FD Set16   setup_off=0x144  skip_if=None        guards=[0x143] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwtrS
+0x796F2C65 Set16   setup_off=0x147  skip_if=None        guards=[0x146] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrdrdScL
+0x91364DC6 Set16   setup_off=0x14A  skip_if=None        guards=[0x149] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrdrdSc
+0x627427BD Set16   setup_off=0x14D  skip_if=None        guards=[0x14C] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrdrdSd
+0x08E99B01 Set16   setup_off=0x150  skip_if=None        guards=[0x14F] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TrdrdDd
+0x86E6A99A Set16   setup_off=0x153  skip_if=None        guards=[0x152] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwrwrScL
+0x275A3185 Set16   setup_off=0x156  skip_if=None        guards=[0x155] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwrwrSc
+0x99B04933 Set16   setup_off=0x159  skip_if=None        guards=[0x158] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwrwrSd
+0x10B50ABC Set16   setup_off=0x15C  skip_if=None        guards=[0x15B] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          TwrwrDd
+0x77AF3F93 Set16   setup_off=0x15F  skip_if=None        guards=[0x15E] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Twrrd
+0x1382572D Set16   setup_off=0x162  skip_if=None        guards=[0x161] cmp r13b;[0x116] cmp r13b  platform_default_in_main_APCB=-          Trdwr
+0x275C400A Set8    setup_off=0x164  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Processor CK drive strengths
+0x82648A4F Set8    setup_off=0x165  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Processor CA drive strengths
+0x4891D431 Set8    setup_off=0x166  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Processor CS drive strengths
+0xA085FAD9 Set8    setup_off=0x167  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram ODT impedance RTT_NOM_WR
+0x668AC7E7 Set8    setup_off=0x168  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram ODT impedance RTT_NOM_RD
+0x29AD741F Set8    setup_off=0x169  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram ODT impedance RTT_WR
+0xDF253FE7 Set8    setup_off=0x16A  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram ODT impedance RTT_PARK
+0xFFEDC3F7 Set8    setup_off=0x16B  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram ODT impedance DQS_RTT_PARK
+0xB88F40C8 Set8    setup_off=0x16C  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Processor ODT impedance
+0x62985EDE Set8    setup_off=0x16D  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Processor DQ drive strengths
+0xC4765F1F Set8    setup_off=0x16E  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Dram DQ drive strengths
+0x6E6B60F7 Set8    setup_off=0x16F  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Power Down Enable
+0xF77A05F1 Set8    setup_off=0x170  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Disable Memory Error Injection
+0x5F1DE498 Set8    setup_off=0x171  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          ECC
+0xF0869ECA SetBool setup_off=0x172  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          TSME
+0x8D67F9E4 Set8    setup_off=0x173  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Data Scramble
+0xA196A838 Set8    setup_off=0x174  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Chipselect Interleaving
+0x27CC2068 Set8    setup_off=0x175  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Address Hash Bank
+0x91D21E3F Set8    setup_off=0x176  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Address Hash CS
+0x3664DBA5 Set8    setup_off=0x289  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Address Hash Subchannel
+0x7EF11128 Set8    setup_off=0x177  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          BankSwapMode
+0x909D9E12 Set8    setup_off=0x178  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          DFE Read Training
+0x299EAED1 Set8    setup_off=0x261  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          DRAM PDA Enumerate ID Programming Mode
+0x664706F1 Set8    setup_off=0x2C8  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          TX DFE Taps
+0x085711CF Set8    setup_off=0x2D4  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          PPT Control
+0x7DCB2DA5 Set8    setup_off=0x179  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          MBIST Enable
+0x96DF25CA Set8    setup_off=0x17A  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          MBIST Test Mode
+0xB46EF9AB Set8    setup_off=0x17B  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          MBIST Aggressors
+0x3B782D55 Set8    setup_off=0x17C  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          MBIST Per Bit Slave Die Reporting
+0x5988CFA6 Set8    setup_off=0x17D  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Pattern Select
+0x108BB3E6 Set8    setup_off=0x17E  skip_if=None        guards=[0x2CE] cmp r13b                   platform_default_in_main_APCB=-          Pattern Length
+0x02FC8CA9 Set8    setup_off=0x17F  skip_if=bpl         guards=                                   platform_default_in_main_APCB=-          Aggressor Channel
+0xFEDB01F8 SetBool setup_off=0x263  skip_if=bpl         guards=                                   platform_default_in_main_APCB=bool:0x1   Memory Context Restore
+0x1FB35295 Set8    setup_off=0x44   skip_if=0xf         guards=                                   platform_default_in_main_APCB=u8:0x2     iGPU Configuration
+0xA00D4B57 Set8    setup_off=0x45   skip_if=0xf         guards=[0x20] cmp bpl                     platform_default_in_main_APCB=-          UMA Version
+0x37B1F8CF Set32   setup_off=0x46   skip_if=0xffffffff  guards=[0x44] cmp r13b                    platform_default_in_main_APCB=u32:0x400  UMA Frame buffer Size
+0xEEED60BA SetBool setup_off=0x4A   skip_if=r15b        guards=[0x20] cmp bpl                     platform_default_in_main_APCB=bool:0x1   GPU Host Translation Cache
+0x4367CBD2 Set8    setup_off=0x63   skip_if=r15b        guards=[0x20] cmp bpl                     platform_default_in_main_APCB=u8:0x1     FCH Spread Spectrum
+0x87958B5A SetBool setup_off=0x2D7  skip_if=r15b        guards=                                   platform_default_in_main_APCB=bool:0x1   ESPI ABL Init
+0xF1823F38 Set8    setup_off=0x260  skip_if=bpl         guards=[0x20] cmp bpl                     platform_default_in_main_APCB=-          Infinity Fabric Frequency and Dividers
+0xFA826511 Set8    setup_off=0x264  skip_if=bpl         guards=[0x20] cmp bpl                     platform_default_in_main_APCB=-          SyncFifo Mode Override
+0x016DA8CA Set8    setup_off=0x2D2  skip_if=0xfe        guards=                                   platform_default_in_main_APCB=u8:0x1     Trusted Platform Module
+0xDDB759DA Set8    setup_off=0xA9   skip_if=0x2         guards=                                   platform_default_in_main_APCB=u8:0x0     ABL Console Out Control
+0x4B993A83 Set8    setup_off=0xAA   skip_if=None        guards=[0xA9] cmp r13b                    platform_default_in_main_APCB=-          ABL Console Out Boot Mode Select
+0xAF6D3A6F Set8    setup_off=0xAB   skip_if=bpl         guards=[0xA9] cmp r13b                    platform_default_in_main_APCB=u8:0xFF    ABL PMU message Control
+0x4967F4FC Set8    setup_off=0xA3   skip_if=bpl         guards=                                   platform_default_in_main_APCB=u8:0x0     PSP RPMC Switch
+0x072DB576 Set8    setup_off=0xA4   skip_if=r15b        guards=                                   platform_default_in_main_APCB=-          AIM-T / Moselle support
+0x441D2982 SetBool setup_off=0xA5   skip_if=r15b        guards=[0xA4] cmp r13b                    platform_default_in_main_APCB=bool:0x0   Wireless Manageability
+0x58E10F2C SetBool setup_off=0xA6   skip_if=r15b        guards=[0xA5] cmp r13b;[0xA4] cmp r13b    platform_default_in_main_APCB=bool:0x0   KVM for Wireless Manageability
+0x0202CB32 SetBool setup_off=0xA8   skip_if=r15b        guards=[0xA4] cmp r13b                    platform_default_in_main_APCB=bool:0x0   KVM for Wired Manageability

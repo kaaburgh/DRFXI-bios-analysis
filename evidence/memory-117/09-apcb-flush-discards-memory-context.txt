@@ -1,0 +1,92 @@
+# AmdApcbDxeV3 1.17 (PCD-renumbering-only vs 1.15): APCB flush -> memory-context discard
+## protocol function table (.data @0xA160, member offset -> function RVA)
+  +0x00 -> 0x3
+  +0x08 -> 0xA00
+  +0x10 -> 0x1A9C
+  +0x18 -> 0x1D7C
+  +0x20 -> 0x1EA0
+  +0x28 -> 0x1FD4
+  +0x30 -> 0x99C
+  +0x38 -> 0xAA8
+  +0x40 -> 0xBA4
+  +0x48 -> 0x99C
+  +0x50 -> 0x99C
+  +0x58 -> 0x99C
+  +0x60 -> 0xC8C
+  +0x68 -> 0xD34
+  +0x70 -> 0xDEC
+  +0x78 -> 0xEF0
+  +0x80 -> 0xFDC
+  +0x88 -> 0x10E0
+  +0x90 -> 0x11CC
+  +0x98 -> 0x12D0
+  +0xA0 -> 0x13BC
+  +0xA8 -> 0x14C0
+  +0xB0 -> 0x15A8
+  +0xB8 -> 0x16F4
+  +0xC0 -> 0x191C
+  +0xC8 -> 0x19DC
+  +0xD0 -> 0x1834
+
+## discard routine excerpt (CMOS bank 2: port 0x72/0x73 index 0x0D; bit 0x02 generic / bit 0x08 'for APCB update' per CPUID check)
+  4101: call 0x338c
+  4106: test r14b,r14b
+  4109: je 0x41c8
+  410F: lea rdx,[rip+0x73ea] # 0xb500
+  4116: mov rcx,r12
+  4119: call 0x24f4
+  411E: mov ecx,0xa60f00
+  4123: call 0x8e18
+  4128: test al,al
+  412A: jne 0x4190
+  412C: mov ecx,0xa40f40
+  4131: call 0x8e18
+  4136: test al,al
+  4138: jne 0x4190
+  413A: mov ecx,0xa40f00
+  413F: call 0x8e18
+  4144: test al,al
+  4146: jne 0x4190
+  4148: mov ecx,0x8a0f00
+  414D: call 0x8e18
+  4152: test al,al
+  4154: jne 0x4190
+  4156: lea rdx,[rip+0x8ba3] # 0xcd00
+  415D: movabs rcx,0x4000000000000
+  4167: call 0x24f4
+  416C: mov edx,0x72
+  4171: mov al,0xd
+  4173: out dx,al
+  4174: lea r8d,[rdx+0x1]
+  4178: mov edx,r8d
+  417B: in al,dx
+  417C: mov cl,al
+  417E: lea edx,[r8-0x1]
+  4182: mov al,0xd
+  4184: out dx,al
+  4185: or cl,0x2
+  4188: mov edx,r8d
+  418B: mov al,cl
+  418D: out dx,al
+  418E: jmp 0x41c8
+  4190: lea rdx,[rip+0x8ba9] # 0xcd40
+  4197: movabs rcx,0x4000000000000
+  41A1: call 0x24f4
+  41A6: mov edx,0x72
+  41AB: mov al,0xd
+  41AD: out dx,al
+  41AE: lea r8d,[rdx+0x1]
+  41B2: mov edx,r8d
+  41B5: in al,dx
+  41B6: mov cl,al
+  41B8: lea edx,[r8-0x1]
+  41BC: mov al,0xd
+  41BE: out dx,al
+  41BF: or cl,0x8
+  41C2: mov edx,r8d
+  41C5: mov al,cl
+  41C7: out dx,al
+  41C8: add rdi,0x28
+
+static call-graph result (depth<=4): +0x08 reaches 0x3F10 discard routine; +0x88 Set8, +0xC0 purge, +0x60, +0x68 do not
+strings: 0xCD00 '[AMD MemRestore] Discard current memory context', 0xCD40 '[AMD MemRestore] Discard current memory context for APCB update'

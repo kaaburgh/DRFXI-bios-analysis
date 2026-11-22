@@ -1,0 +1,1061 @@
+{
+ "source": "DRFXI 1.17 CbsSetupDxeRPL (identical in 1.15)",
+ "sync_routine": "0x45c4-0x5112",
+ "purpose": 3,
+ "entries": [
+  {
+   "token": "0xB331378E",
+   "setter": "Set32",
+   "setup_offset": 8,
+   "skip_if": null,
+   "guards": [],
+   "prompt": null,
+   "ifr_default": null,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x9DA294C2",
+   "setter": "Set8",
+   "setup_offset": 40,
+   "skip_if": "r13b",
+   "guards": [],
+   "prompt": "Core Performance Boost",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xD1091CD0",
+   "setter": "Set8",
+   "setup_offset": 50,
+   "skip_if": "0x3",
+   "guards": [
+    "[0x20] cmp 0xff"
+   ],
+   "prompt": "SMU and PSP Debug Mode",
+   "ifr_default": 3,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 1
+   }
+  },
+  {
+   "token": "0x6A6700FD",
+   "setter": "SetBool",
+   "setup_offset": 51,
+   "skip_if": "0xff",
+   "guards": [
+    "[0x20] cmp 0xff"
+   ],
+   "prompt": "PPIN Opt-in",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x2762E77B",
+   "setter": "Set8",
+   "setup_offset": 178,
+   "skip_if": "0xff",
+   "guards": [
+    "[0x20] cmp 0xff"
+   ],
+   "prompt": "Xtrig7 Workaround",
+   "ifr_default": 255,
+   "platform_default_main_apcb": {
+    "type": "u32",
+    "value": 1
+   }
+  },
+  {
+   "token": "0xCBC2C0DD",
+   "setter": "Set8",
+   "setup_offset": 185,
+   "skip_if": "0xff",
+   "guards": [
+    "[0x20] cmp 0xff"
+   ],
+   "prompt": "Action on BIST Failure",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xB0A37D17",
+   "setter": "Set8",
+   "setup_offset": 53,
+   "skip_if": "r13b",
+   "guards": [],
+   "prompt": "SMT Control",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xFFFE0B07",
+   "setter": "Set8",
+   "setup_offset": 57,
+   "skip_if": "0xff",
+   "guards": [],
+   "prompt": "Disable DF to external downstream IP Sync Flood Propagation",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x49639134",
+   "setter": "Set8",
+   "setup_offset": 58,
+   "skip_if": "0x3",
+   "guards": [],
+   "prompt": "Disable DF sync flood propagation",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xCE0176EF",
+   "setter": "Set8",
+   "setup_offset": 54,
+   "skip_if": "0x7",
+   "guards": [],
+   "prompt": "Memory interleaving",
+   "ifr_default": 7,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 2
+   }
+  },
+  {
+   "token": "0x2606C42E",
+   "setter": "Set8",
+   "setup_offset": 55,
+   "skip_if": "0x7",
+   "guards": [],
+   "prompt": "Memory interleaving size",
+   "ifr_default": 7,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 7
+   }
+  },
+  {
+   "token": "0x6574B2C0",
+   "setter": "Set8",
+   "setup_offset": 56,
+   "skip_if": "0x3",
+   "guards": [],
+   "prompt": "DRAM map inversion",
+   "ifr_default": 3,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 3
+   }
+  },
+  {
+   "token": "0x249E08D5",
+   "setter": "Set8",
+   "setup_offset": 444,
+   "skip_if": "0xff",
+   "guards": [],
+   "prompt": "Location of private memory regions",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xD06DBAFB",
+   "setter": "Set16",
+   "setup_offset": 279,
+   "skip_if": null,
+   "guards": [
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Memory Target Speed",
+   "ifr_default": 3200,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xFC195E5C",
+   "setter": "Set16",
+   "setup_offset": 282,
+   "skip_if": null,
+   "guards": [
+    "[0x119] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Tcl",
+   "ifr_default": 22,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xE31F1FCE",
+   "setter": "Set16",
+   "setup_offset": 285,
+   "skip_if": null,
+   "guards": [
+    "[0x11C] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trcd",
+   "ifr_default": 8,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x0DB8CB47",
+   "setter": "Set16",
+   "setup_offset": 288,
+   "skip_if": null,
+   "guards": [
+    "[0x11F] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trp",
+   "ifr_default": 8,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x5E367ACA",
+   "setter": "Set16",
+   "setup_offset": 291,
+   "skip_if": null,
+   "guards": [
+    "[0x122] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Tras",
+   "ifr_default": 30,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x7F877269",
+   "setter": "Set16",
+   "setup_offset": 294,
+   "skip_if": null,
+   "guards": [
+    "[0x125] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trc",
+   "ifr_default": 32,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x082D6E55",
+   "setter": "Set16",
+   "setup_offset": 297,
+   "skip_if": null,
+   "guards": [
+    "[0x128] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Twr",
+   "ifr_default": 48,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xBBEED68E",
+   "setter": "Set16",
+   "setup_offset": 300,
+   "skip_if": null,
+   "guards": [
+    "[0x12B] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trfc1",
+   "ifr_default": 50,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x2C5A76B2",
+   "setter": "Set16",
+   "setup_offset": 303,
+   "skip_if": null,
+   "guards": [
+    "[0x12E] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trfc2",
+   "ifr_default": 50,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x32EB3B5B",
+   "setter": "Set16",
+   "setup_offset": 306,
+   "skip_if": null,
+   "guards": [
+    "[0x131] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrfcSb",
+   "ifr_default": 50,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xE5AEA7D3",
+   "setter": "Set16",
+   "setup_offset": 309,
+   "skip_if": null,
+   "guards": [
+    "[0x134] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trtp",
+   "ifr_default": 9,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xA715EE94",
+   "setter": "Set16",
+   "setup_offset": 312,
+   "skip_if": null,
+   "guards": [
+    "[0x137] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrrdL",
+   "ifr_default": 4,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x89251A4E",
+   "setter": "Set16",
+   "setup_offset": 315,
+   "skip_if": null,
+   "guards": [
+    "[0x13A] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrrdS",
+   "ifr_default": 4,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xD8690C08",
+   "setter": "Set16",
+   "setup_offset": 318,
+   "skip_if": null,
+   "guards": [
+    "[0x13D] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Tfaw",
+   "ifr_default": 26,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xABA4CB4A",
+   "setter": "Set16",
+   "setup_offset": 321,
+   "skip_if": null,
+   "guards": [
+    "[0x140] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwtrL",
+   "ifr_default": 8,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xF65089FD",
+   "setter": "Set16",
+   "setup_offset": 324,
+   "skip_if": null,
+   "guards": [
+    "[0x143] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwtrS",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x796F2C65",
+   "setter": "Set16",
+   "setup_offset": 327,
+   "skip_if": null,
+   "guards": [
+    "[0x146] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrdrdScL",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x91364DC6",
+   "setter": "Set16",
+   "setup_offset": 330,
+   "skip_if": null,
+   "guards": [
+    "[0x149] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrdrdSc",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x627427BD",
+   "setter": "Set16",
+   "setup_offset": 333,
+   "skip_if": null,
+   "guards": [
+    "[0x14C] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrdrdSd",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x08E99B01",
+   "setter": "Set16",
+   "setup_offset": 336,
+   "skip_if": null,
+   "guards": [
+    "[0x14F] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TrdrdDd",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x86E6A99A",
+   "setter": "Set16",
+   "setup_offset": 339,
+   "skip_if": null,
+   "guards": [
+    "[0x152] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwrwrScL",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x275A3185",
+   "setter": "Set16",
+   "setup_offset": 342,
+   "skip_if": null,
+   "guards": [
+    "[0x155] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwrwrSc",
+   "ifr_default": 1,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x99B04933",
+   "setter": "Set16",
+   "setup_offset": 345,
+   "skip_if": null,
+   "guards": [
+    "[0x158] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwrwrSd",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x10B50ABC",
+   "setter": "Set16",
+   "setup_offset": 348,
+   "skip_if": null,
+   "guards": [
+    "[0x15B] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "TwrwrDd",
+   "ifr_default": 3,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x77AF3F93",
+   "setter": "Set16",
+   "setup_offset": 351,
+   "skip_if": null,
+   "guards": [
+    "[0x15E] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Twrrd",
+   "ifr_default": 5,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x1382572D",
+   "setter": "Set16",
+   "setup_offset": 354,
+   "skip_if": null,
+   "guards": [
+    "[0x161] cmp r13b",
+    "[0x116] cmp r13b"
+   ],
+   "prompt": "Trdwr",
+   "ifr_default": 5,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x275C400A",
+   "setter": "Set8",
+   "setup_offset": 356,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Processor CK drive strengths",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x82648A4F",
+   "setter": "Set8",
+   "setup_offset": 357,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Processor CA drive strengths",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x4891D431",
+   "setter": "Set8",
+   "setup_offset": 358,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Processor CS drive strengths",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xA085FAD9",
+   "setter": "Set8",
+   "setup_offset": 359,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram ODT impedance RTT_NOM_WR",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x668AC7E7",
+   "setter": "Set8",
+   "setup_offset": 360,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram ODT impedance RTT_NOM_RD",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x29AD741F",
+   "setter": "Set8",
+   "setup_offset": 361,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram ODT impedance RTT_WR",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xDF253FE7",
+   "setter": "Set8",
+   "setup_offset": 362,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram ODT impedance RTT_PARK",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xFFEDC3F7",
+   "setter": "Set8",
+   "setup_offset": 363,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram ODT impedance DQS_RTT_PARK",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xB88F40C8",
+   "setter": "Set8",
+   "setup_offset": 364,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Processor ODT impedance",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x62985EDE",
+   "setter": "Set8",
+   "setup_offset": 365,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Processor DQ drive strengths",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xC4765F1F",
+   "setter": "Set8",
+   "setup_offset": 366,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Dram DQ drive strengths",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x6E6B60F7",
+   "setter": "Set8",
+   "setup_offset": 367,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Power Down Enable",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xF77A05F1",
+   "setter": "Set8",
+   "setup_offset": 368,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Disable Memory Error Injection",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x5F1DE498",
+   "setter": "Set8",
+   "setup_offset": 369,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "ECC",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xF0869ECA",
+   "setter": "SetBool",
+   "setup_offset": 370,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "TSME",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x8D67F9E4",
+   "setter": "Set8",
+   "setup_offset": 371,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Data Scramble",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xA196A838",
+   "setter": "Set8",
+   "setup_offset": 372,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Chipselect Interleaving",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x27CC2068",
+   "setter": "Set8",
+   "setup_offset": 373,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Address Hash Bank",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x91D21E3F",
+   "setter": "Set8",
+   "setup_offset": 374,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Address Hash CS",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x3664DBA5",
+   "setter": "Set8",
+   "setup_offset": 649,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Address Hash Subchannel",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x7EF11128",
+   "setter": "Set8",
+   "setup_offset": 375,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "BankSwapMode",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x909D9E12",
+   "setter": "Set8",
+   "setup_offset": 376,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "DFE Read Training",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x299EAED1",
+   "setter": "Set8",
+   "setup_offset": 609,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "DRAM PDA Enumerate ID Programming Mode",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x664706F1",
+   "setter": "Set8",
+   "setup_offset": 712,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "TX DFE Taps",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x085711CF",
+   "setter": "Set8",
+   "setup_offset": 724,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "PPT Control",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x7DCB2DA5",
+   "setter": "Set8",
+   "setup_offset": 377,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "MBIST Enable",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x96DF25CA",
+   "setter": "Set8",
+   "setup_offset": 378,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "MBIST Test Mode",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xB46EF9AB",
+   "setter": "Set8",
+   "setup_offset": 379,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "MBIST Aggressors",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x3B782D55",
+   "setter": "Set8",
+   "setup_offset": 380,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "MBIST Per Bit Slave Die Reporting",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x5988CFA6",
+   "setter": "Set8",
+   "setup_offset": 381,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Pattern Select",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x108BB3E6",
+   "setter": "Set8",
+   "setup_offset": 382,
+   "skip_if": null,
+   "guards": [
+    "[0x2CE] cmp r13b"
+   ],
+   "prompt": "Pattern Length",
+   "ifr_default": 6,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x02FC8CA9",
+   "setter": "Set8",
+   "setup_offset": 383,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Aggressor Channel",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xFEDB01F8",
+   "setter": "SetBool",
+   "setup_offset": 611,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "Memory Context Restore",
+   "ifr_default": 255,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 1
+   }
+  },
+  {
+   "token": "0x1FB35295",
+   "setter": "Set8",
+   "setup_offset": 68,
+   "skip_if": "0xf",
+   "guards": [],
+   "prompt": "iGPU Configuration",
+   "ifr_default": 1,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 2
+   }
+  },
+  {
+   "token": "0xA00D4B57",
+   "setter": "Set8",
+   "setup_offset": 69,
+   "skip_if": "0xf",
+   "guards": [
+    "[0x20] cmp bpl"
+   ],
+   "prompt": "UMA Version",
+   "ifr_default": 15,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x37B1F8CF",
+   "setter": "Set32",
+   "setup_offset": 70,
+   "skip_if": "0xffffffff",
+   "guards": [
+    "[0x44] cmp r13b"
+   ],
+   "prompt": "UMA Frame buffer Size",
+   "ifr_default": 2048,
+   "platform_default_main_apcb": {
+    "type": "u32",
+    "value": 1024
+   }
+  },
+  {
+   "token": "0xEEED60BA",
+   "setter": "SetBool",
+   "setup_offset": 74,
+   "skip_if": "r15b",
+   "guards": [
+    "[0x20] cmp bpl"
+   ],
+   "prompt": "GPU Host Translation Cache",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 1
+   }
+  },
+  {
+   "token": "0x4367CBD2",
+   "setter": "Set8",
+   "setup_offset": 99,
+   "skip_if": "r15b",
+   "guards": [
+    "[0x20] cmp bpl"
+   ],
+   "prompt": "FCH Spread Spectrum",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 1
+   }
+  },
+  {
+   "token": "0x87958B5A",
+   "setter": "SetBool",
+   "setup_offset": 727,
+   "skip_if": "r15b",
+   "guards": [],
+   "prompt": "ESPI ABL Init",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 1
+   }
+  },
+  {
+   "token": "0xF1823F38",
+   "setter": "Set8",
+   "setup_offset": 608,
+   "skip_if": "bpl",
+   "guards": [
+    "[0x20] cmp bpl"
+   ],
+   "prompt": "Infinity Fabric Frequency and Dividers",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xFA826511",
+   "setter": "Set8",
+   "setup_offset": 612,
+   "skip_if": "bpl",
+   "guards": [
+    "[0x20] cmp bpl"
+   ],
+   "prompt": "SyncFifo Mode Override",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x016DA8CA",
+   "setter": "Set8",
+   "setup_offset": 722,
+   "skip_if": "0xfe",
+   "guards": [],
+   "prompt": "Trusted Platform Module",
+   "ifr_default": 254,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 1
+   }
+  },
+  {
+   "token": "0xDDB759DA",
+   "setter": "Set8",
+   "setup_offset": 169,
+   "skip_if": "0x2",
+   "guards": [],
+   "prompt": "ABL Console Out Control",
+   "ifr_default": 2,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 0
+   }
+  },
+  {
+   "token": "0x4B993A83",
+   "setter": "Set8",
+   "setup_offset": 170,
+   "skip_if": null,
+   "guards": [
+    "[0xA9] cmp r13b"
+   ],
+   "prompt": "ABL Console Out Boot Mode Select",
+   "ifr_default": 255,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0xAF6D3A6F",
+   "setter": "Set8",
+   "setup_offset": 171,
+   "skip_if": "bpl",
+   "guards": [
+    "[0xA9] cmp r13b"
+   ],
+   "prompt": "ABL PMU message Control",
+   "ifr_default": 255,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 255
+   }
+  },
+  {
+   "token": "0x4967F4FC",
+   "setter": "Set8",
+   "setup_offset": 163,
+   "skip_if": "bpl",
+   "guards": [],
+   "prompt": "PSP RPMC Switch",
+   "ifr_default": 255,
+   "platform_default_main_apcb": {
+    "type": "u8",
+    "value": 0
+   }
+  },
+  {
+   "token": "0x072DB576",
+   "setter": "Set8",
+   "setup_offset": 164,
+   "skip_if": "r15b",
+   "guards": [],
+   "prompt": "AIM-T / Moselle support",
+   "ifr_default": 15,
+   "platform_default_main_apcb": null
+  },
+  {
+   "token": "0x441D2982",
+   "setter": "SetBool",
+   "setup_offset": 165,
+   "skip_if": "r15b",
+   "guards": [
+    "[0xA4] cmp r13b"
+   ],
+   "prompt": "Wireless Manageability",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 0
+   }
+  },
+  {
+   "token": "0x58E10F2C",
+   "setter": "SetBool",
+   "setup_offset": 166,
+   "skip_if": "r15b",
+   "guards": [
+    "[0xA5] cmp r13b",
+    "[0xA4] cmp r13b"
+   ],
+   "prompt": "KVM for Wireless Manageability",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 0
+   }
+  },
+  {
+   "token": "0x0202CB32",
+   "setter": "SetBool",
+   "setup_offset": 168,
+   "skip_if": "r15b",
+   "guards": [
+    "[0xA4] cmp r13b"
+   ],
+   "prompt": "KVM for Wired Manageability",
+   "ifr_default": 15,
+   "platform_default_main_apcb": {
+    "type": "bool",
+    "value": 0
+   }
+  }
+ ]
+}

@@ -65,6 +65,10 @@ The function also uses CMOS index `0x66` through ports `0x70/0x71` as state asso
 
 A successful state transition ends in a hard reset using I/O port `0xCF9` with value `0x06`.
 
+## APCB side effect (2026-11-22)
+
+After `SetVariable(AmdSetupRPL)` the function also locates the AMD APCB service protocol (`7189e04e-6284-4953-a543-a31f89a1a7bf`), reads and sets token `0x1FB35295` (the APCB counterpart of `iGPU Configuration`, pushed by CBS from offset `0x44` with purpose 3) and calls the flush member (`+0x08`) before the CF9h reset. In `AmdApcbDxeV3` that flush path discards the saved memory context, so every dGPU appear/disappear transition is followed by a full memory training. See `../../evidence/memory-117/10-oemdxe-117-apcb-write.txt` and `09-apcb-flush-discards-memory-context.txt`.
+
 ## Confidence
 
 This is a **confirmed code-level mapping** of the 1.17 changelog item, not merely a correlation based on module names or strings.

@@ -1,0 +1,83 @@
+# AMD PSP/BIOS directory entries (1.15 image; equality vs 1.17 at the same flash range)
+# tool: scripts/fwtools/pspdir.py
+
+EFS @20000: 55AA55AA 00000000 00000000 00000000 00000000 00121000 00000000 00000000 00000000 00000000 00000000 00122000 00000000 00000000 00000000 FFFFFFFF
+$PL2@019D000 type=00 sub/inst=00 flags=00 size=00000440 addr=019D400 AMD pubkey             SAME
+$PL2@019D000 type=01 sub/inst=00 flags=00 size=00001F00 addr=019D900 PSP bootloader         SAME
+$PL2@019D000 type=73 sub/inst=00 flags=00 size=00012600 addr=019F800 ?                      SAME
+$PL2@019D000 type=76 sub/inst=00 flags=00 size=00001250 addr=01B1E00 ?                      SAME
+$PL2@019D000 type=02 sub/inst=00 flags=00 size=00016470 addr=01B3100 PSP secure OS          SAME
+$PL2@019D000 type=08 sub/inst=01 flags=00 size=00021C40 addr=01C9600 SMU FW                 SAME
+$PL2@019D000 type=09 sub/inst=00 flags=00 size=00000440 addr=01EB300 SD unlock key          SAME
+$PL2@019D000 type=0B sub/inst=00 flags=00 size=FFFFFFFF addr=000C041 soft fuse              
+$PL2@019D000 type=0C sub/inst=00 flags=00 size=00023100 addr=01EB800 ?                      SAME
+$PL2@019D000 type=13 sub/inst=00 flags=00 size=00002180 addr=020E900 early SD unlock        SAME
+$PL2@019D000 type=20 sub/inst=00 flags=00 size=00000610 addr=0210B00 IP discovery           SAME
+$PL2@019D000 type=21 sub/inst=00 flags=00 size=00000030 addr=0211200 wrapped iKEK           SAME
+$PL2@019D000 type=24 sub/inst=00 flags=00 size=00004C20 addr=0211300 sec policy             SAME
+$PL2@019D000 type=28 sub/inst=00 flags=00 size=00023890 addr=0216000 sys drv                SAME
+$PL2@019D000 type=2A sub/inst=01 flags=00 size=0000E050 addr=0239900 ?                      SAME
+$PL2@019D000 type=2D sub/inst=00 flags=00 size=00003100 addr=0247A00 ?                      SAME
+$PL2@019D000 type=30 sub/inst=00 flags=00 size=0006BA50 addr=024AB00 ABL0                   SAME
+$PL2@019D000 type=3C sub/inst=00 flags=00 size=00001900 addr=02B6600 ?                      SAME
+$PL2@019D000 type=42 sub/inst=00 flags=00 size=0000CDB0 addr=02B7F00 ?                      SAME
+$PL2@019D000 type=44 sub/inst=00 flags=00 size=00006610 addr=02C4D00 ?                      SAME
+$PL2@019D000 type=45 sub/inst=00 flags=00 size=00002450 addr=02CB400 ?                      SAME
+$PL2@019D000 type=47 sub/inst=00 flags=00 size=00006100 addr=02CD900 ?                      SAME
+$PL2@019D000 type=49 sub/inst=00 flags=00 size=00000400 addr=051D000 BIOS L2 dir (from PSP) SAME
+$BL2@051D000 type=68 sub/inst=00 flags=00 size=00004000 addr=051D400 APCB backup            DIFF(3 bytes)
+$BL2@051D000 type=60 sub/inst=20 flags=00 size=00003000 addr=0522000 APCB                   DIFF(3 bytes)
+$BL2@051D000 type=68 sub/inst=00 flags=80 size=00003000 addr=0525000 APCB backup            DIFF(3 bytes)
+$BL2@051D000 type=61 sub/inst=00 flags=00 size=00000000 addr=0000000 APOB(ram)              
+$BL2@051D000 type=62 sub/inst=00 flags=0B size=00500020 addr=1E02000 BIOS RTM/reset image   
+$BL2@051D000 type=62 sub/inst=00 flags=1B size=00500020 addr=1C02000 BIOS RTM/reset image   
+$BL2@051D000 type=63 sub/inst=20 flags=00 size=00028000 addr=0125000 APOB NV                SAME BLANK(FF)
+$BL2@051D000 type=64 sub/inst=00 flags=10 size=00005F10 addr=0528000 PMU FW code            SAME
+$BL2@051D000 type=65 sub/inst=00 flags=10 size=000004D0 addr=052E000 PMU FW data            SAME
+$BL2@051D000 type=64 sub/inst=00 flags=20 size=000058E0 addr=052E500 PMU FW code            SAME
+$BL2@051D000 type=65 sub/inst=00 flags=20 size=00000250 addr=0533E00 PMU FW data            SAME
+$BL2@051D000 type=64 sub/inst=00 flags=90 size=00002CE0 addr=0534100 PMU FW code            SAME
+$BL2@051D000 type=65 sub/inst=00 flags=90 size=000003B0 addr=0536E00 PMU FW data            SAME
+$BL2@051D000 type=6D sub/inst=20 flags=00 size=00020000 addr=1BC0000 ?                      SAME BLANK(FF)
+$BL2@051D000 type=6D sub/inst=20 flags=10 size=00020000 addr=1BE0000 ?                      DIFF(680 bytes)
+$BL2@051D000 type=6D sub/inst=20 flags=20 size=00010000 addr=1BB0000 ?                      SAME BLANK(FF)
+$BL2@051D000 type=66 sub/inst=00 flags=00 size=000015C0 addr=0537200 microcode              SAME
+$BL2@051D000 type=66 sub/inst=00 flags=10 size=000015C0 addr=0538800 microcode              SAME
+$PL2@019D000 type=50 sub/inst=00 flags=00 size=00001DF0 addr=02D3A00 ?                      SAME
+$PL2@019D000 type=51 sub/inst=00 flags=00 size=00001310 addr=02D5800 ?                      SAME
+$PL2@019D000 type=55 sub/inst=00 flags=00 size=000006A0 addr=02D6C00 ?                      SAME
+$PL2@019D000 type=5A sub/inst=00 flags=00 size=00000520 addr=02D7300 MSMU                   SAME
+$PL2@019D000 type=5C sub/inst=00 flags=00 size=00000B20 addr=02D7900 SPIROM cfg             SAME
+$PL2@019D000 type=5D sub/inst=00 flags=00 size=000164F0 addr=02D8500 ?                      SAME
+$PL2@019D000 type=5F sub/inst=00 flags=00 size=00060000 addr=02EEA00 ?                      SAME
+$PL2@019D000 type=71 sub/inst=00 flags=00 size=0002FA10 addr=034EA00 ?                      SAME
+$PL2@019D000 type=8D sub/inst=00 flags=00 size=00000030 addr=037E500 ?                      SAME
+$PL2@019D000 type=91 sub/inst=00 flags=00 size=00005560 addr=037E600 ?                      SAME
+$PL2@019D000 type=93 sub/inst=00 flags=00 size=00028000 addr=014D000 ?                      SAME
+$PL2@019D000 type=93 sub/inst=00 flags=00 size=00028000 addr=0175000 ?                      SAME
+$PL2@019D000 type=04 sub/inst=00 flags=00 size=00020000 addr=00C1000 PSP NV data            SAME BLANK(FF)
+$PL2@019D000 type=54 sub/inst=00 flags=00 size=00040000 addr=00E1000 PSP NVRAM (RPMC)       SAME BLANK(FF)
+
+differing bytes in first 16 MiB (AMD/PSP part): 18
+
+# AMI ROM layout table (FFS 0dca793a-..., sub-GUID 88a15a4f-...), 24-byte records: addr(u64) offset size type attributes
+# identical in 1.15 and 1.17: True (sha256 7f8e5a3f0e4b4937)
+  off=0x1E00000 size=0x0200000 type=0 attr=0x0000660A
+  off=0x1C00000 size=0x0200000 type=0 attr=0x0000660A
+  off=0x1BE0000 size=0x0020000 type=0 attr=0x00006200
+  off=0x1BC0000 size=0x0020000 type=1 attr=0x00006200
+  off=0x1BB0000 size=0x0010000 type=1 attr=0x00000000
+  off=0x1BAF000 size=0x0001000 type=0 attr=0x00004000
+  off=0x1000000 size=0x0BAF000 type=0 attr=0x00000208
+  off=0x00C1000 size=0x0F3F000 type=1 attr=0x00006200
+  off=0x0081000 size=0x0040000 type=1 attr=0x00000200
+  off=0x0041000 size=0x0040000 type=1 attr=0x00000200
+  off=0x0039000 size=0x0008000 type=1 attr=0x00000200
+  off=0x0031000 size=0x0008000 type=1 attr=0x00000200
+  off=0x0029000 size=0x0008000 type=1 attr=0x00000200
+  off=0x0021000 size=0x0008000 type=1 attr=0x00000200
+  off=0x0020000 size=0x0001000 type=1 attr=0x00000000
+  off=0x0011000 size=0x000F000 type=1 attr=0x00000200
+  off=0x0001000 size=0x0010000 type=1 attr=0x00000200
+  off=0x0000000 size=0x0001000 type=1 attr=0x00000200
+# attribute bit meanings are AMI-private and NOT decoded here; no conclusion is drawn from them.
