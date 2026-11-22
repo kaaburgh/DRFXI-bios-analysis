@@ -12,7 +12,8 @@ What it reports
   * whether APOB NV (saved training data, flash 0x125000) is blank or populated,
   * AmdSetupRPL (from the dump's NVRAM or from --amdsetup): DRAM fields, Ctrl gates,
   * the APCB tokens a CBS sync would produce from that variable and every divergence from SPI,
-  * the boot-time resync predicate: AmdSetupRPL[0x08] vs APCB token 0xB331378E.
+  * the boot-time resync predicate: AmdSetupRPL[0x08] vs APCB token 0xB331378E ('RECV' = recovery reset),
+  * the AmdSetupRPL header signature (0xFC4053AA; anything else is migrated over code defaults on the next boot).
 
 Limitations: the NVAR chain walker follows the public UEFITool interpretation (Next = offset relative to the
 entry, 0xFFFFFF terminates) and has only been exercised on official images and synthetic chains.
@@ -92,20 +93,29 @@ def main():
             vars_ = nvar_variables(nv[f + 24:f + fsize])
             print("NVRAM @%X: %d named variables: %s" % (NV_MAIN, len(vars_), ", ".join(sorted(k[0] for k in vars_))))
             setup = vars_.get(("AmdSetupRPL", SETUP_GUID))
-            if setup is None: print("   AmdSetupRPL not stored -> StdDefaults apply ([0x08]=0 -> CBS resync on next boot)")
+            if setup is None: print("   AmdSetupRPL not stored -> CbsSetupDxeRPL recreates it from code defaults (generation 0x4B9D5809);\n"
+                                    "   a resync runs only if the override APCB token 0xB331378E differs from 0x4B9D5809")
     if a.amdsetup:
         raw = open(a.amdsetup, "rb").read()
         setup = raw[4:] if len(raw) == 0x6D5 + 4 else raw
     if setup is None:
         return
     if len(setup) != 0x6D5: print("WARNING: AmdSetupRPL length 0x%X != 0x6D5" % len(setup))
+    sig = struct.unpack_from("<I", setup, 0)[0]
+    if sig != 0xFC4053AA:
+        ln = struct.unpack_from("<I", setup, 4)[0]
+        if 0x21 <= ln <= 0x6D4:
+            print("\nAmdSetupRPL header signature 0x%08X != 0xFC4053AA -> next boot keeps bytes 0x20..0x%X and takes everything else from code defaults (generation 0x4B9D5809)" % (sig, ln))
+        else:
+            print("\nAmdSetupRPL header signature 0x%08X != 0xFC4053AA and length field 0x%X out of range -> next boot REPLACES all settings with code defaults" % (sig, ln))
     print("\nAmdSetupRPL: [0x08] sync generation = 0x%08X; Active Memory Timing Settings [0x116] = 0x%02X (%s); Memory Context Restore [0x263] = 0x%02X; Power Down [0x16F] = 0x%02X; iGPU [0x44] = 0x%02X" % (
         struct.unpack_from("<I", setup, 8)[0], setup[0x116], {1: "Enabled", 0xFF: "Auto -> no timing token is pushed"}.get(setup[0x116], "?"), setup[0x263], setup[0x16F], setup[0x44]))
     if spi_tokens:
         tok = spi_tokens.get(0xB331378E)
         print("boot-time resync predicate: AmdSetupRPL[0x08]=0x%08X vs APCB 0xB331378E=%s -> %s" % (
             struct.unpack_from("<I", setup, 8)[0], "0x%08X" % tok if tok is not None else "absent",
-            "in sync (no automatic resync)" if tok == struct.unpack_from("<I", setup, 8)[0] else "MISMATCH -> CbsSetupDxeRPL resyncs APCB on next boot (APCB flush -> memory context discarded)"))
+            "in sync (no automatic resync)" if tok == struct.unpack_from("<I", setup, 8)[0] else
+            ("'RECV' -> CbsSetupDxeRPL resets CBS to code defaults and resyncs" if tok == 0x56434552 else "MISMATCH -> CbsSetupDxeRPL resyncs APCB on next boot (APCB flush -> memory context discarded)")))
     exp = expected_tokens(setup, cmap)
     print("\nDRAM-relevant CBS entries (expected after a CBS sync vs. stored in SPI override APCB):")
     for tid, (ok, val, name) in exp.items():

@@ -20,7 +20,8 @@ analysis environment; where results overlap with earlier UEFIExtract-based check
 | `nvar.py` | AMI NVAR store entries |
 | `ifrmini.py` | minimal IFR + HII string reader (questions, varstores, defaults, ranges, options) |
 | `cbs_apcb_map.py` | recover the CbsSetupDxeRPL setup-offset → APCB-token push table from disassembly |
-| `run_x64_leaf.py` | run a hash-checked, self-contained x64 leaf function natively (used once, for the CBS fingerprint) |
+| `straightline_eval.py` | evaluate straight-line x64 routines from objdump text (no execution): CBS code defaults (0x3E58) and fingerprint (0x5134) |
+| `run_x64_leaf.py` | optional native cross-check of a self-contained leaf function (`--exec-fingerprint`); not required |
 | `memory117_evidence.py` | regenerate `evidence/memory-117/` from the two official packages (fail-closed on hashes) |
 | `memory_state_report.py` | **read-only diagnostics**: offline report of effective memory configuration from an owner-made SPI dump and/or an efivarfs export of `AmdSetupRPL` |
 
@@ -29,12 +30,12 @@ analysis environment; where results overlap with earlier UEFIExtract-based check
 ```bash
 python3 -I scripts/fwtools/memory117_evidence.py \
     /path/DRFXI_1.15_260105A.7z /path/DRFXI_1.17_260828A.7z \
-    /tmp/drfxi-work evidence/memory-117 --exec-fingerprint
+    /tmp/drfxi-work evidence/memory-117
 ```
 
 Keep the work directory outside the repository; it contains complete vendor firmware trees.
-`--exec-fingerprint` executes 3 KiB of pure arithmetic code from `CbsSetupDxeRPL` natively after the
-script checks that the routine has no calls or RIP-relative references; omit the flag to skip that step.
+Vendor code is not executed: `straightline_eval.py` interprets the disassembly text. `--exec-fingerprint` adds an
+optional native cross-check of the fingerprint routine (same results).
 
 ## Read-only state report (future hardware checks)
 

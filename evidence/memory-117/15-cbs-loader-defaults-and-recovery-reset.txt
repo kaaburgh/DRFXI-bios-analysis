@@ -1,0 +1,207 @@
+# CbsSetupDxeRPL boot sequence (entry 0x10C4..0x1129, identical in 1.15): allocate 'CBSD' private data, HII ConfigAccess
+#   (ExtractConfig 0x894, RouteConfig 0xB58 = Setup save -> sync, Callback 0xC60), then 0xD68 (APCB-recovery reset) and 0xE68 (loader).
+  10E2: lea rbx,[rax+0x38]
+  10E6: mov QWORD PTR [rax],0x44534243
+  10ED: lea rax,[rip+0xfffffffffffff7a0] # 0x894
+  10F4: mov edx,0x6d5
+  10F9: mov QWORD PTR [rbx],rax
+  10FC: mov ecx,esi
+  10FE: lea rax,[rip+0xfffffffffffffa53] # 0xb58
+  1105: mov QWORD PTR [rdi+0x40],rax
+  1109: lea rax,[rip+0xfffffffffffffb50] # 0xc60
+  1110: mov QWORD PTR [rdi+0x48],rax
+  1114: call 0x247c
+  1119: mov rcx,rdi
+  111C: mov QWORD PTR [rdi+0x18],rax
+  1120: call 0xd68
+  1125: mov rcx,QWORD PTR [rdi+0x18]
+  1129: call 0xe68
+
+## 0xD68: if APOB-protocol(0de50221-faaa-45ba-90b9-7bcc26ec60cf, installed by ApobRplDxe) +0x08 'ApobApcbRecoveryFlag' is set,
+##   or APCB token 0xB331378E == 'RECV' (0x56434552), the CBS buffer is rebuilt from code defaults, resynced and written back.
+   DA6: mov rax,QWORD PTR [rbp-0x10]
+   DAA: lea r9,[rbp+0x38]
+   DAE: mov r8d,0xb331378e
+   DB4: lea rdx,[rbp+0x28]
+   DB8: mov rcx,rax
+   DBB: call QWORD PTR [rax+0xa0]
+   DC1: mov ecx,DWORD PTR [rbp+0x38]
+   DC4: test rax,rax
+   DC7: cmovne ecx,esi
+   DCA: mov DWORD PTR [rbp+0x38],ecx
+   DCD: call 0x5ee0
+   DD2: mov rbx,rax
+   DD5: test rax,rax
+   DD8: jns 0xde6
+   DDA: mov ecx,0x20390086
+   DDF: call 0x61c0
+   DE4: jmp 0xdf7
+   DE6: mov rax,QWORD PTR [rip+0x7203] # 0x7ff0
+   DED: lea rcx,[rbp+0x30]
+   DF1: call QWORD PTR [rax+0x8]
+   DF4: mov rbx,rax
+   DF7: test rbx,rbx
+   DFA: jne 0xe56
+   DFC: cmp BYTE PTR [rbp+0x30],sil
+   E00: jne 0xe0b
+   E02: cmp DWORD PTR [rbp+0x38],0x56434552
+   E09: jne 0xe56
+   E0B: mov rcx,QWORD PTR [rdi+0x18]
+   E0F: call 0x3e58
+   E14: mov rcx,QWORD PTR [rdi+0x18]
+   E18: call 0x3cc0
+   E1D: mov rcx,QWORD PTR [rdi+0x18]
+   E21: call 0x3c3c
+   E26: mov rax,QWORD PTR [rdi+0x18]
+   E2A: lea rdx,[rip+0x617f] # 0x6fb0
+   E31: mov QWORD PTR [rsp+0x20],rax
+   E36: lea rcx,[rip+0x62b3] # 0x70f0
+   E3D: mov rax,QWORD PTR [rip+0x7134] # 0x7f78
+   E44: mov r9d,0x6d5
+   E4A: mov r8d,0x7
+   E50: call QWORD PTR [rax+0x58]
+   E53: mov rbx,rax
+
+fingerprint routine never returns 'RECV' (tail: cmp edx,0x56434552 / cmovne):
+  5ED5: cmp edx,0x56434552
+  5EDB: cmovne eax,edx
+  5EDE: ret
+
+## 0xE68 loader: GetVariable(AmdSetupRPL); missing or size != 0x6D5 -> code defaults (0x3E58) -> 0x3CC0 -> generation check -> SetVariable;
+##   present with header signature != code-default signature -> migrate bytes 0x20..[+4) over code defaults -> check -> SetVariable;
+##   present with matching signature -> generation check only.
+   E68: mov rax,rsp
+   E6B: mov QWORD PTR [rax+0x8],rbx
+   E6F: mov QWORD PTR [rax+0x18],rbp
+   E73: push rsi
+   E74: push rdi
+   E75: push r14
+   E77: sub rsp,0x30
+   E7B: and QWORD PTR [rax+0x10],0x0
+   E80: lea r9,[rax+0x10]
+   E84: mov QWORD PTR [rax-0x28],rcx
+   E88: lea rbp,[rip+0x6121] # 0x6fb0
+   E8F: mov rax,QWORD PTR [rip+0x70e2] # 0x7f78
+   E96: lea r14,[rip+0x6253] # 0x70f0
+   E9D: mov rbx,rcx
+   EA0: xor r8d,r8d
+   EA3: mov rdx,rbp
+   EA6: mov rcx,r14
+   EA9: call QWORD PTR [rax+0x48]
+   EAC: movabs rcx,0x8000000000000005
+   EB6: mov esi,0x6d5
+   EBB: cmp rax,rcx
+   EBE: jne 0xfb6
+   EC4: cmp QWORD PTR [rsp+0x58],rsi
+   EC9: jne 0xfb6
+   ECF: mov rax,QWORD PTR [rip+0x70a2] # 0x7f78
+   ED6: lea r9,[rsp+0x58]
+   EDB: xor r8d,r8d
+   EDE: mov QWORD PTR [rsp+0x20],rbx
+   EE3: mov rdx,rbp
+   EE6: mov rcx,r14
+   EE9: call QWORD PTR [rax+0x48]
+   EEC: test rax,rax
+   EEF: jns 0xf15
+   EF1: mov rcx,rbx
+   EF4: call 0x3e58
+   EF9: call 0x3cc0
+   EFE: mov rcx,rbx
+   F01: mov QWORD PTR [rsp+0x58],rsi
+   F06: call 0x3c3c
+   F0B: mov r9,QWORD PTR [rsp+0x58]
+   F10: jmp 0xfd3
+   F15: mov rdx,rsi
+   F18: mov ecx,0x4
+   F1D: call 0x247c
+   F22: mov rdi,rax
+   F25: test rax,rax
+   F28: je 0xfee
+   F2E: mov rcx,rax
+   F31: call 0x3e58
+   F36: mov ecx,DWORD PTR [rcx]
+   F38: cmp DWORD PTR [rbx],ecx
+   F3A: je 0xf9f
+   F3C: mov eax,DWORD PTR [rbx+0x4]
+   F3F: lea ecx,[rax-0x21]
+   F42: cmp ecx,0x6b4
+   F48: ja 0xf64
+   F4A: add eax,0xffffffe0
+   F4D: lea rdx,[rbx+0x20]
+   F51: mov r8d,eax
+   F54: lea rcx,[rdi+0x20]
+   F58: je 0xf64
+   F5A: cmp rcx,rdx
+   F5D: je 0xf64
+   F5F: call 0x310
+   F64: cmp rbx,rdi
+   F67: je 0xf77
+   F69: mov r8,rsi
+   F6C: mov rdx,rdi
+   F6F: mov rcx,rbx
+   F72: call 0x310
+   F77: mov rcx,rbx
+   F7A: call 0x3c3c
+   F7F: mov rax,QWORD PTR [rip+0x6ff2] # 0x7f78
+   F86: mov r9,rsi
+   F89: mov r8d,0x7
+   F8F: mov QWORD PTR [rsp+0x20],rbx
+   F94: mov rdx,rbp
+   F97: mov rcx,r14
+   F9A: call QWORD PTR [rax+0x58]
+   F9D: jmp 0xfa7
+   F9F: mov rcx,rbx
+   FA2: call 0x3c3c
+   FA7: mov rax,QWORD PTR [rip+0x6fc2] # 0x7f70
+   FAE: mov rcx,rdi
+   FB1: call QWORD PTR [rax+0x48]
+   FB4: jmp 0xfee
+   FB6: mov rcx,rbx
+   FB9: call 0x3e58
+   FBE: call 0x3cc0
+   FC3: mov rcx,rbx
+   FC6: call 0x3c3c
+   FCB: mov r9,rsi
+   FCE: mov QWORD PTR [rsp+0x58],rsi
+   FD3: mov rax,QWORD PTR [rip+0x6f9e] # 0x7f78
+   FDA: mov r8d,0x7
+   FE0: mov rdx,rbp
+   FE3: mov QWORD PTR [rsp+0x20],rbx
+   FE8: mov rcx,r14
+   FEB: call QWORD PTR [rax+0x58]
+
+## code defaults (0x3E58) evaluated from the disassembly text by scripts/fwtools/straightline_eval.py (no native execution):
+115: header sig=0xFC4053AA len=0x2D8 gen=0x4B9D5809 | written bytes 707; body differences vs StdDefaults: 0; StdDefaults non-zero where builder writes nothing: 0; StdDefaults header = 000000000000000000000000
+117: header sig=0xFC4053AA len=0x2D8 gen=0x4B9D5809 | written bytes 707; body differences vs StdDefaults: 0; StdDefaults non-zero where builder writes nothing: 0; StdDefaults header = 000000000000000000000000
+code defaults identical 1.15 vs 1.17: True
+=> after an NVRAM reset the variable is recreated as StdDefaults-equivalent settings with generation 0x4B9D5809 = the image's APCB token:
+   no automatic resync and no CBS-side APCB flush occur when the APCB in SPI is the image copy (see 14-*).
+
+## ApobRplDxe APOB protocol interface (@0x28F0): +0x00->0x162C, +0x08->0x15C8, +0x10->0x16A8, +0x18->0x1748, +0x20->0x1790, +0x28->0x17E8, +0x30->0x185C, +0x38->0x18D0
+   +0x00 'Fail to get ApobApcbInstance', +0x08 'Fail to get ApobApcbRecoveryFlag' (byte +0x65 of the APOB entry), +0x10 'Fail to get DimmCfgUpdatedFlag'
+  15C8: rex push rbx
+  15CA: sub rsp,0x30
+  15CE: and QWORD PTR [rsp+0x40],0x0
+  15D4: lea rax,[rsp+0x40]
+  15D9: xor r8d,r8d
+  15DC: mov BYTE PTR [rcx],0x0
+  15DF: mov rbx,rcx
+  15E2: mov QWORD PTR [rsp+0x20],rax
+  15E7: lea edx,[r8+0x10]
+  15EB: lea ecx,[rdx-0xf]
+  15EE: call 0x2648
+  15F3: mov rdx,rax
+  15F6: test rax,rax
+  15F9: jns 0x1618
+  15FB: lea rdx,[rip+0x1626] # 0x2c28
+  1602: mov ecx,0x80000000
+  1607: call 0xa58
+  160C: movabs rax,0x800000000000000e
+  1616: jmp 0x1625
+  1618: mov rax,QWORD PTR [rsp+0x40]
+  161D: mov cl,BYTE PTR [rax+0x65]
+  1620: mov rax,rdx
+  1623: mov BYTE PTR [rbx],cl
+  1625: add rsp,0x30
+  1629: pop rbx
+  162A: ret

@@ -46,7 +46,7 @@ See `docs/findings/amd-variable-protection.md` and `docs/checkpoints/2026-09-12-
 
 ### DDR5 1.15 → 1.17 regression — static analysis
 
-All 1.15→1.17 deltas are classified; none touches DRAM timing selection, training, APCB data or DRAM voltages. The causal candidate is the update-time configuration/training reset (identical in both versions) plus Memory Context Restore being effectively on by default; 1.17's only lifecycle addition is the `OemDxe` APCB flush on dGPU state changes. Do not repeat module-level diffs; resume only with hardware read-only data, AFU coverage evidence, or a 1.16 image.
+All 1.15→1.17 deltas are classified; none touches DRAM timing selection, training, APCB data or DRAM voltages. The vendor flash command rewrites the whole SPI part (SmiFlash puts the AMD/PSP areas into non-critical blocks covered by `/K`), so APCB overrides and APOB NV are reset together with NVRAM; all DRAM-setting consumers are mapped. The causal candidate is this update-time configuration/training reset plus Memory Context Restore being effectively on by default; 1.17's only lifecycle addition is the `OemDxe` APCB flush on dGPU state changes. Do not repeat module-level diffs; resume only with hardware read-only data, AFU disassembly if its own preservation must be excluded, or a 1.16 image.
 
 See `docs/findings/memory-117-regression.md`.
 

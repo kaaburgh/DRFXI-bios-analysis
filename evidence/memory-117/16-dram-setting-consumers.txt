@@ -1,0 +1,51 @@
+# Every 1.17 module that references the AmdSetupRPL GUID/name or any DRAM-related CBS APCB token (55 tokens: offsets 0x116-0x17F + MCR)
+
+  AmdApcbDxeV3             PE32 guid=0 name=0 dram_tokens=1
+  CbsBaseDxeRPL            PE32 guid=1 name=1 dram_tokens=0
+  CbsSetupDxeRPL           PE32 guid=1 name=1 dram_tokens=55
+  AmdVariableProtection    PE32 guid=1 name=1 dram_tokens=0
+  OemDxe                   PE32 guid=0 name=1 dram_tokens=0
+  AmdApcbSmmV3             PE32 guid=0 name=0 dram_tokens=1
+  BctBaseSmmRPL            PE32 guid=0 name=0 dram_tokens=55
+  AodSmm                   PE32 guid=0 name=0 dram_tokens=36
+  CbsBasePeiRPL            TE   guid=1 name=1 dram_tokens=0
+  CbsBasePeiRPL            TE   guid=1 name=1 dram_tokens=0
+
+## roles (manual analysis, see checkpoint 2026-11-22 AFU coverage / consumers)
+  CbsSetupDxeRPL  : only in-image path that pushes CBS DRAM values to APCB (Setup save; boot generation mismatch; APCB-recovery reset)
+  CbsBaseDxeRPL   : same loader/code defaults for its own copy; reads no DRAM field (stores only, defaults builder at 0x934)
+  CbsBasePeiRPL   : 32-bit PEI copy; of the CBS fields it reads only 0x110-0x113 (USB3 Port 2..5); other accesses are default stores
+  BctBaseSmmRPL   : SMM duplicate of the CBS sync, exposed only as SMM protocol 147f8bda-da41-45bb-bc9b-827e72dc30a1 (CPUID 0xA60F00/0xB40F00);
+                    no module in 1.15 or 1.17 references that protocol GUID -> not invoked by in-image code
+  AodSmm          : AMD Overclocking apply path: purpose-2 token writes (59-token list) and, for VDDIO Ctrl Manual/Separate,
+                    AodSetupRpl[0x197] (APU VDDIO Adjust, runtime-created question: AodDxe 0xC5C5 prompt 367 VarOffset 0x197)
+                    -> extended CMOS 0xA1 (low) / 0xA0 (high); never cleared when Ctrl returns to Auto
+  AmdApcbDxeV3/SmmV3: MCR token only inside the token-registration whitelist table (no code use)
+  OemDxe          : offset 0x44 only (iGPU), token 0x1FB35295
+  AmdVariableProtection: variable-policy protection, no data use
+
+## AodSmm extended-CMOS write (VDDIO hand-off)
+  4CC1: mov al,BYTE PTR [rbx+0x192]
+  4CC7: dec al
+  4CC9: cmp al,0x1
+  4CCB: ja 0x4cfa
+  4CCD: movzx ecx,WORD PTR [rbx+0x197]
+  4CD4: mov r8d,0x72
+  4CDA: mov al,0xa1
+  4CDC: mov edx,r8d
+  4CDF: out dx,al
+  4CE0: lea r9d,[r8+0x1]
+  4CE4: mov al,cl
+  4CE6: mov edx,r9d
+  4CE9: out dx,al
+  4CEA: mov edx,r8d
+  4CED: mov al,0xa0
+  4CEF: out dx,al
+  4CF0: shr cx,0x8
+  4CF4: mov edx,r9d
+  4CF7: mov al,cl
+  4CF9: out dx,al
+  4CFA: mov rdx,QWORD PTR [rsp+0x30]
+  4CFF: mov rcx,rbx
+  4D02: call 0x533c
+BctBaseSmmRPL protocol GUID references outside BctBaseSmmRPL: []

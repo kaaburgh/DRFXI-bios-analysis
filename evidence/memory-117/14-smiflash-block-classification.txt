@@ -1,0 +1,69 @@
+# SmiFlash 1.17 block-type classifier (identical logic in 1.15: SmiFlash differs only in a shared flash-library routine, see 04-*)
+# ROM layout source: HOB/config table 00781ca1-5de3-405f-abb8-379c3c076984 (FFS c91c3c17-..., 40-byte AMI_ROM_AREA: GUID, addr, offset, size, type, attributes)
+ROM layout with area GUIDs identical 1.15 vs 1.17: True
+
+## classifier excerpt (entries sorted by offset; +0x20 receives the block type, +0x24 holds the attributes)
+  2BC0: lea rcx,[rax+rax*4]
+  2BC4: mov r11,QWORD PTR [r8+rcx*8]
+  2BC8: cmp r11,QWORD PTR [rsp+0x20]
+  2BCD: jne 0x2bd6
+  2BCF: cmp QWORD PTR [r8+rcx*8+0x8],rsi
+  2BD4: je 0x2c4d
+  2BD6: cmp r11,QWORD PTR [rsp+0x30]
+  2BDB: jne 0x2be4
+  2BDD: cmp QWORD PTR [r8+rcx*8+0x8],rbp
+  2BE2: je 0x2bf2
+  2BE4: cmp r11,QWORD PTR [rsp+0x40]
+  2BE9: jne 0x2bfd
+  2BEB: cmp QWORD PTR [r8+rcx*8+0x8],r14
+  2BF0: jne 0x2bfd
+  2BF2: mov DWORD PTR [r8+rcx*8+0x20],0x1
+  2BFB: jmp 0x2c6a
+  2BFD: cmp r11,QWORD PTR [rip+0x44dc] # 0x70e0
+  2C04: jne 0x2c1b
+  2C06: mov rax,QWORD PTR [rip+0x44db] # 0x70e8
+  2C0D: cmp QWORD PTR [r8+rcx*8+0x8],rax
+  2C12: jne 0x2c1b
+  2C14: mov rdx,QWORD PTR [r8+rcx*8+0x10]
+  2C19: jmp 0x2c37
+  2C1B: cmp r11,QWORD PTR [rip+0x442e] # 0x7050
+  2C22: jne 0x2c42
+  2C24: mov rax,QWORD PTR [rip+0x442d] # 0x7058
+  2C2B: cmp QWORD PTR [r8+rcx*8+0x8],rax
+  2C30: jne 0x2c42
+  2C32: mov r10,QWORD PTR [r8+rcx*8+0x10]
+  2C37: mov DWORD PTR [r8+rcx*8+0x20],0x2
+  2C40: jmp 0x2c6a
+  2C42: test DWORD PTR [r8+rcx*8+0x24],0x400
+  2C4B: je 0x2c55
+  2C4D: and DWORD PTR [r8+rcx*8+0x20],0x0
+  2C53: jmp 0x2c6a
+  2C55: lea eax,[rbx+0x80]
+  2C5B: inc rbx
+  2C5E: mov QWORD PTR [rip+0x531b],rbx # 0x7f80
+  2C65: mov DWORD PTR [r8+rcx*8+0x20],eax
+
+## rules: GUID FV_BB -> 0 BOOT_BLOCK; GUID FV_MAIN (5c60f367/4f1c52d3) -> 1 MAIN_BLOCK; GUID fa4974fc / a7edebd8 -> 2 NV_BLOCK;
+##        else attributes & 0x400 -> 0 BOOT_BLOCK; else -> 0x80+n NON-CRITICAL BLOCK (n counts in offset order). No area is filtered out.
+
+  off=0x0000000 size=0x0001000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x80 (/K)
+  off=0x0001000 size=0x0010000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x81 (/K)
+  off=0x0011000 size=0x000F000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x82 (/K)
+  off=0x0020000 size=0x0001000 type=1 attr=0x0000 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x83 (/K)
+  off=0x0021000 size=0x0008000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x84 (/K)
+  off=0x0029000 size=0x0008000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x85 (/K)
+  off=0x0031000 size=0x0008000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x86 (/K)
+  off=0x0039000 size=0x0008000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x87 (/K)
+  off=0x0041000 size=0x0040000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x88 (/K)
+  off=0x0081000 size=0x0040000 type=1 attr=0x0200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x89 (/K)
+  off=0x00C1000 size=0x0F3F000 type=1 attr=0x6200 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x8A (/K)  <- contains PSP NV data 0xC1000, RPMC NV 0xE1000, APOB NV 0x125000, PSP L2, BIOS L2 + APCB 0x51D400-0x528000, PMU FW, microcode, mirror
+  off=0x1000000 size=0x0BAF000 type=0 attr=0x0208 guid=4f1c52d3-d824-4d2a-a2f0-ec40c23c5916 -> MAIN_BLOCK (/P)
+  off=0x1BAF000 size=0x0001000 type=0 attr=0x4000 guid=f649fc2d-c0e6-4262-ad51-0ce64f76429f -> NCB 0x8B (/K)  <- ROM-layout FV
+  off=0x1BB0000 size=0x0010000 type=1 attr=0x0000 guid=00000000-0000-0000-0000-000000000000 -> NCB 0x8C (/K)
+  off=0x1BC0000 size=0x0020000 type=1 attr=0x6200 guid=a7edebd8-a8d7-48f8-81fb-837656b82077 -> NV_BLOCK (/N)
+  off=0x1BE0000 size=0x0020000 type=0 attr=0x6200 guid=fa4974fc-af1d-4e5d-bdc5-dacd6d27baec -> NV_BLOCK (/N)
+  off=0x1C00000 size=0x0200000 type=0 attr=0x660A guid=61c0f511-a691-4f54-974f-b9a42172ce53 -> BOOT_BLOCK (/B)
+  off=0x1E00000 size=0x0200000 type=0 attr=0x660A guid=61c0f511-a691-4f54-974f-b9a42172ce53 -> BOOT_BLOCK (/B)
+
+=> /p /b /n /k (the shipped command) covers every one of the 18 areas, i.e. the whole 32 MiB part; the AMD/PSP range is non-critical blocks programmed by /K.
+AFU side (strings, 12-*): /K 'Program all non-critical blocks', 'Erasing/Updating/Verifying NCB Block'; the separate 'Program PSP block' option is not used and not needed for these NCBs.

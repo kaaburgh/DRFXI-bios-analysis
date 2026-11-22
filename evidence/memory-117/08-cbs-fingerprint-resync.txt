@@ -22,15 +22,16 @@
 fingerprint routine 0x5134..0x5EDF bytes identical 1.15/1.17: True (sha256 71c6b2564a5d1118)
 routine contains call/RIP-relative references: False
 AmdSetupRPL offsets hashed (88): 28 32 33 35 36 37 38 39 3A 44 45 46 4A 63 A3 A4 A5 A6 A8 A9 AA AB B2 B9 117 11A 11D 120 123 126 129 12C 12F 132 135 138 13B 13E 141 144 147 14A 14D 150 153 156 159 15C 15F 162 164 165 166 167 168 169 16A 16B 16C 16D 16E 16F 170 171 172 173 174 175 176 177 178 179 17A 17B 17C 17D 17E 17F 1BC 260 261 263 264 289 2C8 2D2 2D4 2D7
-boot-time trigger = stored AmdSetupRPL[0x08] != APCB token 0xB331378E (or Get32 fails); the fingerprint is only computed/stored on mismatch.
-  -> NVRAM reset (StdDefaults [0x08]=0) always forces a full CBS->APCB resync on the next boot;
-  -> a Setup 'Save' calls the sync directly (call site 0xC38, after SetVariable) without changing [0x08];
+boot-time trigger = AmdSetupRPL[0x08] (as prepared by the loader, see 15-*) != APCB token 0xB331378E (or Get32 fails); the fingerprint is only computed/stored on mismatch.
+  -> a missing variable or one with a foreign header is rebuilt from CODE defaults whose [0x08] is already 0x4B9D5809 (15-*),
+     so an NVRAM reset alone does NOT trigger the resync when the APCB carries the image token (CORRECTION of the first 2026-11-22 reading);
+  -> a Setup 'Save' calls the sync directly (RouteConfig, call site 0xC38, after SetVariable) without changing [0x08];
   -> out-of-band edits of AmdSetupRPL (setup_var/AMISCE/efivar) change neither [0x08] nor the token, so they are NOT pushed to APCB by this path.
 fields 0x116 (Active Memory Timing Settings) and the *Ctrl bytes are not part of the fingerprint input.
 shipped user-APCB token 0xB331378E = 0x4B9D5809
-executed 115 routine on 115 StdDefaults AmdSetupRPL -> 0x4B9D5809
-executed 117 routine on 117 StdDefaults AmdSetupRPL -> 0x4B9D5809
-executed 1.17 routine, defaults with Active Memory Timing Settings=Enabled  -> 0x4B9D5809
-executed 1.17 routine, defaults with Twr Ctrl=Manual                        -> 0x4B9D5809
-executed 1.17 routine, defaults with Twr=96                                 -> 0x5F7BBBF0
-executed 1.17 routine, defaults with iGPU Configuration=Disabled            -> 0xB8A93DB9
+evaluated 115 routine (text interpreter, no execution) on 115 StdDefaults AmdSetupRPL -> 0x4B9D5809
+evaluated 117 routine (text interpreter, no execution) on 117 StdDefaults AmdSetupRPL -> 0x4B9D5809
+evaluated 1.17 routine, defaults with Active Memory Timing Settings=Enabled  -> 0x4B9D5809
+evaluated 1.17 routine, defaults with Twr Ctrl=Manual                        -> 0x4B9D5809
+evaluated 1.17 routine, defaults with Twr=96                                 -> 0x5F7BBBF0
+evaluated 1.17 routine, defaults with iGPU Configuration=Disabled            -> 0xB8A93DB9

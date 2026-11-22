@@ -7,9 +7,9 @@ usage:
 * WORKDIR receives the unpacked packages and extracted firmware trees (keep it OUTSIDE the repository).
 * OUTDIR receives the small text/JSON evidence files (evidence/memory-117/ in the repository).
 * Fail-closed: refuses to continue unless both DRFXI.BIN hashes match the official values.
-* --exec-fingerprint additionally executes the self-contained CBS fingerprint leaf function
-  (CbsSetupDxeRPL @0x5134, pure arithmetic, no calls / no RIP-relative accesses) natively on x86-64 Linux
-  after checking its byte hash. Without the flag that section is skipped.
+* The CBS fingerprint (CbsSetupDxeRPL @0x5134) and the CBS code defaults (@0x3E58) are computed by
+  scripts/fwtools/straightline_eval.py, which interprets the objdump text; no vendor code is executed.
+* --exec-fingerprint optionally adds a native cross-check of the fingerprint (pure-arithmetic leaf function).
 
 Requirements: Python 3.10+, system libarchive (for 7z), binutils objdump with pei-x86-64 support.
 Only first-party code is used; no vendor tools are invoked.
@@ -19,6 +19,7 @@ import hashlib, json, os, re, struct, subprocess, sys, uuid
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import un7z, fvparse, cmpidx, pcdnames, pspdir, apcb, nvar, ifrmini, cbs_apcb_map, getmod  # noqa: E402
+import straightline_eval  # noqa: E402,F401
 
 EXPECTED = {
     "115": "3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88",
@@ -234,23 +235,27 @@ def main():
     rows += ["", "fingerprint routine 0x%X..0x%X bytes identical 1.15/1.17: %s (sha256 %s)" % (FINGERPRINT_FN[0], FINGERPRINT_FN[1], fnb["115"] == fnb["117"], sha(fnb["117"])[:16]),
              "routine contains call/RIP-relative references: %s" % bool(re.search(r"call|rip", "\n".join(asm_range(cbs_asm, *FINGERPRINT_FN)))),
              "AmdSetupRPL offsets hashed (%d): %s" % (len(fields), " ".join("%X" % f for f in fields)),
-             "boot-time trigger = stored AmdSetupRPL[0x08] != APCB token 0xB331378E (or Get32 fails); the fingerprint is only computed/stored on mismatch.",
-             "  -> NVRAM reset (StdDefaults [0x08]=0) always forces a full CBS->APCB resync on the next boot;",
-             "  -> a Setup 'Save' calls the sync directly (call site 0xC38, after SetVariable) without changing [0x08];",
+             "boot-time trigger = AmdSetupRPL[0x08] (as prepared by the loader, see 15-*) != APCB token 0xB331378E (or Get32 fails); the fingerprint is only computed/stored on mismatch.",
+             "  -> a missing variable or one with a foreign header is rebuilt from CODE defaults whose [0x08] is already 0x4B9D5809 (15-*),",
+             "     so an NVRAM reset alone does NOT trigger the resync when the APCB carries the image token (CORRECTION of the first 2026-11-22 reading);",
+             "  -> a Setup 'Save' calls the sync directly (RouteConfig, call site 0xC38, after SetVariable) without changing [0x08];",
              "  -> out-of-band edits of AmdSetupRPL (setup_var/AMISCE/efivar) change neither [0x08] nor the token, so they are NOT pushed to APCB by this path.",
              "fields 0x116 (Active Memory Timing Settings) and the *Ctrl bytes are not part of the fingerprint input.",
              "shipped user-APCB token 0xB331378E = 0x%X" % [val for g in infos[("117", APCB_USER)]["groups"] for t in g["types"] for tid, val in t["tokens"] if tid == 0xB331378E][0]]
+    import straightline_eval as se
+    for v in ("115", "117"):
+        dv = D[v][[k for k in D[v] if k[0] == "AmdSetupRPL"][0]]
+        _, _, fpv = se.run(se.lines_from(cbs[v], FINGERPRINT_FN[0], skip_to=0x5140), 0x6D5, init=dv)
+        rows.append("evaluated %s routine (text interpreter, no execution) on %s StdDefaults AmdSetupRPL -> 0x%08X" % (v, v, fpv))
+    L117 = se.lines_from(cbs["117"], FINGERPRINT_FN[0], skip_to=0x5140)
+    for label, off, val in (("Active Memory Timing Settings=Enabled", 0x116, 1), ("Twr Ctrl=Manual", 0x128, 1), ("Twr=96", 0x129, 96), ("iGPU Configuration=Disabled", 0x44, 0)):
+        t = bytearray(dflt); t[off] = val
+        rows.append("evaluated 1.17 routine, defaults with %-38s -> 0x%08X" % (label, se.run(L117, 0x6D5, init=bytes(t))[2]))
     if execfp:
         import run_x64_leaf
         for v in ("115", "117"):
             dv = D[v][[k for k in D[v] if k[0] == "AmdSetupRPL"][0]]
-            rows.append("executed %s routine on %s StdDefaults AmdSetupRPL -> 0x%08X" % (v, v, run_x64_leaf.run(cbs[v], FINGERPRINT_FN[0], FINGERPRINT_FN[1], dv)))
-        dv = bytearray(dflt)
-        for label, off, val in (("Active Memory Timing Settings=Enabled", 0x116, 1), ("Twr Ctrl=Manual", 0x128, 1), ("Twr=96", 0x129, 96), ("iGPU Configuration=Disabled", 0x44, 0)):
-            t = bytearray(dflt); t[off] = val
-            rows.append("executed 1.17 routine, defaults with %-38s -> 0x%08X" % (label, run_x64_leaf.run(cbs["117"], FINGERPRINT_FN[0], FINGERPRINT_FN[1], bytes(t))))
-    else:
-        rows.append("(native execution skipped; rerun with --exec-fingerprint)")
+            rows.append("native cross-check (--exec-fingerprint) %s -> 0x%08X" % (v, run_x64_leaf.run(cbs[v], FINGERPRINT_FN[0], FINGERPRINT_FN[1], dv)))
     w(out, "08-cbs-fingerprint-resync.txt", "\n".join(rows))
 
     # 09 APCB flush -> memory-context discard
@@ -320,6 +325,113 @@ def main():
              "tWR 96 clk equals exactly 30 ns at DDR5-6400; tRFC 968 clk is ~302 ns at 6400 (295 ns JEDEC 16 Gb + rounding/guard) - the pair is most consistent with ~6400 MT/s Auto (INFERENCE; the reporter's data rate is unknown).",
              "Reported 'auto' tRFC ~968 / tWR 96 are consistent with SPD/JEDEC-derived Auto values at a high data rate; they are not, by themselves, evidence that 1.17 computes Auto differently (no 1.15 Auto reading at the same frequency exists)."]
     w(out, "13-timing-arithmetic.txt", "\n".join(rows))
+    # 14 SmiFlash block classification of the ROM layout (what AFU /B /P /N /K see)
+    rl = {}
+    for v in ("115", "117"):
+        for rec in json.load(open(os.path.join(T[v], "index.json"))):
+            if rec.get("sub_guid") == "00781ca1-5de3-405f-abb8-379c3c076984" and rec["kind"] == "FREEFORM_GUID":
+                rl[v] = open(os.path.join(T[v], rec["file"]), "rb").read()
+    def areas(b):
+        out = []; o = 0x10
+        while o + 40 <= len(b):
+            g = str(uuid.UUID(bytes_le=b[o:o + 16])); addr, off, size, ty, at = struct.unpack_from("<QIIII", b, o + 16)
+            if size == 0: break
+            out.append((off, size, ty, at, g)); o += 40
+        return sorted(out)
+    BB, MAIN = "61c0f511-a691-4f54-974f-b9a42172ce53", ("5c60f367-a505-419a-859e-2a4ff6ca6fe5", "4f1c52d3-d824-4d2a-a2f0-ec40c23c5916")
+    NV = ("fa4974fc-af1d-4e5d-bdc5-dacd6d27baec", "a7edebd8-a8d7-48f8-81fb-837656b82077")
+    sf = mod(T["117"], "SmiFlash"); sf_asm = objdump(sf)
+    rows = ["# SmiFlash 1.17 block-type classifier (identical logic in 1.15: SmiFlash differs only in a shared flash-library routine, see 04-*)",
+            "# ROM layout source: HOB/config table 00781ca1-5de3-405f-abb8-379c3c076984 (FFS c91c3c17-..., 40-byte AMI_ROM_AREA: GUID, addr, offset, size, type, attributes)",
+            "ROM layout with area GUIDs identical 1.15 vs 1.17: %s" % (rl["115"] == rl["117"]), "",
+            "## classifier excerpt (entries sorted by offset; +0x20 receives the block type, +0x24 holds the attributes)"]
+    rows += asm_range(sf_asm, 0x2BC0, 0x2C6A)
+    rows += ["", "## rules: GUID FV_BB -> 0 BOOT_BLOCK; GUID FV_MAIN (5c60f367/4f1c52d3) -> 1 MAIN_BLOCK; GUID fa4974fc / a7edebd8 -> 2 NV_BLOCK;",
+             "##        else attributes & 0x400 -> 0 BOOT_BLOCK; else -> 0x80+n NON-CRITICAL BLOCK (n counts in offset order). No area is filtered out.", ""]
+    ncb = 0
+    for off, size, ty, at, g in areas(rl["117"]):
+        if g == BB: t = "BOOT_BLOCK (/B)"
+        elif g in MAIN: t = "MAIN_BLOCK (/P)"
+        elif g in NV: t = "NV_BLOCK (/N)"
+        elif at & 0x400: t = "BOOT_BLOCK (/B)"
+        else: t = "NCB 0x%02X (/K)" % (0x80 + ncb); ncb += 1
+        what = ""
+        if off == 0xC1000: what = "  <- contains PSP NV data 0xC1000, RPMC NV 0xE1000, APOB NV 0x125000, PSP L2, BIOS L2 + APCB 0x51D400-0x528000, PMU FW, microcode, mirror"
+        if off == 0x1BAF000: what = "  <- ROM-layout FV"
+        rows.append("  off=0x%07X size=0x%07X type=%d attr=0x%04X guid=%s -> %s%s" % (off, size, ty, at, g, t, what))
+    rows += ["", "=> /p /b /n /k (the shipped command) covers every one of the %d areas, i.e. the whole 32 MiB part; the AMD/PSP range is non-critical blocks programmed by /K." % len(areas(rl["117"])),
+             "AFU side (strings, 12-*): /K 'Program all non-critical blocks', 'Erasing/Updating/Verifying NCB Block'; the separate 'Program PSP block' option is not used and not needed for these NCBs."]
+    w(out, "14-smiflash-block-classification.txt", "\n".join(rows))
+
+    # 15 CBS loader / code defaults / APCB-recovery reset
+    import straightline_eval
+    cd = {}
+    for v in ("115", "117"):
+        asm = subprocess.run(["objdump", "-d", "-M", "intel", "--no-show-raw-insn", cbs[v]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True).stdout
+        lines = []; on = False
+        for l in asm.splitlines():
+            m = re.match(r"\s*([0-9a-f]+):\t(.*)", l)
+            if not m: continue
+            if int(m.group(1), 16) == 0x3E58: on = True
+            if on:
+                lines.append(m.group(2))
+                if m.group(2).strip().startswith("ret"): break
+        cd[v] = straightline_eval.run(lines, 0x6D5)[:2]
+    rows = ["# CbsSetupDxeRPL boot sequence (entry 0x10C4..0x1129, identical in 1.15): allocate 'CBSD' private data, HII ConfigAccess",
+            "#   (ExtractConfig 0x894, RouteConfig 0xB58 = Setup save -> sync, Callback 0xC60), then 0xD68 (APCB-recovery reset) and 0xE68 (loader)."]
+    rows += asm_range(cbs_asm, 0x10E2, 0x112E)
+    rows += ["", "## 0xD68: if APOB-protocol(0de50221-faaa-45ba-90b9-7bcc26ec60cf, installed by ApobRplDxe) +0x08 'ApobApcbRecoveryFlag' is set,",
+             "##   or APCB token 0xB331378E == 'RECV' (0x56434552), the CBS buffer is rebuilt from code defaults, resynced and written back."]
+    rows += asm_range(cbs_asm, 0xDA6, 0xE56)
+    rows += ["", "fingerprint routine never returns 'RECV' (tail: cmp edx,0x56434552 / cmovne):"] + asm_range(cbs_asm, 0x5ED5, 0x5EDF)
+    rows += ["", "## 0xE68 loader: GetVariable(AmdSetupRPL); missing or size != 0x6D5 -> code defaults (0x3E58) -> 0x3CC0 -> generation check -> SetVariable;",
+             "##   present with header signature != code-default signature -> migrate bytes 0x20..[+4) over code defaults -> check -> SetVariable;",
+             "##   present with matching signature -> generation check only."]
+    rows += asm_range(cbs_asm, 0xE68, 0xFEE)
+    rows += ["", "## code defaults (0x3E58) evaluated from the disassembly text by scripts/fwtools/straightline_eval.py (no native execution):"]
+    for v in ("115", "117"):
+        mem, mask = cd[v]; std = D[v][[k for k in D[v] if k[0] == "AmdSetupRPL"][0]]
+        body_diff = [i for i in range(0x20, 0x6D5) if mask[i] and mem[i] != std[i]]
+        unw_nonzero = sum(1 for i in range(0x6D5) if not mask[i] and std[i])
+        rows.append("%s: header sig=0x%08X len=0x%X gen=0x%08X | written bytes %d; body differences vs StdDefaults: %d; StdDefaults non-zero where builder writes nothing: %d; StdDefaults header = %s" % (
+            v, struct.unpack_from("<I", mem, 0)[0], struct.unpack_from("<I", mem, 4)[0], struct.unpack_from("<I", mem, 8)[0], sum(mask), len(body_diff), unw_nonzero, std[:12].hex()))
+    rows.append("code defaults identical 1.15 vs 1.17: %s" % (cd["115"][0] == cd["117"][0]))
+    rows += ["=> after an NVRAM reset the variable is recreated as StdDefaults-equivalent settings with generation 0x4B9D5809 = the image's APCB token:",
+             "   no automatic resync and no CBS-side APCB flush occur when the APCB in SPI is the image copy (see 14-*)."]
+    ap = mod(T["117"], "ApobRplDxe"); ap_pe = open(ap, "rb").read()
+    rows += ["", "## ApobRplDxe APOB protocol interface (@0x28F0): " + ", ".join("+0x%02X->0x%X" % (8 * k, struct.unpack_from("<Q", ap_pe, 0x28F0 + 8 * k)[0]) for k in range(8)),
+             "   +0x00 'Fail to get ApobApcbInstance', +0x08 'Fail to get ApobApcbRecoveryFlag' (byte +0x65 of the APOB entry), +0x10 'Fail to get DimmCfgUpdatedFlag'"]
+    rows += asm_range(objdump(ap), 0x15C8, 0x162B)
+    w(out, "15-cbs-loader-defaults-and-recovery-reset.txt", "\n".join(rows))
+
+    # 16 consumers of AmdSetupRPL DRAM fields and DRAM APCB tokens
+    smap = {int(r["token"], 16): r for r in maps["117"]}
+    dram = {t for t, r in smap.items() if r["setup_offset"] is not None and (0x116 <= r["setup_offset"] <= 0x17F or r["setup_offset"] == 0x263)}
+    g_setup = uuid.UUID("3a997502-647a-4c82-998e-52ef9486a247").bytes_le; n_setup = "AmdSetupRPL".encode("utf-16-le")
+    rows = ["# Every 1.17 module that references the AmdSetupRPL GUID/name or any DRAM-related CBS APCB token (%d tokens: offsets 0x116-0x17F + MCR)" % len(dram), ""]
+    for rec in json.load(open(os.path.join(T["117"], "index.json"))):
+        if rec["kind"] not in ("PE32", "TE"): continue
+        d = open(os.path.join(T["117"], rec["file"]), "rb").read()
+        nt = sum(1 for t in dram if struct.pack("<I", t) in d)
+        if g_setup in d or n_setup in d or nt:
+            rows.append("  %-24s %-4s guid=%d name=%d dram_tokens=%d" % (rec.get("ui"), rec["kind"], g_setup in d, n_setup in d, nt))
+    rows += ["", "## roles (manual analysis, see checkpoint 2026-11-22 AFU coverage / consumers)",
+             "  CbsSetupDxeRPL  : only in-image path that pushes CBS DRAM values to APCB (Setup save; boot generation mismatch; APCB-recovery reset)",
+             "  CbsBaseDxeRPL   : same loader/code defaults for its own copy; reads no DRAM field (stores only, defaults builder at 0x934)",
+             "  CbsBasePeiRPL   : 32-bit PEI copy; of the CBS fields it reads only 0x110-0x113 (USB3 Port 2..5); other accesses are default stores",
+             "  BctBaseSmmRPL   : SMM duplicate of the CBS sync, exposed only as SMM protocol 147f8bda-da41-45bb-bc9b-827e72dc30a1 (CPUID 0xA60F00/0xB40F00);",
+             "                    no module in 1.15 or 1.17 references that protocol GUID -> not invoked by in-image code",
+             "  AodSmm          : AMD Overclocking apply path: purpose-2 token writes (59-token list) and, for VDDIO Ctrl Manual/Separate,",
+             "                    AodSetupRpl[0x197] (APU VDDIO Adjust, runtime-created question: AodDxe 0xC5C5 prompt 367 VarOffset 0x197)",
+             "                    -> extended CMOS 0xA1 (low) / 0xA0 (high); never cleared when Ctrl returns to Auto",
+             "  AmdApcbDxeV3/SmmV3: MCR token only inside the token-registration whitelist table (no code use)",
+             "  OemDxe          : offset 0x44 only (iGPU), token 0x1FB35295",
+             "  AmdVariableProtection: variable-policy protection, no data use"]
+    rows += ["", "## AodSmm extended-CMOS write (VDDIO hand-off)"] + asm_range(objdump(mod(T["117"], "AodSmm")), 0x4CC1, 0x4D07)
+    rows.append("BctBaseSmmRPL protocol GUID references outside BctBaseSmmRPL: %s" % [rec.get("ui") for v in ("115", "117") for rec in json.load(open(os.path.join(T[v], "index.json")))
+        if rec["kind"] not in ("FV",) and rec.get("ui") != "BctBaseSmmRPL" and uuid.UUID("147f8bda-da41-45bb-bc9b-827e72dc30a1").bytes_le in open(os.path.join(T[v], rec["file"]), "rb").read()])
+    w(out, "16-dram-setting-consumers.txt", "\n".join(rows))
+
     print("done")
 
 if __name__ == "__main__":
