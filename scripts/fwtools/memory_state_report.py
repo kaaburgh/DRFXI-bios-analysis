@@ -241,7 +241,7 @@ def report_setup(setup, spi_tokens, cmap, qt, aod):
     print("\nDRAM-relevant CBS entries (expected after a CBS sync vs. stored in SPI override APCB):")
     for tid, (ok, val, name) in exp.items():
         off = [r["setup_offset"] for r in cmap["entries"] if int(r["token"], 16) == tid][0]
-        if not (off in (0x44, 0x46, 0x263) or 0x116 <= off <= 0x17F): continue
+        if not (off in (0x44, 0x46, 0x260, 0x263) or 0x116 <= off <= 0x17F): continue
         want = val if ok else None
         have = spi_tokens.get(tid) if spi_tokens else "n/a"
         flag = "" if not spi_tokens or have == want or ok is None else "   <-- DIVERGES"

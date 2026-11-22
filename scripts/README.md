@@ -10,6 +10,7 @@ Current helpers:
 - `patch_drfxi_117_clean_hii_unlock.py` — fail-closed, exact-version patcher for the official DRFXI 1.17 image. It exposes the selected UMC/DDR memory tree plus the existing VDDP/FCLK branch and AMI Save/Restore User Defaults without importing donor-board state.
 
 - `fwtools/` — dependency-free firmware walkers (FV/FFS/LZMA/AMD-zlib, PSP/BIOS directories, APCB v3, AMI NVAR, PCD name table, IFR), the reproducible `memory117_evidence.py` pipeline and the read-only `memory_state_report.py`. See `fwtools/README.md`.
+- `win/drfxi-mem.ps1` — generated (`fwtools/make_windows_reader.py`) read-only Windows PowerShell reader for the owner's memory settings (no Python needed).
 
 ## DRFXI 1.17 clean HII patcher
 

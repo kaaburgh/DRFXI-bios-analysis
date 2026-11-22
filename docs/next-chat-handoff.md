@@ -153,7 +153,7 @@ Paused.
 - Механизм: штатная команда переписывает весь SPI (SmiFlash относит PSP-область к NCB → `/K`): NVRAM, APCB (без ручных токенов) и APOB NV (пусто → полная тренировка); CbsSetupDxeRPL пересоздаёт `AmdSetupRPL` из кодовых defaults (поколение уже совпадает, ресинка нет); MCR фактически включён платформенным дефолтом. Утренняя версия про «ресинк из-за [0x08]=0» исправлена во втором checkpoint 2026-11-22.
 - 1.17-специфично только: `OemDxe` пишет APCB-токен iGPU и делает flush (лишняя тренировка при смене dGPU).
 - Дальше — только read-only данные с железа (`scripts/fwtools/memory_state_report.py`).
-- Подготовка к baseline владельца (checkpoint `2026-11-22-memory-117-owner-baseline-and-reentry-check.md`, evidence 18): путь повторного ввода в 1.17 не изменился; отчёт печатает лист повторного ввода, ловит «записано в переменную, но не отправлено в APCB» (`DIVERGES`), `--aodsetup`, `--compare` до/после.
+- Подготовка к baseline владельца (checkpoint `2026-11-22-memory-117-owner-baseline-and-reentry-check.md`, evidence 18): путь повторного ввода в 1.17 не изменился; отчёт печатает лист повторного ввода, ловит «записано в переменную, но не отправлено в APCB» (`DIVERGES`), `--aodsetup`, `--compare` до/после. Без Python в Windows: `scripts/win/drfxi-mem.ps1` (только чтение переменных; `-Rom` для образа AFU `/O`; AFUWINx64.EXE лежит в официальных пакетах 1.15/1.17, идентичен).
 
 
 ### Set TCC to 100

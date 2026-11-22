@@ -23,6 +23,7 @@ analysis environment; where results overlap with earlier UEFIExtract-based check
 | `straightline_eval.py` | evaluate straight-line x64 routines from objdump text (no execution): CBS code defaults (0x3E58) and fingerprint (0x5134) |
 | `run_x64_leaf.py` | optional native cross-check of a self-contained leaf function (`--exec-fingerprint`); not required |
 | `memory117_evidence.py` | regenerate `evidence/memory-117/` from the two official packages (fail-closed on hashes) |
+| `make_windows_reader.py` | generates `scripts/win/drfxi-mem.ps1` (read-only Windows PowerShell reader: no Python needed; reads `AmdSetupRPL`/`AodSetupRpl` via `GetFirmwareEnvironmentVariableEx`, saves them, prints the re-entry sheet; `-Rom` adds APCB/APOB state from an AFU `/O` image) |
 | `memory_state_report.py` | **read-only diagnostics**: offline report of effective memory configuration from an owner-made SPI dump and/or efivarfs exports of `AmdSetupRPL` / `AodSetupRpl`; re-entry sheet; `--compare` of two dumps |
 
 ## Reproducing the 2026-11-22 memory evidence
@@ -50,6 +51,9 @@ python3 -I scripts/fwtools/memory_state_report.py --amdsetup AmdSetupRPL.var --a
 # after an update and re-entry: exit status 0 only if the effective memory configuration is unchanged
 python3 -I scripts/fwtools/memory_state_report.py --spi rom_115.bin --compare rom_117.bin
 ```
+
+On Windows without Python: `scripts/win/drfxi-mem.ps1` (PowerShell as administrator,
+`powershell -ExecutionPolicy Bypass -File .\drfxi-mem.ps1 [-Rom .\backup_115.bin]`) prints the same sheet.
 
 The tool needs only the Python 3 standard library (also runs on Windows: `py -3 -I ...`). Owner dumps contain
 Secure Boot, TPM and Windows key-protector variables: run it locally and share only the text output.
