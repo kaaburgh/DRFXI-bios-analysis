@@ -88,7 +88,7 @@ public static class DrfxiMem
     class M { public uint Token; public int Width; public int Off; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<long> GVal = new List<long>(); public bool GUnknown; public string Name; }
     static Dictionary<string, SortedDictionary<int, Q>> T = new Dictionary<string, SortedDictionary<int, Q>>();
     static List<M> Map = new List<M>();
-    class N { public uint Token; public int Width; public int Off; public bool HasConst; public long Const; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<List<long>> GVals = new List<List<long>>(); public bool Fclk; public string Name; }
+    class N { public uint Token; public int Width; public int Off; public bool HasConst; public long Const; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<List<long>> GVals = new List<List<long>>(); public List<bool> GEq = new List<bool>(); public bool Fclk; public string Name; }
     static List<N> AodMap = new List<N>();
 
     public static void Load(string text)
@@ -138,8 +138,10 @@ public static class DrfxiMem
                 if (f[6].Length > 0)
                     foreach (string g in f[6].Split(','))
                     {
-                        string[] p = g.Split(':');
+                        bool eq = g.IndexOf(':') >= 0;
+                        string[] p = g.Split(eq ? ':' : '!');
                         n.GOff.Add(Convert.ToInt32(p[0], 16));
+                        n.GEq.Add(eq);
                         List<long> vals = new List<long>();
                         foreach (string x in p[1].Split('/')) vals.Add(Int64.Parse(x));
                         n.GVals.Add(vals);
@@ -304,7 +306,7 @@ public static class DrfxiMem
                 {
                     long val = n.HasConst ? n.Const : Get(aod, n.Off, n.Width);
                     int ok = 1;
-                    for (int i = 0; i < n.GOff.Count; i++) if (!n.GVals[i].Contains(Get(aod, n.GOff[i], 1))) ok = 0;
+                    for (int i = 0; i < n.GOff.Count; i++) if (n.GVals[i].Contains(Get(aod, n.GOff[i], 1)) != n.GEq[i]) ok = 0;
                     if (n.HasSkip && val == n.Skip) ok = 0;
                     if (ok == 1 && n.Fclk)
                     {
@@ -1080,7 +1082,7 @@ M|FEDB01F8|1|263|255||Memory Context Restore
 M|1FB35295|1|44|15||iGPU Configuration
 M|37B1F8CF|4|46|4294967295|44:1|UMA Frame buffer Size
 M|F1823F38|1|260|255|20:255|Infinity Fabric Frequency and Dividers
-N|D06DBAFB|2|3D|-|-|3A:1,3C:1|-|Memory Target Speed
+N|D06DBAFB|2|3D|-|-|3A!1,3C:1|-|Memory Target Speed
 N|FC195E5C|2|40|-|-|3F:1,3C:1|-|Tcl
 N|E31F1FCE|2|43|-|-|42:1,3C:1|-|Trcd
 N|0DB8CB47|2|46|-|-|45:1,3C:1|-|Trp

@@ -239,7 +239,7 @@ def aod_expected(aod, amap, qt):
                (r["const"] is not None and any(g[0] == 0x192 for g in r["guards"]))
         if not dram: continue
         tid = int(r["token"], 16)
-        ok = all(aod[g] in allowed for g, allowed in r["guards"])
+        ok = all((aod[g] in vals) == (op == "eq") for g, op, vals in r["guards"])
         val = r["const"] if r["const"] is not None else int.from_bytes(aod[off:off + r["width"]], "little")
         if r["skip_if"] is not None and val == r["skip_if"]: ok = False
         if ok and r["transform"] == "fclk_mhz_to_cbs_option_code":

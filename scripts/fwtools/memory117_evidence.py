@@ -446,12 +446,12 @@ def main():
     aq = {q["offset"]: q["prompt"] for q in ifr[("AodDxe", "117")]}
     cn = {int(r["token"], 16): r["prompt"] for r in maps["117"] if r["prompt"]}
     rows = ["# AodSetupRpl -> APCB token writes in AodSmm (purpose dl=2), tool: scripts/fwtools/aod_apcb_map.py",
-            "# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards [off]==v on AodSetupRpl; skip = value that suppresses the write",
+            "# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards on AodSetupRpl bytes, direction from the following jne/je; skip = value that suppresses the write",
             "map identical 1.15 vs 1.17 (ignoring code addresses): %s (%d writes)" % (strip_a(am["115"]) == strip_a(am["117"]), len(am["117"])), ""]
     for r in am["117"]:
         src = ("[0x%X] w%d" % (r["offset"], r["width"])) if r["offset"] is not None else ("const %d" % r["const"] if r["const"] is not None else "computed")
         rows.append("%-7s %s %-9s %-13s skip=%-6s guards=%-26s %-28s %s" % (r["addr"], r["token"], r["setter"], src, "0x%X" % r["skip_if"] if r["skip_if"] is not None else "-",
-                    ";".join("[0x%X] in %s" % (g, "/".join(map(str, vs))) for g, vs in r["guards"]) or "-", (r["transform"] or ""),
+                    ";".join("[0x%X] %s %s" % (g, "in" if op == "eq" else "not in", "/".join(map(str, vs))) for g, op, vs in r["guards"]) or "-", (r["transform"] or ""),
                     cn.get(int(r["token"], 16)) or (aq.get(r["offset"], "") if r["offset"] is not None else "")))
     w(out, "19-aod-to-apcb-token-map.txt", "\n".join(rows))
     json.dump(dict(source="DRFXI 1.17 AodSmm (identical in 1.15 apart from code addresses)", purpose=2, entries=strip_a(am["117"])),

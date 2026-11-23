@@ -52,7 +52,7 @@ def table_lines():
         tid = int(r["token"], 16)
         name = cn.get(tid) or (aq.get(off, "") if off is not None else "flag TRUE (VDDIO Ctrl Manual/Separate)")
         out.append("N|%08X|%s|%s|%s|%s|%s|%s|%s" % (tid, r["width"] or 0, "%X" % off if off is not None else "-", r["const"] if r["const"] is not None else "-",
-                   r["skip_if"] if r["skip_if"] is not None else "-", ",".join("%X:%s" % (g, "/".join(map(str, v))) for g, v in r["guards"]),
+                   r["skip_if"] if r["skip_if"] is not None else "-", ",".join("%X%s%s" % (g, ":" if op == "eq" else "!", "/".join(map(str, v))) for g, op, v in r["guards"]),
                    r["transform"] or "-", name))
     return out
 
@@ -121,7 +121,7 @@ public static class DrfxiMem
     class M { public uint Token; public int Width; public int Off; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<long> GVal = new List<long>(); public bool GUnknown; public string Name; }
     static Dictionary<string, SortedDictionary<int, Q>> T = new Dictionary<string, SortedDictionary<int, Q>>();
     static List<M> Map = new List<M>();
-    class N { public uint Token; public int Width; public int Off; public bool HasConst; public long Const; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<List<long>> GVals = new List<List<long>>(); public bool Fclk; public string Name; }
+    class N { public uint Token; public int Width; public int Off; public bool HasConst; public long Const; public bool HasSkip; public long Skip; public List<int> GOff = new List<int>(); public List<List<long>> GVals = new List<List<long>>(); public List<bool> GEq = new List<bool>(); public bool Fclk; public string Name; }
     static List<N> AodMap = new List<N>();
 
     public static void Load(string text)
@@ -171,8 +171,10 @@ public static class DrfxiMem
                 if (f[6].Length > 0)
                     foreach (string g in f[6].Split(','))
                     {
-                        string[] p = g.Split(':');
+                        bool eq = g.IndexOf(':') >= 0;
+                        string[] p = g.Split(eq ? ':' : '!');
                         n.GOff.Add(Convert.ToInt32(p[0], 16));
+                        n.GEq.Add(eq);
                         List<long> vals = new List<long>();
                         foreach (string x in p[1].Split('/')) vals.Add(Int64.Parse(x));
                         n.GVals.Add(vals);
@@ -337,7 +339,7 @@ public static class DrfxiMem
                 {
                     long val = n.HasConst ? n.Const : Get(aod, n.Off, n.Width);
                     int ok = 1;
-                    for (int i = 0; i < n.GOff.Count; i++) if (!n.GVals[i].Contains(Get(aod, n.GOff[i], 1))) ok = 0;
+                    for (int i = 0; i < n.GOff.Count; i++) if (n.GVals[i].Contains(Get(aod, n.GOff[i], 1)) != n.GEq[i]) ok = 0;
                     if (n.HasSkip && val == n.Skip) ok = 0;
                     if (ok == 1 && n.Fclk)
                     {

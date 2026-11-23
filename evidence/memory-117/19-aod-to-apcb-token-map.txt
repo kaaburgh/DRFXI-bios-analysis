@@ -1,10 +1,10 @@
 # AodSetupRpl -> APCB token writes in AodSmm (purpose dl=2), tool: scripts/fwtools/aod_apcb_map.py
-# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards [off]==v on AodSetupRpl; skip = value that suppresses the write
+# setter: rsi = Set16/32, r14 = Set8, r12 = SetBool (AodSmm locals); guards on AodSetupRpl bytes, direction from the following jne/je; skip = value that suppresses the write
 map identical 1.15 vs 1.17 (ignoring code addresses): True (63 writes)
 
 0x5250  0x3F7F8A94 call rbp  [0x1A1] w1    skip=-      guards=-                                                       
 0x5260  0x530BB305 call rbp  computed      skip=-      guards=-                                                       
-0x5588  0xD06DBAFB Set16/32  [0x3D] w2     skip=-      guards=[0x3A] in 1;[0x3C] in 1                                 Memory Target Speed
+0x5588  0xD06DBAFB Set16/32  [0x3D] w2     skip=-      guards=[0x3A] not in 1;[0x3C] in 1                              Memory Target Speed
 0x55AA  0xFC195E5C Set16/32  [0x40] w2     skip=-      guards=[0x3F] in 1;[0x3C] in 1                                 Tcl
 0x55CC  0xE31F1FCE Set16/32  [0x43] w2     skip=-      guards=[0x42] in 1;[0x3C] in 1                                 Trcd
 0x55EE  0x0DB8CB47 Set16/32  [0x46] w2     skip=-      guards=[0x45] in 1;[0x3C] in 1                                 Trp
@@ -50,7 +50,7 @@ map identical 1.15 vs 1.17 (ignoring code addresses): True (63 writes)
 0x5AE0  0x72958E2C SetBool   const 1       skip=-      guards=[0x192] in 1/2                                          
 0x5AFF  0x0386C490 Set16/32  [0x199] w2    skip=-      guards=[0x19B] in 1                                            VPP Adjust
 0x5B15  0xB0A37D17 Set8      [0x32] w1     skip=-      guards=-                                                       SMT Control
-0x5B2F  0xE033C709 Set16/32  computed      skip=-      guards=-                                                       
+0x5B2F  0xE033C709 Set16/32  const 1       skip=-      guards=[0x187] not in 255                                      
 0x5B4D  0xAB4BABF4 Set16/32  [0x188] w2    skip=-      guards=[0x187] in 1                                            VDDP Voltage Adjust
 0x5B7E  0xC286E57A Set16/32  computed      skip=-      guards=-                                                       
 0x5B9B  0xC74D6F5B Set16/32  computed      skip=-      guards=-                                                       

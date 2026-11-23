@@ -1,6 +1,6 @@
 # DDR5 tuning regression after DRFXI 1.15 → 1.17
 
-Last updated: 2026-11-22 (evening: owner readback, AMD Overclocking path)
+Last updated: 2026-11-23 (AOD speed-guard correction, PMIC readout)
 
 Living summary. Details, evidence references and the hypothesis table are in `../checkpoints/2026-11-22-memory-117-regression-config-lifecycle.md`, corrected and extended by `../checkpoints/2026-11-22-memory-117-afu-coverage-and-dram-consumers.md` (and the earlier `2026-11-14-memory-117-regression-static-narrowing.md`). Evidence: `../../evidence/memory-117/`.
 
@@ -46,6 +46,8 @@ The re-entry path is unchanged in 1.17 (`AmdVariableProtection` byte-identical; 
 ## Owner's 1.15 readback (checkpoint `2026-11-22-memory-117-owner-readback-aod-path.md`, evidence 19–20)
 
 The owner's DDR5-6000 configuration is held entirely by AMD Overclocking (`AodSetupRpl`): 13 Manual timings, 6000 MT/s, FCLK 2000, UCLK=MEMCLK, VDDIO Ctrl Manual with DIMM VDD/VDDQ/APU VDDIO 1200 mV, platform PMIC control disabled; CBS DRAM settings are all Auto. The static `AodSmm` map (`aod_apcb_map.py`, identical 1.15/1.17) predicts all 21 stored purpose-2 tokens exactly. Correction: AOD tokens use override instance 0 / priority **0x02** (not 0x10); CBS uses instance 1 / 0x04. Open: requested 1.20 V vs 1.10 V reported by ZenTimings.
+
+Update 2026-11-23 (checkpoint `2026-11-23-memory-117-aod-speed-guard-and-pmic.md`): the AOD Memory Target Speed write requires `AodSetupRpl[0x3A] != 1` (inverted guard, the map and evidence 20 are corrected). First hardware run of the ZenTimings origin column: both setup variables are readable from Windows and the layout matched. The DIMM PMICs (Secure mode) report VDD/VDDQ set-points of 1100 mV and ADC 1095 mV, so the saved 1.20 V is **not applied**; the configuration runs at 1.10 V (cause UNKNOWN).
 
 ## BD790i X3D
 

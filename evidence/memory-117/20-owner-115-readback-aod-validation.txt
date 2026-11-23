@@ -1,5 +1,8 @@
 # Owner's stock-1.15 SPI readback (AFUWINx64 /O, BD790i X3D) - validation of the AOD path model (manual; dump not committed)
 # source: owner-run memory_state_report.py output (pre-fix version); AodSetupRpl values from its re-entry sheet
+# revision 2026-11-23: guards now carry the branch direction; AodSetupRpl[0x3A] kept at its driver default 0xFF
+#   (AodSmm defaults builder: 4E98 mov WORD PTR [rbx+0x3a],0xff). The first revision assumed 0x3A = 1, which only
+#   matched because the extractor then also read the 0x3A guard with the wrong polarity (see checkpoint 2026-11-23).
 
 ## override APCB @0x522000 slots in the readback
   inst=0 prio=0x02: 21 token(s)
@@ -31,16 +34,17 @@
   0xFC195E5C AodSetupRpl[0x40]                    predicted=36     stored=36     ok
 
 RESULT: predicted == stored for all 21 tokens: True
+counter-check: with AodSetupRpl[0x3A] = 1 the model drops Memory Target Speed (0xD06DBAFB): True
 
 ## observations
 - AMD Overclocking (AodSmm, purpose 2) writes land in override instance 0 with priority mask 0x02, not 0x10 as inferred earlier
   from the community dump's GNBG entry; CBS (purpose 3) uses instance 1 / 0x04. With fiano's level order AOD would outrank CBS.
+- Memory Target Speed (0xD06DBAFB) is written only when AodSetupRpl[0x3C] == 1 AND [0x3A] != 1 (AodSmm 557D: cmp [rbx+0x3a],r13b; je skip);
+  [0x3A] == 1 selects another path that writes 0xE753A04C = TRUE and 0x244E47D0 = [0x3B] instead (meaning of 0x3A/0x3B: INFERENCE,
+  likely a memory-profile selector; the IFR questions are unnamed).
 - the owner's memory configuration lives entirely in AMD Overclocking; the APCB holds exactly what those settings produce,
   no CBS resync is pending, APOB NV is populated (saved training), CBS Memory Context Restore is Auto (platform default TRUE).
 - FCLK is stored as the CBS option code (AOD 2000 MHz -> 0x30); DIMM VDD/VDDQ 1200 mV become tokens 0x66CAD59B/0x814A6C32 plus two
-  TRUE flags (0x6CD36DBE, 0x72958E2C); 'Enable Platform PMIC Control' = Disable becomes 0x288F8A28 = 0 (help text: when enabled,
-  DDR PMIC voltages are not adjusted by processor firmware). APU VDDIO 1200 has no APCB token (extended-CMOS hand-off, evidence 16).
-- ZenTimings on the same 1.15 setup reported MEM VDD/VDDQ 1.10 V while 1.20 V is requested: whether the request reaches the
-  SODIMM PMICs is UNKNOWN statically (ABL not readable); read-only check: DIMM PMIC sensors in HWiNFO.
-- the pre-fix report flagged every AOD token as DIVERGES because it compared all override slots against the CBS expectation;
-  memory_state_report.py now separates the slots and models the AOD path.
+  TRUE flags (0x6CD36DBE, 0x72958E2C); 'Enable Platform PMIC Control' = Disable becomes 0x288F8A28 = 0. APU VDDIO has no token.
+- running DIMM voltages (owner's ZenTimings debug report, 2026-11-23): PMIC5100 in Secure mode, VDD/VDDQ set-points 1100 mV,
+  SWA/SWB ADC 1095 mV -> the saved 1200 mV request is not applied (checkpoint 2026-11-23).

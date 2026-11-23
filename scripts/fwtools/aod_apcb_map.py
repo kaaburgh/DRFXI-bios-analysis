@@ -3,8 +3,9 @@
 
 Input: `objdump -d -M intel` text of AodSmm. Every purpose-2 write is `mov r8d,TOKEN` + `mov dl,0x2` + call
 through the APCB service (rsi = Set16/32, r14 = Set8, r12 = SetBool). The source is the nearest preceding
-`[rbx+OFF]` load into r9, and guards are the preceding `cmp BYTE PTR [rbx+OFF],r13b` (r13b = 1) /
-`cmp r9b,0xff` (skip Auto). Two blocks are not plain loads and are matched by exact instruction shape:
+`[rbx+OFF]` load into r9, and guards are the preceding `cmp BYTE PTR [rbx+OFF],r13b|0xff` (r13b = 1) with the
+direction taken from the following branch: `jne skip` -> the write needs [OFF] == v ("eq"), `je skip` -> it needs
+[OFF] != v ("ne"); `cmp r9b,0xff; je` -> skip Auto. Guards are [offset, "eq"|"ne", [values]]. Two blocks are not plain loads and are matched by exact instruction shape:
   * FCLK: WORD [rbx+0x94] (MHz) is skipped when 0xFFFF and converted by a helper to the CBS FCLK option code;
   * VDDIO: `mov al,[rbx+0x192]; sub al,r13b; cmp al,r13b; ja` -> the DIMM VDDQ/VDD values and two TRUE flags are
     written only when VDDIO Ctrl is Manual (1) or Separate (2).
@@ -42,9 +43,12 @@ def build(asm):
             if ms and r["offset"] is None and r["const"] is None:
                 r["offset"] = int(ms.group(2), 16)
                 r["width"] = {"WORD": 2, "BYTE": 1}.get(ms.group(1), 1 if "r9b" in tj else 4)
-            if tj == "mov r9b,r13b" and r["offset"] is None: r["const"] = 1
-            mc = re.match(r"cmp BYTE PTR \[rbx\+0x([0-9a-f]+)\],r13b", tj)
-            if mc: r["guards"].append([int(mc.group(1), 16), [1]])
+            if tj in ("mov r9b,r13b", "mov r9d,r13d") and r["offset"] is None: r["const"] = 1
+            mc = re.match(r"cmp BYTE PTR \[rbx\+0x([0-9a-f]+)\],(r13b|0xff)$", tj)
+            if mc:
+                br = txt[j + 1].split()[0]
+                assert br in ("jne", "je"), (hex(ins[j][0]), txt[j + 1])
+                r["guards"].append([int(mc.group(1), 16), "eq" if br == "jne" else "ne", [1 if mc.group(2) == "r13b" else 0xFF]])
             if tj == "cmp r9b,0xff": r["skip_if"] = 0xFF
         rows.append(r)
     by = {r["token"]: r for r in rows}
@@ -59,7 +63,7 @@ def build(asm):
     end = int(txt[k + 3].split()[-1], 16)
     for r in rows:
         if int(r["addr"], 16) > ins[k][0] and int(r["addr"], 16) < end:
-            r["guards"].append([0x192, [1, 2]])
+            r["guards"].append([0x192, "eq", [1, 2]])
     return rows
 
 
@@ -74,4 +78,5 @@ if __name__ == "__main__":
     rows = main(sys.argv[1], sys.argv[sys.argv.index("--json") + 1] if "--json" in sys.argv else None)
     for r in rows:
         src = ("[0x%X] w%d" % (r["offset"], r["width"])) if r["offset"] is not None else ("const %d" % r["const"] if r["const"] is not None else "computed")
-        print("%s %s %-9s %-14s skip=%-6s guards=%s %s" % (r["addr"], r["token"], r["setter"], src, r["skip_if"], r["guards"], r["transform"] or ""))
+        g = ";".join("[0x%X]%s%s" % (o, "==" if op == "eq" else "!=", "/".join(map(str, v))) for o, op, v in r["guards"])
+        print("%s %s %-9s %-14s skip=%-6s guards=%s %s" % (r["addr"], r["token"], r["setter"], src, r["skip_if"], g or "-", r["transform"] or ""))

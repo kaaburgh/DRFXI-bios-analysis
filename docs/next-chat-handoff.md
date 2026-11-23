@@ -155,6 +155,7 @@ Paused.
 - Дальше — только read-only данные с железа (`scripts/fwtools/memory_state_report.py`).
 - Подготовка к baseline владельца (checkpoint `2026-11-22-memory-117-owner-baseline-and-reentry-check.md`, evidence 18): путь повторного ввода в 1.17 не изменился; отчёт печатает лист повторного ввода, ловит «записано в переменную, но не отправлено в APCB» (`DIVERGES`), `--aodsetup`, `--compare` до/после. Без Python в Windows: `scripts/win/drfxi-mem.ps1` (только чтение переменных; `-Rom` для образа AFU `/O`; AFUWINx64.EXE лежит в официальных пакетах 1.15/1.17, идентичен).
 - Дамп владельца на 1.15 (checkpoint `2026-11-22-memory-117-owner-readback-aod-path.md`): вся конфигурация в AMD Overclocking (13 таймингов, 6000, FCLK 2000, UCLK=MEMCLK, VDDIO Manual 1200/1200/1200, Platform PMIC Control Disable), CBS — Auto; статическая карта AodSmm (`aod_apcb_map.py`) точно предсказывает 21 токен; AOD-токены в слоте inst 0 / prio 0x02 (исправление 0x10). Открыто: 1.20 В запрошено, ZenTimings показывал 1.10 В.
+- 2026-11-23 (checkpoint `2026-11-23-memory-117-aod-speed-guard-and-pmic.md`): у Memory Target Speed в AodSmm условие `[0x3A] != 1` (в карте было наоборот — исправлено, evidence 19/20 перегенерированы); сборка форка ZenTimings на плате владельца: переменные читаются, раскладка совпала, всё как ожидалось, кроме Speed/MCLK (та же ошибка, сообщено в PR #1); PMIC модулей в Secure mode, VDD/VDDQ 1100 мВ (ADC 1095 мВ) — сохранённые 1.20 В не применяются.
 
 
 ### Set TCC to 100
