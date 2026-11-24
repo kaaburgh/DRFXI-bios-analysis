@@ -200,6 +200,7 @@ Static narrowing, 2026-11-24:
   - 1.11.x (ComboAM5PI 1.0.0.3) has no Trefi front end, but its ABL 28.22.90.13 already consumes the token;
   - 1.21 (1.0.0.6) adds AMD CBS `Trefi` (`AmdSetupRPL[0x2E1]`), producers in `CbsSetupDxeRPL`/`BctBaseSmmRPL`/`AodSmm`, and ASRock "Refresh Interval (tREFI)";
   - DRFXI's CBS layout matches the pre-1.0.0.6 generation (`checkpoints/2026-11-24-trefi-asrock-x670e-steel-legend.md`).
+- Injection feasibility (static): the APCB token register-permission whitelist is present but not armed on DRFXI 1.15, so the firmware's own `AmdApcbDxeV3` `SetToken16` would accept `0x419FF338`. Blockers are persistence (separate SPI write-back), a possible CBS Save-time purge, and the fact that ABL auto-recovery is training-failure-based and would not catch a too-high tREFI's warm instability (`checkpoints/2026-11-24-trefi-apcb-service-feasibility.md`). No injector written; no flashing in scope.
 
 See `findings/memory-trefi.md`. The separate 1.17 DDR5 tuning-regression narrowing is in `checkpoints/2026-11-14-memory-117-regression-static-narrowing.md`.
 

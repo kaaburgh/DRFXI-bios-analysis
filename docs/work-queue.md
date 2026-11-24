@@ -21,11 +21,14 @@ The static DRFXI side is done (`docs/findings/memory-trefi.md`). The ABL reads T
 
 Fire Range comparison done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-firerange-msa2.md`). On Minisforum MS-A2, the FRG (FireRangePI 1.0.0.0 / 1.0.0.0g) AOD layer adds `Tref Ctrl`/`Tref`, and `AodSmm` writes the same token `0x419FF338`. The DRG twin (DragonRangePI-FL1 1.0.0.3h) does not.
 
+APCB-service injection feasibility done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-apcb-service-feasibility.md`): the register-permission whitelist is not armed on DRFXI 1.15, so the firmware's own `AmdApcbDxeV3` `SetToken16` would accept `0x419FF338`; blockers are persistence, a possible CBS Save-time purge, and training-failure-only auto-recovery.
+
 Remaining bounded items:
 
 - ~~compare the ABL Override Timing / Tref path between Fire Range and Dragon Range~~ and ~~trace `+0x218` into `DramTiming12`~~: done (`docs/checkpoints/2026-11-24-trefi-abl-path.md`, `scripts/abl_tref_path.py`);
+- resolve which CBS priority an injected token would need to avoid the Save-time purge, and the `0xE138`/`0xE139` write-back gating;
 - if a vendor BIOS with DragonRangeFL1PI 1.0.0.3j/3k turns up, run the audit on it;
-- runtime confirmation needs hardware and a token producer, and requires a separate safety/recovery review first.
+- runtime confirmation needs hardware; any injection attempt requires a hardware recovery plan (external SPI programmer / flashback) first. No injector or flashing in scope.
 
 ### AMD Variable Protection / no-flash setup editing
 
