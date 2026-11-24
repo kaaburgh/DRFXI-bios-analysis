@@ -1,6 +1,6 @@
 # Research work queue
 
-Last updated: 2026-09-12
+Last updated: 2026-11-24
 
 This file records which branches are active, complete enough to stop, or intentionally deferred. Topic details remain in `docs/findings/`; immutable snapshots remain in `docs/checkpoints/`.
 
@@ -14,6 +14,12 @@ Other valuable bounded branches remain:
 - recover missing official firmware 1.13 / 1.14 / 1.16;
 - classify a remaining normalized PE/FFS change only when driven by a concrete changelog or unexplained released feature;
 - if the clean 1.17 unlock is ever considered for hardware use, perform a **separate** bounded pre-flash integrity/recovery pass before discussing a flashing procedure.
+
+### DDR5 tREFI: "newer AGESA" comparison
+
+The static DRFXI side is done (`docs/findings/memory-trefi.md`). The ABL reads Tref token `0x419FF338`, but no IFR question or UEFI producer exists.
+
+Next, only once an external artifact is available: run `scripts/trefi_chain_audit.py` on a FireRangeFL1 (Ryzen 9000HX) BIOS in which tREFI is reported editable. Optionally add a desktop ComboAM5 BIOS that exposes Trefi in AMD CBS as a second reference. Without such an image, do not continue generic ABL reverse engineering. The one ABL item worth a bounded pass is tracing the Tref structure field (`+0x218`) into the `DramTiming12` write.
 
 ### AMD Variable Protection / no-flash setup editing
 

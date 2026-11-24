@@ -1,6 +1,6 @@
 # Research status
 
-Last updated: 2026-09-12
+Last updated: 2026-11-24
 
 This is the **living checkpoint** for the investigation. Dated reports under `docs/checkpoints/` are historical snapshots and may contain conclusions later refined here.
 
@@ -185,6 +185,18 @@ See `findings/clean-hii-unlock.md` and `data/drfxi-1.17-clean-hii-unlock-validat
 
 This is **not** a flashing recommendation. Hardware boot/runtime validation and flash-path/integrity/recovery safety remain separate, unproven questions.
 
+### DDR5 tREFI not editable (1.15 / 1.17, also 1.04–1.12)
+
+Static narrowing, 2026-11-24:
+
+- There is no tREFI IFR question and no `AmdSetupRPL` field for it. The manual timing block `0x116`–`0x162` ends at Trdwr.
+- No UEFI module (`CbsSetupDxeRPL`, `BctBaseSmmRPL`, `AodSmm`) writes APCB token `0x419FF338`.
+- The PSP ABL (4C.11.90.20 in 1.15/1.17; also 32.3 and 35.23 in older images) **does** read that token in its "Override Timing" routine ("Override Tref").
+- The cause is therefore narrowed to the missing CBS/AOD front end, not a missing ABL consumer. Whether ABL applies the override to the effective `DramTiming12` register is unknown.
+- This is not a 1.15/1.17 regression.
+
+See `findings/memory-trefi.md`. The separate 1.17 DDR5 tuning-regression narrowing is in `checkpoints/2026-11-14-memory-117-regression-static-narrowing.md`.
+
 ### 1.17 dGPU / iGPU behavior
 
 - New executable logic is localized to `OemDxe.efi`.
@@ -231,7 +243,8 @@ Highest-value unresolved work outside paused branches:
 1. run the read-only `AmdVariableProtectionProbe.efi` on stock 1.17 hardware and verify gate deletion plus next-boot recovery without any setup-variable write;
 2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
 3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
-4. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps.
+4. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps;
+5. tREFI: run `scripts/trefi_chain_audit.py` on a FireRangeFL1 BIOS in which tREFI is reported editable, to see whether "newer AGESA" only adds the CBS/AOD producer for token `0x419FF338` (see `findings/memory-trefi.md`).
 
 ## Deferred / paused branches
 

@@ -7,6 +7,7 @@ Current helpers:
 - `pe_semantic_diff.py` — zeroes selected volatile PE metadata, relocation targets and debug payloads before section-level comparison;
 - `asm_semantic_compare.py` — normalizes objdump output by abstracting RIP-relative displacements and branch targets before sequence comparison;
 - `pcd_db_diff.py` — parses EDK II BuildVersion-7 external PCD databases, decodes scalar DATA defaults, uses stable DynamicEx identities as a renumbering anchor, and performs a value-aware token-sequence diff. It was used to localize the DRFXI 1.12→1.15 `91 → 100` TCC PCD change;
+- `trefi_chain_audit.py` — read-only, standard-library-only audit of the DDR5 tREFI chain in any AMD SPI image. It walks FV/FFS/sections (LZMA and AMD zlib), decompresses PSP `$PS1` images, and reports which UEFI modules or ABL overlays contain the known APCB timing tokens (Tref `0x419FF338` plus Tcl/Trfc1 controls) and tREFI strings, together with the AGESA PI string. It is intended for comparing DRFXI against newer (e.g. FireRangeFL1) images; see `docs/findings/memory-trefi.md`;
 - `patch_drfxi_117_clean_hii_unlock.py` — fail-closed, exact-version patcher for the official DRFXI 1.17 image. It exposes the selected UMC/DDR memory tree plus the existing VDDP/FCLK branch and AMI Save/Restore User Defaults without importing donor-board state.
 
 ## DRFXI 1.17 clean HII patcher

@@ -1,0 +1,87 @@
+DRFXI DDR5 tREFI chain: narrowly scoped excerpts
+=================================================
+
+Provenance
+----------
+Firmware (official DRFXI.BIN):
+  1.15  3afaba6d916b3897d1d98bd5913008b38e89b6c51b2c6963c7109793541d8d88
+  1.17  99f3bab5ea491202bf365c23e6416f9d1e8a649ad00f90c1f3e21f1a61e35c51
+
+ABL overlay (PSP $PS1 at flash 0x289940, ABL 4C.11.90.20, zlib-decompressed,
+identical in 1.15 and 1.17):
+  sha256 f4ec135a998b81ef7547e6b303fec72dd219b786442aad85c48ee6eaf4330c1c
+  ARM Thumb-2; offsets below are file offsets in the decompressed body.
+
+CbsSetupDxeRPL PE32 (FFS 2848A12F-3F86-47C7-81D8-D3FD47B205B2):
+  1.15 sha256 0aafafee9e5f51d72b978a8268499c6aacbc9e3a612d22e3b4943c0021212084
+  1.17 sha256 d5fe096d8d6c0a5a123b6543a9b64377b4928669e3b0953fd8b875aaec6140ea
+  x86-64; offsets are RVAs. The excerpted code is identical in both versions.
+
+Tools: uefi_firmware 1.17 / uefi-firmware-parser (extraction cross-check),
+psptool 3.8 (PSP directory listing), capstone 5.0.9 + pefile 2024.8.26
+(disassembly), first-party scripts/trefi_chain_audit.py (reproduction).
+
+1. ABL: Tref getter requests APCB token 0x419FF338
+-------------------------------------------------
+002d30  push     {r4, r5, r6, lr}
+002d36  cmp      r1, #2                 ; token size must be 2 (UINT16)
+002d38  beq      #0x2d40
+002d3a  ldr      r0, =0xf0f20058        ; assert / error code otherwise
+002d3c  bl       #0x4094
+002d40  ldr      r0, =0x2e7d4           ; ABL core service table pointer
+002d44  ldr      r0, [r0]
+002d46  ldr.w    r2, [r0, #0xd8]        ; APCB token getter
+002d4a  ldr      r0, =0x419ff338        ; <-- Tref token ID
+002d4c  blx      r2
+002d4e  cbz      r0, #0x2d52            ; return found ? 1 : 0
+
+Same shape for the other 18 getters, e.g. 0x2bd0 -> 0xfc195e5c (Tcl).
+
+2. ABL: "Override Timing" stores Tref
+--------------------------------------
+009d94  adr      r2, ->"\n\tOverride Timing:\n"
+009dd4  bl       #0x5138
+009dda  bl       #0x4508                ; gate: returns [ctx+0x20] != 0
+009dde  cmp      r0, #0
+009de0  beq      #0x9ede                ; skip all overrides when gate is 0
+...
+00a0e6  movs     r1, #2
+00a0e8  add      r0, sp, #4
+00a0ea  bl       #0x2d30                ; Tref getter
+00a0ee  cbz      r0, #0xa110            ; token absent -> no override
+00a0f2  ldrh.w   r3, [sp, #4]           ; 16-bit value
+00a0f6  adr      r2, ->"\n\t\t\tOverride Tref: 0x%x\n"
+00a0f8  smulbb   r0, r5, r0             ; P-state index * 0x59 dwords (0x164 bytes)
+00a100  str.w    r3, [r0, #0x218]       ; store into timing structure
+00a10e  blx      r6                     ; debug print
+
+3. CbsSetupDxeRPL: manual-timing token producers (start and end of block)
+--------------------------------------------------------------------------
+00477c  cmp     byte ptr [rbx + 0x116], r13b    ; Active Memory Timing Settings
+004783  jne     0x4bc5                          ; skip the entire block
+004789  movzx   r9d, word ptr [rbx + 0x117]     ; Memory Target Speed
+004791  mov     r8d, 0xd06dbafb
+00479c  call    rbp                             ; write APCB word token
+0047ab  cmp     byte ptr [rbx + 0x119], r13b    ; Tcl Ctrl
+0047b4  movzx   r9d, word ptr [rbx + 0x11a]     ; Tcl
+0047bc  mov     r8d, 0xfc195e5c
+0047c7  call    rbp
+...   (23 more identical Ctrl/value/token triplets, see data/trefi-token-map.csv)
+004ba7  cmp     byte ptr [rbx + 0x161], r13b    ; Trdwr Ctrl
+004bb0  movzx   r9d, word ptr [rbx + 0x162]     ; Trdwr
+004bb8  mov     r8d, 0x1382572d
+004bc3  call    rbp
+004bc5  mov     r9b, byte ptr [rbx + 0x164]     ; next block: drive strengths
+004bd4  mov     r8d, 0x275c400a
+
+No instruction or data in any UEFI module of 1.04/1.07/1.12/1.15/1.17 or the
+community 795iX3D image contains the dword 0x419FF338.
+
+4. IFR boundary (CbsSetupDxeRPL, VarStore 0x5000 = AmdSetupRPL)
+---------------------------------------------------------------
+0x15E oneof   Twrrd Ctrl
+0x15F numeric Twrrd              (UINT16)
+0x161 oneof   Trdwr Ctrl
+0x162 numeric Trdwr              (UINT16)
+0x164 oneof   Processor CK drive strengths
+No IFR prompt in any module matches /refi|refresh interval/i.

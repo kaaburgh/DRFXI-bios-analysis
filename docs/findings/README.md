@@ -12,6 +12,7 @@ Current topics:
 - [`flash-eip-and-tcg.md`](flash-eip-and-tcg.md) — AMI flash-driver/EIP changes and undocumented TCG Storage Security addition
 - [`smu-power-limit.md`](smu-power-limit.md) — current TCC/SMU power-limit investigation, including negative results
 - [`intel-lan-oprom.md`](intel-lan-oprom.md) — current state of the 1.13 Intel LAN OPROM POST-hang investigation
+- [`memory-trefi.md`](memory-trefi.md) — why DDR5 tREFI is not editable: no IFR question or CBS/AOD token producer, while the ABL already reads Tref token `0x419FF338`
 - [`changelog-mapping.md`](changelog-mapping.md) — compact changelog ↔ code/data evidence matrix
 
 Use `../research-status.md` as the project-level starting point.
