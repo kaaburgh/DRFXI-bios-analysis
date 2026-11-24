@@ -12,6 +12,7 @@ Dated snapshot: [`../checkpoints/2026-11-24-trefi-static-narrowing.md`](../check
 - **Confirmed:** the ABL in the same images **does read a tREFI override**. Its "Override Timing" routine requests APCB token **`0x419FF338`** (16-bit) and, when present, logs `Override Tref: 0x%x` and stores the value in the per-P-state timing structure, the same way it handles Tcl, Trfc1 and the other manual timings.
 - **Confirmed:** this has been true since 1.04 (DragonRangePI-FL1 1.0.0.3a, ABL 32.3.90.20). It is not a 1.15/1.17 regression.
 - **Narrowed cause:** the gap is in the platform-side **CBS/AOD front end** (IFR question plus APCB token producer), not in the ABL consumer.
+- **Confirmed on Fire Range (MS-A2 `F1WSA_FRG`, FireRangePI 1.0.0.0 and 1.0.0.0g):** the AMD Overclocking (AOD) layer adds `Tref Ctrl` / `Tref`, and `AodSmm` writes the **same token `0x419FF338`**. The matched Dragon Range build for the same board (`F1WSA_DRG`, PI 1.0.0.3h) lacks both. See [`../checkpoints/2026-11-24-trefi-firerange-msa2.md`](../checkpoints/2026-11-24-trefi-firerange-msa2.md).
 - **Unknown:** whether a `0x419FF338` token, if one were present in the APCB, ends up as the effective `UMC::DramTiming12` Tref value. The ABL path after the override store was not traced to the register write.
 
 ## Firmware corpus
@@ -75,21 +76,30 @@ The routine runs only if a gate returns nonzero: `[ctx+0x20]`, checked by the fu
 
 [brick2928/AMD-Mobile-overclocking-capabilities](https://github.com/brick2928/AMD-Mobile-overclocking-capabilities) lists tREFI as "No" for all Dragon Range parts and "Yes, with newer AGESA" for Fire Range (9955HX3D/9955HX/9850HX). Its only cited evidence is one Discord screenshot of a 9955HX3D system. It gives no AGESA version and no mechanism.
 
-DRFXI evidence agrees that stock Dragon Range firmware gives the user no way to change tREFI. It does **not** support the reading that Dragon Range ABL lacks tREFI support: the ABL has read token `0x419FF338` since PI 1.0.0.3a. The most economical explanation is that the newer (Fire Range / ComboAM5-derived) AGESA added the **generated CBS/AOD layer** for tREFI: an IFR question, an `AmdSetup` field, a token write in CbsSetupDxe/BctBaseSmm and an AOD entry. Whether it also changed ABL behavior is unknown until a Fire Range image is compared.
+DRFXI evidence agrees that stock Dragon Range firmware gives the user no way to change tREFI. It does **not** support the reading that Dragon Range ABL lacks tREFI support: the ABL has read token `0x419FF338` since PI 1.0.0.3a.
+
+The Fire Range comparison (Minisforum MS-A2, same board, `DRG` vs `FRG` BIOS lines) settles where the "newer AGESA" difference sits:
+
+| | MS-A2 DRG 1.02/1.03 (DragonRangePI-FL1 1.0.0.3h) | MS-A2 FRG 1.02 (FireRangePI 1.0.0.0) / 1.04 (1.0.0.0g) |
+|---|---|---|
+| AMD CBS (`CbsSetupDxeRPL`) Tref question | no | no |
+| AMD Overclocking (`AodDxe`) `Tref Ctrl` / `Tref` | no | **yes** ("Specify the tRef time. Valid Value: 0 ~ 0xFFFF") |
+| `AodSmm` writes `0x419FF338` | no | **yes**, from AOD variable `0x20F`/`0x210`, right after Trdwr |
+| ABL reads `0x419FF338` | yes (4C.11.90.20) | yes (51.15.0.20 / 64.24.0.20) |
+
+The producer is the **AOD layer**, not CBS. It uses the identical token ID, so on Dragon Range only the producer side is missing. The Fire Range AOD set also grows from 64 to 106 `AodMem*` parameters (Tref, TrcdRd/TrcdWr, 2D/DFE training, OC mode/profile, per-P-state drive/ODT).
+
+Whether the Fire Range ABLs differ from the Dragon Range ABL in how the override reaches `DramTiming12` is not yet compared.
 
 ## Open questions
 
 1. Does a `0x419FF338` token in the APCB actually become the effective `UMC::DramTiming12[Tref]`? The ABL code observed around `DramTiming12` (refresh enable and P-state save/restore; a `0xC00FFFFF` mask) does not recompute the Tref field, but the main timing-programming path was not traced.
 2. What feeds the Override Timing gate `[ctx+0x20]`?
-3. Does a Fire Range BIOS with editable tREFI use the same token ID?
+3. ~~Does a Fire Range BIOS with editable tREFI use the same token ID?~~ Yes. MS-A2 FRG `AodSmm` writes `0x419FF338`.
+4. Does any vendor ship DragonRangeFL1PI newer than 1.0.0.3h? Third-party CVE mirrors of AMD bulletins list 1.0.0.3j and 1.0.0.3k as fixed versions, but no vendor BIOS carrying them has been found. MS-A2 DRG 1.03 (2025-12-16) and DRFXI 1.17 (2026-08-28) are both on 1.0.0.3h.
 
 ## Next bounded steps
 
-1. **Fire Range comparison (static, highest value).** Run `scripts/trefi_chain_audit.py` on a FireRangeFL1 BIOS in which tREFI is reported editable. Record:
-   - whether a `Trefi` IFR prompt exists, in which module, and at which VarOffset;
-   - which UEFI modules write `0x419FF338`, or which other token sits next to the Trfc/TrfcSb token writes;
-   - the ABL version, and whether "Override Tref" is still present.
-
-   If the Fire Range producer writes `0x419FF338`, the Dragon Range ABL already accepts the same token and the gap is purely front-end.
+1. **Fire Range ABL vs Dragon Range ABL (static).** Compare the "Override Timing" / Tref path in ABL 51.15.0.20 (MS-A2 FRG 1.02) with 4C.11.90.20. If the Fire Range ABL getter and store are unchanged, the Dragon Range override path is very likely functional.
 2. **Hardware, read-only.** An SPI readback after saving manual timings in setup would confirm which tokens CBS inserts into the small APCB instances. Do not change firmware for this step.
 3. Any experiment that **writes** a Tref token (APCB edit, CBS patch, runtime APCB service call) modifies boot-critical configuration. It needs its own safety and recovery analysis first. The ABL contains "Memory error occurs with default APCB" and "Clear CMOS and load default APCB" recovery paths, but their behavior on this board is unverified.

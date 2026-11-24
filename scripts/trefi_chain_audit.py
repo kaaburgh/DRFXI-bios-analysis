@@ -58,7 +58,10 @@ TOKENS = {
     "Trfc1 (positive control)": 0xBBEED68E,
 }
 
-STRINGS = ["trefi", "refresh interval", "override tref", "tref "]
+# "Tref Ctrl" / "AodMemTimingTref*" are the AMD Overclocking (AOD) names used by
+# FireRangePI (MS-A2 F1WSA_FRG); "tref " alone is only meaningful in ABL bodies.
+STRINGS = ["trefi", "refresh interval", "tref ctrl", "specify the tref", "aodmemtimingtref",
+           "override tref", "tref "]
 
 
 def guid_str(b):
@@ -261,9 +264,8 @@ def main():
     rep["summary"] = {
         "abl_reads_known_tref_token": any(tref in x["hits"] for x in psp_hits),
         "uefi_modules_with_known_tref_token": sorted({x["module"] for x in uefi_hits if tref in x["hits"]}),
-        "uefi_modules_with_trefi_string": sorted({x["module"] for x in uefi_hits
-                                                  if any(k.startswith("string:trefi") or k.startswith("string:refresh interval")
-                                                         for k in x["hits"])}),
+        "uefi_modules_with_tref_string": sorted({x["module"] for x in uefi_hits
+                                                 if any(k.startswith("string:") for k in x["hits"])}),
         "uefi_modules_with_tcl_control_token": sorted({x["module"] for x in uefi_hits
                                                        if "token:Tcl (positive control)" in x["hits"]}),
     }

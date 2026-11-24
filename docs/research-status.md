@@ -194,6 +194,7 @@ Static narrowing, 2026-11-24:
 - The PSP ABL (4C.11.90.20 in 1.15/1.17; also 32.3 and 35.23 in older images) **does** read that token in its "Override Timing" routine ("Override Tref").
 - The cause is therefore narrowed to the missing CBS/AOD front end, not a missing ABL consumer. Whether ABL applies the override to the effective `DramTiming12` register is unknown.
 - This is not a 1.15/1.17 regression.
+- On Fire Range (Minisforum MS-A2 `F1WSA_FRG`, FireRangePI 1.0.0.0/1.0.0.0g), the AMD Overclocking (AOD) layer adds `Tref Ctrl`/`Tref`, and `AodSmm` writes the same token `0x419FF338`. The Dragon Range twin `F1WSA_DRG` (PI 1.0.0.3h) does not. The "newer AGESA" difference is therefore the AOD producer, not CBS and not a new token (`checkpoints/2026-11-24-trefi-firerange-msa2.md`).
 
 See `findings/memory-trefi.md`. The separate 1.17 DDR5 tuning-regression narrowing is in `checkpoints/2026-11-14-memory-117-regression-static-narrowing.md`.
 
@@ -244,7 +245,7 @@ Highest-value unresolved work outside paused branches:
 2. recover official 1.13 / 1.14 / 1.16 binaries to resolve temporal attribution;
 3. classify remaining normalized PE/FFS changes only when driven by a concrete changelog or unexplained released feature;
 4. if hardware use of the clean 1.17 unlock is contemplated, perform a separate pre-flash integrity/authentication/recovery investigation before discussing flashing steps;
-5. tREFI: run `scripts/trefi_chain_audit.py` on a FireRangeFL1 BIOS in which tREFI is reported editable, to see whether "newer AGESA" only adds the CBS/AOD producer for token `0x419FF338` (see `findings/memory-trefi.md`).
+5. tREFI: compare the ABL Override Timing / Tref path between Fire Range ABL 51.15.0.20 and Dragon Range ABL 4C.11.90.20 (see `findings/memory-trefi.md`).
 
 ## Deferred / paused branches
 

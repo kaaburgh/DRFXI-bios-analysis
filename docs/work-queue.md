@@ -19,7 +19,13 @@ Other valuable bounded branches remain:
 
 The static DRFXI side is done (`docs/findings/memory-trefi.md`). The ABL reads Tref token `0x419FF338`, but no IFR question or UEFI producer exists.
 
-Next, only once an external artifact is available: run `scripts/trefi_chain_audit.py` on a FireRangeFL1 (Ryzen 9000HX) BIOS in which tREFI is reported editable. Optionally add a desktop ComboAM5 BIOS that exposes Trefi in AMD CBS as a second reference. Without such an image, do not continue generic ABL reverse engineering. The one ABL item worth a bounded pass is tracing the Tref structure field (`+0x218`) into the `DramTiming12` write.
+Fire Range comparison done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-firerange-msa2.md`). On Minisforum MS-A2, the FRG (FireRangePI 1.0.0.0 / 1.0.0.0g) AOD layer adds `Tref Ctrl`/`Tref`, and `AodSmm` writes the same token `0x419FF338`. The DRG twin (DragonRangePI-FL1 1.0.0.3h) does not.
+
+Remaining bounded items:
+
+- compare the ABL Override Timing / Tref path between Fire Range ABL 51.15.0.20 and Dragon Range ABL 4C.11.90.20;
+- trace the Tref structure field (`+0x218`) into the `DramTiming12` write;
+- if a vendor BIOS with DragonRangeFL1PI 1.0.0.3j/3k turns up, run the audit on it.
 
 ### AMD Variable Protection / no-flash setup editing
 

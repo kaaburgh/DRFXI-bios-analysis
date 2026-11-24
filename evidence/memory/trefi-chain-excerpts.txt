@@ -77,6 +77,23 @@ Same shape for the other 18 getters, e.g. 0x2bd0 -> 0xfc195e5c (Tcl).
 No instruction or data in any UEFI module of 1.04/1.07/1.12/1.15/1.17 or the
 community 795iX3D image contains the dword 0x419FF338.
 
+3b. Fire Range comparison: AodSmm writes the same token (MS-A2 F1WSA_FRG 1.04)
+-------------------------------------------------------------------------------
+Image F1WSA.BIN sha256 56c775c720d9ca766e98cb0727ca087614b7352a667b4e50100786e666ce018d
+(FireRangePI 1.0.0.0g). AodSmm PE32 (FFS B54299AD-B521-4BB8-A361-689249FE72B9)
+sha256 69f114656e7043b30a3fe50197716ff6cdb49aea742ac96f2f9c0431e70de726, RVAs:
+006deb  movzx   r9d, word ptr [rbx + 0x88]      ; Trdwr
+006df3  mov     r8d, 0x1382572d
+006dff  call    r14
+006e02  cmp     byte ptr [rbx + 0x3c], r13b      ; block gate
+006e08  cmp     byte ptr [rbx + 0x20f], r13b     ; Tref Ctrl
+006e11  movzx   r9d, word ptr [rbx + 0x210]      ; Tref
+006e19  mov     r8d, 0x419ff338                  ; same ID as Dragon Range ABL getter
+006e25  call    r14
+AodDxe (same image) UTF-16 strings: "Tref Ctrl", "Tref",
+"Specify the tRef time. Valid Value: 0 ~ 0xFFFF. The value is in hex."
+FRG 1.02 (FireRangePI 1.0.0.0) has the same sequence at RVA 0x6cd7 (token).
+
 4. IFR boundary (CbsSetupDxeRPL, VarStore 0x5000 = AmdSetupRPL)
 ---------------------------------------------------------------
 0x15E oneof   Twrrd Ctrl
