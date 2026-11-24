@@ -89,7 +89,20 @@ The Fire Range comparison (Minisforum MS-A2, same board, `DRG` vs `FRG` BIOS lin
 
 The producer is the **AOD layer**, not CBS. It uses the identical token ID, so on Dragon Range only the producer side is missing. The Fire Range AOD set also grows from 64 to 106 `AodMem*` parameters (Tref, TrcdRd/TrcdWr, 2D/DFE training, OC mode/profile, per-P-state drive/ODT).
 
-Whether the Fire Range ABLs differ from the Dragon Range ABL in how the override reaches `DramTiming12` is not yet compared.
+The Fire Range and Dragon Range ABLs program the override into `DramTiming12` the same way (see `../checkpoints/2026-11-24-trefi-abl-path.md`).
+
+### Desktop reference: ASRock X670E Steel Legend 1.11.x → 1.21
+
+[`../checkpoints/2026-11-24-trefi-asrock-x670e-steel-legend.md`](../checkpoints/2026-11-24-trefi-asrock-x670e-steel-legend.md)
+
+- **1.11 / 1.11.AS01 / 1.11.AS03** (ComboAM5PI 1.0.0.3, ABL 28.22.90.13): no Trefi question and no producer. The ABL already reads `0x419FF338` and programs `DramTiming12[15:0]`. The CBS timing layout is identical to DRFXI.
+- **1.21** (ComboAM5PI 1.0.0.6, ABL 2C.16.90.12):
+  - AMD CBS adds `Trefi` (`AmdSetupRPL[0x2E1]`, appended, default `0xFFFF`, no Ctrl);
+  - `CbsSetupDxeRPL` and `BctBaseSmmRPL` write `0x419FF338` whenever Active Memory Timing Settings is enabled;
+  - `AodSmm` writes it when its AOD field is nonzero;
+  - ASRock's OC menu adds "Refresh Interval (tREFI)".
+
+So AMD added the tREFI front end to Raphael CBS in early 2023. DragonRangePI-FL1 up to 1.0.0.3h still carries the earlier CBS generation without it. FireRangePI exposes it through AOD instead.
 
 ## Open questions
 

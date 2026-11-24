@@ -196,6 +196,10 @@ Static narrowing, 2026-11-24:
 - This is not a 1.15/1.17 regression.
 - On Fire Range (Minisforum MS-A2 `F1WSA_FRG`, FireRangePI 1.0.0.0/1.0.0.0g), the AMD Overclocking (AOD) layer adds `Tref Ctrl`/`Tref`, and `AodSmm` writes the same token `0x419FF338`. The Dragon Range twin `F1WSA_DRG` (PI 1.0.0.3h) does not. The "newer AGESA" difference is therefore the AOD producer, not CBS and not a new token (`checkpoints/2026-11-24-trefi-firerange-msa2.md`).
 - The ABL path Override Timing → `TimingPtr->Tref` → Program UMC Timings → `UMC::DramTiming12[15:0]` has the same structure in Dragon Range ABL 32.3/35.23/4C.11 and Fire Range ABL 51.15/64.24. No later ABL code rewrites Tref (`checkpoints/2026-11-24-trefi-abl-path.md`).
+- Desktop reference, ASRock X670E Steel Legend:
+  - 1.11.x (ComboAM5PI 1.0.0.3) has no Trefi front end, but its ABL 28.22.90.13 already consumes the token;
+  - 1.21 (1.0.0.6) adds AMD CBS `Trefi` (`AmdSetupRPL[0x2E1]`), producers in `CbsSetupDxeRPL`/`BctBaseSmmRPL`/`AodSmm`, and ASRock "Refresh Interval (tREFI)";
+  - DRFXI's CBS layout matches the pre-1.0.0.6 generation (`checkpoints/2026-11-24-trefi-asrock-x670e-steel-legend.md`).
 
 See `findings/memory-trefi.md`. The separate 1.17 DDR5 tuning-regression narrowing is in `checkpoints/2026-11-14-memory-117-regression-static-narrowing.md`.
 
