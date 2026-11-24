@@ -57,6 +57,14 @@ The ABL overclock-failure recovery (overlay `0x289940`, routine at `0x1900`) kee
 
 But this fires only on a **memory-training/boot failure**. An over-aggressive tREFI usually trains and boots cleanly and then causes instability or data corruption under load, especially warm. In that case the counter never increments, recovery never fires, and there is **no automatic rollback** — the failure surfaces in the OS. This is the dominant risk and it is structural, not incidental.
 
+## 7. Follow-up: what is actually armed for recovery (DRFXI 1.15)
+
+- **OC-failure threshold is configured.** Token `0xE5325C7B` (`APCB_TOKEN_UID_MEM_OVERCLOCK_FAIL_CNT`) is present in the main APCB (`0x51D400`, mirror `0x8E5400`): byte token, priority mask `0x20`, value **1**. So the §6 "Clear CMOS and load default APCB" path is configured with threshold 1. The extra gate checked before it (`[ctx+0x28]->[0x10] == 1`) was not identified. No DXE/SMM module writes this token; the CBS menu has no matching question.
+- **APCB integrity handling in the ABL core** (overlay `0x24ADA0`, ~`0x884`–`0x8F8`):
+  - if an APCB entry fails validation and the loader is not already in recovery and the failing entry is not the backup type `0x68`, it logs "Recoverable APCB Checksum Error" (postcode `0xE329`), sets a recovery flag and takes an alternate load path. By the structure this is most likely the backup `APCB_COPY` (`0x68`); that is an inference.
+  - if it is already in recovery, or the failing entry is the backup itself, it logs "Fatal APCB Checksum Error" (postcode `0xE32A`) and stops (`svc #0`, code `0x10`). This happens in the PSP before x86 runs: no POST, no UEFI, so no software recovery is possible.
+- `AmdPspWriteBackApcbShadowCopy` refuses to write while `APCB.RecoveryFlag` is set (§4).
+
 ## Conclusion
 
 Mechanically, nothing in DRFXI 1.15 blocks writing token `0x419FF338` through the firmware's own `AmdApcbDxeV3` `SetToken16`: the register-permission whitelist is never armed, and the pre-/post-ReadyToBoot paths both accept the write. The ABL then applies it the way `docs/checkpoints/2026-11-24-trefi-abl-path.md` traced.
