@@ -102,6 +102,8 @@ The Fire Range and Dragon Range ABLs program the override into `DramTiming12` th
   - `AodSmm` writes it when its AOD field is nonzero;
   - ASRock's OC menu adds "Refresh Interval (tREFI)".
 
+The APCB setter (`AmdApcbDxeV3`/`AmdApcbSmmV3` Set16) stores `0xFFFF` verbatim; there is no sentinel handling. With Active Memory Timing Settings enabled and Trefi left at the default `0xFFFF`, ASRock 1.21 would therefore pass tREFI = 65535 to ABL. This is a static inference; the ABL core token-get service was not checked.
+
 So AMD added the tREFI front end to Raphael CBS in early 2023. DragonRangePI-FL1 up to 1.0.0.3h still carries the earlier CBS generation without it. FireRangePI exposes it through AOD instead.
 
 ## Open questions

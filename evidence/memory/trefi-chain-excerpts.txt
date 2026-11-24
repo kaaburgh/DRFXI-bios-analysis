@@ -117,6 +117,22 @@ Fire Range ABL 51.15.0.20 (overlay sha256 abf037c8...; 64.24.0.20 identical here
 Later accesses (DR 00291670/0026cfa0/0029ebf0, FR 002b5550/00289c10) save the
 register, write (value & 0xC00FFFFF) and restore it; bits [15:0] are preserved.
 
+3d. ASRock X670E Steel Legend 1.21: CBS Trefi producer and APCB setter (no 0xFFFF filter)
+-------------------------------------------------------------------------------------------
+ROM sha256 dcfd54e12b345e4ccde214ee561865ddfe30aee3b368a43f5f28203681a377fe (ComboAM5PI 1.0.0.6)
+CbsSetupDxeRPL (RVA):
+00501c  cmp     byte ptr [rbx + 0x116], r13b    ; Active Memory Timing Settings
+005023  jne     0x5363
+005029  movzx   r9d, word ptr [rbx + 0x2e1]     ; Trefi (IFR default 0xFFFF)
+005031  mov     r8d, 0x419ff338
+00503c  call    rbp                             ; rbp = APCB protocol +0x98 (Set16)
+AmdApcbDxeV3: protocol @0x9e00, +0x98 -> 0x12d0 -> 0x4e18 -> 0x6638
+004e7d  mov     r9d, 0xffff                     ; board mask argument, not a value test
+0067b2  movzx   eax, word ptr [rsp + 0xb0]      ; value
+0067c1  mov     word ptr [rcx + 4], ax          ; update existing token value
+006814  mov     dword ptr [r10 + 4], r9d        ; or insert {token, value}
+No "cmp ..., 0xffff" exists in AmdApcbDxeV3 or AmdApcbSmmV3.
+
 4. IFR boundary (CbsSetupDxeRPL, VarStore 0x5000 = AmdSetupRPL)
 ---------------------------------------------------------------
 0x15E oneof   Twrrd Ctrl

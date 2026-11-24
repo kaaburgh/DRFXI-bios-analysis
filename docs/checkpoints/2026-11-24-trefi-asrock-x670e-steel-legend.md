@@ -40,6 +40,30 @@ A forum user reported that tRef/tRefi first appeared in 1.20.AS01 [Beta] (2023-0
 
   All three use the same token `0x419FF338`.
 
-## Open side question
+## `0xFFFF` handling in the CBS → APCB setter (ASRock 1.21)
 
-In ASRock 1.21 the CBS producer writes `AmdSetupRPL[0x2E1]` with no `Ctrl` gate whenever Active Memory Timing Settings is enabled, and the IFR default is `0xFFFF`. ABL 2C.16 has no `0xFFFF` filter in the Tref override. Two things were not checked: whether the CBS APCB word-token setter (reached through a protocol pointer) treats `0xFFFF` as "skip", and whether enabling Active Memory Timing Settings without touching Trefi applies tREFI = 65535.
+In ASRock 1.21 the CBS producer writes `AmdSetupRPL[0x2E1]` with no `Ctrl` gate whenever Active Memory Timing Settings is enabled, and the IFR default is `0xFFFF`. The setter path was disassembled as follows.
+
+Module hashes (decompressed PE, SHA-256 prefix): `CbsSetupDxeRPL` `b8725db405933e96`, `AmdApcbDxeV3` `12070b9a44de2756`, `AmdApcbSmmV3` `bb290cdcf4e7209e`.
+
+1. **Caller.** In `CbsSetupDxeRPL`, the token-writing function at `0x4D58` takes `(AmdSetupRPL*, APCB protocol*)`. It caches protocol slots `+0x88` (8-bit set), `+0x98` (16-bit set) and `+0xA8` (32-bit set).
+   - It first calls `+0x60`, then `+0xC0` with `dl=3`.
+   - Trefi: `cmp [rbx+0x116],1; jne skip; movzx r9d, word [rbx+0x2E1]; mov r8d,0x419FF338; mov dl,3; call rbp`. There is no value test.
+2. **Protocol.** `AmdApcbDxeV3` installs its protocol at `0x9E00` (Revision 3). Slot `+0x98` is `0x12D0` (Set16), and slot `+0xC0` is `0x191C`.
+3. **Set16 `0x12D0`** either forwards `{purpose, token, value}` unchanged through a located protocol (SMM path) or calls `0x3CC0(purpose)` and then `0x4E18(token, value)`. It has no value check.
+4. **`0x4E18`** checks only the priority level (2..5), gets the APCB buffer (`0x3D54`) and calls `0x6638(apcb, size, prioMask = 1<<(prio−1), 0xFFFF, token, value)`. The `0xFFFF` there is the **board-mask argument**, not a value sentinel.
+5. **`0x6638`** (generic WORD-token set):
+   - checks the `APCB` signature;
+   - finds group `0x3000` (TOKN), type 2, by priority mask (`[entry+0xB]`) and board mask (`[entry+0xE] & 0xFFFF`, or equal to `0xFFFF`);
+   - binary-searches the token;
+   - **updates** an existing value (`mov word [rcx+4], ax`) or **inserts** a new `{token, value}` pair, then recomputes the checksum (`0x5E6C`).
+
+   The value is never compared with anything.
+6. **SMM variant.** `AmdApcbSmmV3`'s equivalent routine (`0x6984`) compares only priority masks and the `APCB` signature. Neither module contains any `cmp …, 0xFFFF`.
+7. **Slot `+0xC0` → `0x5380`** recreates empty TOKN type entries (bool, byte, word, dword) for the selected priority through `0x7180`. In practice CBS clears its own token lists before rewriting them on each save. This is an inference from the call pattern.
+
+**Result:** the CBS → APCB setter stores `0xFFFF` like any other value. In ASRock 1.21 with stock AMD CBS:
+- if Active Memory Timing Settings is **disabled**, no Tref token is written, so the ABL default (3.9 µs / 1.95 µs) applies;
+- if it is **enabled** and `Trefi` is left at its default, token `0x419FF338 = 0xFFFF` is written. ABL 2C.16 applies tokens in Override Timing without filtering, so `DramTiming12[15:0]` would become 65535.
+
+This conclusion is static. It assumes the ABL core APCB token-get service (core table `+0xD8`) does not itself treat `0xFFFF` as absent; that service was not disassembled. ASRock's own "Refresh Interval (tREFI)" (default 0) feeds `AodSmm`, which writes the token only when the value is nonzero.
