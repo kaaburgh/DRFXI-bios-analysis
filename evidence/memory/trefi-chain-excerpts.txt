@@ -94,6 +94,29 @@ AodDxe (same image) UTF-16 strings: "Tref Ctrl", "Tref",
 "Specify the tRef time. Valid Value: 0 ~ 0xFFFF. The value is in hex."
 FRG 1.02 (FireRangePI 1.0.0.0) has the same sequence at RVA 0x6cd7 (token).
 
+3c. ABL: Tref reaches UMC::DramTiming12[15:0] (see checkpoint 2026-11-24-trefi-abl-path)
+-------------------------------------------------------------------------------------
+Dragon Range ABL 4C.11.90.20 (overlay sha256 f4ec135a...):
+004dc0  bl  #0x9d8c        ; Override Timing  (stores token -> base+Ps*0x164+0x218)
+004dc4  bl  #0x8b68        ; Program UMC Timings
+004dc8  bl  #0xb098        ; Program UMC DRAM Configuration
+0055fc  ...                ; TimingPtr = base + Ps*0x164 + 0x1ac   (0x218-0x1ac = 0x6c)
+008cf0  ldr.w sb, =0x7000204 ; add.w sb,sb,#0x28 -> 0x700022c, later +4 -> 0x7000230
+008d50  ldr  r0, [r4, #0x6c] ; TimingPtr->Tref
+008d52  bfi  r1, r0, #0, #0x10 ; DramTiming12[15:0]
+008d58  bl   #0xb560         ; register write
+
+Fire Range ABL 51.15.0.20 (overlay sha256 abf037c8...; 64.24.0.20 identical here):
+0053c4  bl  #0xb198        ; Override Timing  (strh token -> base+Ps*0x108+0x208)
+0053c8  bl  #0x9ab0        ; Program UMC Timings
+005d52  ...                ; TimingPtr = base + Ps*0x108 + 0x1cc   (0x208-0x1cc = 0x3c)
+009d1c  ldrh r0, [r4, #0x3c] ; TimingPtr->Tref, clamped to 0xffff
+009d24  bfi  r1, r0, #0, #0x10
+009d28  ldr  r0, =0x7000204 ; adds r0,#0x2c -> 0x7000230 ; bl write
+
+Later accesses (DR 00291670/0026cfa0/0029ebf0, FR 002b5550/00289c10) save the
+register, write (value & 0xC00FFFFF) and restore it; bits [15:0] are preserved.
+
 4. IFR boundary (CbsSetupDxeRPL, VarStore 0x5000 = AmdSetupRPL)
 ---------------------------------------------------------------
 0x15E oneof   Twrrd Ctrl

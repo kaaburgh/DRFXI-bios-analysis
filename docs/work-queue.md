@@ -23,9 +23,9 @@ Fire Range comparison done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-firer
 
 Remaining bounded items:
 
-- compare the ABL Override Timing / Tref path between Fire Range ABL 51.15.0.20 and Dragon Range ABL 4C.11.90.20;
-- trace the Tref structure field (`+0x218`) into the `DramTiming12` write;
-- if a vendor BIOS with DragonRangeFL1PI 1.0.0.3j/3k turns up, run the audit on it.
+- ~~compare the ABL Override Timing / Tref path between Fire Range and Dragon Range~~ and ~~trace `+0x218` into `DramTiming12`~~: done (`docs/checkpoints/2026-11-24-trefi-abl-path.md`, `scripts/abl_tref_path.py`);
+- if a vendor BIOS with DragonRangeFL1PI 1.0.0.3j/3k turns up, run the audit on it;
+- runtime confirmation needs hardware and a token producer, and requires a separate safety/recovery review first.
 
 ### AMD Variable Protection / no-flash setup editing
 

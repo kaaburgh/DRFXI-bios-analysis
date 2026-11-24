@@ -13,7 +13,7 @@ Dated snapshot: [`../checkpoints/2026-11-24-trefi-static-narrowing.md`](../check
 - **Confirmed:** this has been true since 1.04 (DragonRangePI-FL1 1.0.0.3a, ABL 32.3.90.20). It is not a 1.15/1.17 regression.
 - **Narrowed cause:** the gap is in the platform-side **CBS/AOD front end** (IFR question plus APCB token producer), not in the ABL consumer.
 - **Confirmed on Fire Range (MS-A2 `F1WSA_FRG`, FireRangePI 1.0.0.0 and 1.0.0.0g):** the AMD Overclocking (AOD) layer adds `Tref Ctrl` / `Tref`, and `AodSmm` writes the **same token `0x419FF338`**. The matched Dragon Range build for the same board (`F1WSA_DRG`, PI 1.0.0.3h) lacks both. See [`../checkpoints/2026-11-24-trefi-firerange-msa2.md`](../checkpoints/2026-11-24-trefi-firerange-msa2.md).
-- **Unknown:** whether a `0x419FF338` token, if one were present in the APCB, ends up as the effective `UMC::DramTiming12` Tref value. The ABL path after the override store was not traced to the register write.
+- **Statically traced (2026-11-24):** if a `0x419FF338` token is present, ABL writes it to the effective `UMC::DramTiming12[15:0]`. The order is Override Timing → `TimingPtr->Tref` → Program UMC Timings → DramTiming12, with no later rewrite of bits 15:0. The path has the same structure in Dragon Range ABL 32.3/35.23/4C.11 and Fire Range ABL 51.15/64.24. See [`../checkpoints/2026-11-24-trefi-abl-path.md`](../checkpoints/2026-11-24-trefi-abl-path.md). Runtime confirmation is still missing.
 
 ## Firmware corpus
 
@@ -93,13 +93,13 @@ Whether the Fire Range ABLs differ from the Dragon Range ABL in how the override
 
 ## Open questions
 
-1. Does a `0x419FF338` token in the APCB actually become the effective `UMC::DramTiming12[Tref]`? The ABL code observed around `DramTiming12` (refresh enable and P-state save/restore; a `0xC00FFFFF` mask) does not recompute the Tref field, but the main timing-programming path was not traced.
-2. What feeds the Override Timing gate `[ctx+0x20]`?
+1. ~~Does a `0x419FF338` token in the APCB actually become the effective `UMC::DramTiming12[Tref]`?~~ Statically yes: "Program UMC Timings" writes `TimingPtr->Tref` (DR `+0x6C`, FR `+0x3C`) to `0x7000230[15:0]` right after Override Timing. Later accesses only save, mask with `0xC00FFFFF` and restore. See `../checkpoints/2026-11-24-trefi-abl-path.md`. A runtime check is still open.
+2. ~~What feeds the Override Timing gate `[ctx+0x20]`?~~ It is the per-channel "Memory Present" check, shared with Program UMC Timings.
 3. ~~Does a Fire Range BIOS with editable tREFI use the same token ID?~~ Yes. MS-A2 FRG `AodSmm` writes `0x419FF338`.
 4. Does any vendor ship DragonRangeFL1PI newer than 1.0.0.3h? Third-party CVE mirrors of AMD bulletins list 1.0.0.3j and 1.0.0.3k as fixed versions, but no vendor BIOS carrying them has been found. MS-A2 DRG 1.03 (2025-12-16) and DRFXI 1.17 (2026-08-28) are both on 1.0.0.3h.
 
 ## Next bounded steps
 
-1. **Fire Range ABL vs Dragon Range ABL (static).** Compare the "Override Timing" / Tref path in ABL 51.15.0.20 (MS-A2 FRG 1.02) with 4C.11.90.20. If the Fire Range ABL getter and store are unchanged, the Dragon Range override path is very likely functional.
+1. ~~Fire Range ABL vs Dragon Range ABL (static).~~ Done, see `../checkpoints/2026-11-24-trefi-abl-path.md` and `../../scripts/abl_tref_path.py`.
 2. **Hardware, read-only.** An SPI readback after saving manual timings in setup would confirm which tokens CBS inserts into the small APCB instances. Do not change firmware for this step.
 3. Any experiment that **writes** a Tref token (APCB edit, CBS patch, runtime APCB service call) modifies boot-critical configuration. It needs its own safety and recovery analysis first. The ABL contains "Memory error occurs with default APCB" and "Clear CMOS and load default APCB" recovery paths, but their behavior on this board is unverified.
