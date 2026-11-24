@@ -65,6 +65,41 @@ But this fires only on a **memory-training/boot failure**. An over-aggressive tR
   - if it is already in recovery, or the failing entry is the backup itself, it logs "Fatal APCB Checksum Error" (postcode `0xE32A`) and stops (`svc #0`, code `0x10`). This happens in the PSP before x86 runs: no POST, no UEFI, so no software recovery is possible.
 - `AmdPspWriteBackApcbShadowCopy` refuses to write while `APCB.RecoveryFlag` is set (§4).
 
+## 8. Follow-up: real board readback (BD790i X3D, stock DRFXI 1.15) and purge semantics
+
+The board owner ran an APCB/NVRAM parser on a full readback of a stock DRFXI 1.15 BD790i X3D with manual timings set in the stock AMD Overclocking (AOD) menu. Structural facts, cross-checked against the official image:
+
+| Copy | State on the board | Contents |
+|---|---|---|
+| Main APCB `0x51D400` (`0x68` inst 0, defaults, priority mask `0x20` = level 6) | **factory**: payload SHA-256 prefix `7a1bfc4ac026cb94` equals official 1.15 | platform defaults incl. `MEM_OVERCLOCK_FAIL_CNT`=1 |
+| Active override APCB `0x522000` (`0x60`) | **rewritten**: size `0x410` (factory `0x128`), 32-bit instance field at `+0x0C` `0x00B55A83` (factory `0x00006A06`) | AOD timing/voltage tokens at **priority mask `0x02` (level 2)**, instance 0; CBS sync-generation token `0xB331378E` at mask `0x04` (level 3), instance 1; a GNB type `0x1705/0x1002` override at mask `0x10` (level 5) |
+| Override backup `0x525000` (`0x68` inst 8) | **factory** (`0x6A06`, size `0x128`, factory tokens) | — |
+| B-side mirrors `0x8E5400/0x8EA000/0x8ED000` | not reported | — |
+
+So the firmware's own write-back updates only the active override copy at `0x522000`. The main APCB and the override backup keep their factory content, so a good fallback copy exists for the "Recoverable APCB Checksum Error" path in §7. No Tref token is present, which matches the observed tREFI 11677 (= default 3.9 µs at MCLK 3000).
+
+**How AOD writes** (`AodSmm` `0x533C`, DRFXI 1.15):
+
+1. It acquires the APCB mutex (`+0x60`).
+2. It calls **`+0xD0` "APCB purge tokens"** with priority 2 and an explicit list of **59 AOD-owned token IDs** built on the stack. That list has the timings, PHY/ODT/drive, voltages, UCLK/FCLK and PMIC IDs. **`0x419FF338` is not in it.**
+3. It writes the current AOD values at priority 2 (`dl=2`).
+4. It flushes with `+0x08` ("Write back APCB to SPI") and releases the mutex with `+0x68`.
+
+Six AOD token IDs the parser left unnamed map as follows: `0xF0947E37` = UCLK DIV1 mode `[0x96]`; `0x814A6C32` = DIMM VDDQ `[0x195]` and `0x66CAD59B` = DIMM VDD `[0x193]`, both written only when VDDIO Ctrl `[0x192]` is 1 or 2; `0x6CD36DBE` and `0x72958E2C` = two boolean flags set to 1 under the same VDDIO-control condition; `0x288F8A28` = Enable Platform PMIC Control `[0x1A9]`.
+
+**How CBS writes:** it clears **all** of its own priority-3 token lists (`+0xC0` with `dl=3`) and rewrites them only when Active Memory Timing Settings is enabled. On this board it is Auto, so CBS pushes no timing tokens. Its sync token matches the setup variable, so no resync runs at boot.
+
+**`+0xD0` semantics** (DXE `0x1834` → core `0x5170`): only priorities 2..5 are allowed ("APCB writes not allowed at the current priority" otherwise). The routine sorts the passed IDs and deletes exactly those tokens at the selected priority.
+
+**Consequences for a Tref token** (inference from the above):
+
+- Written as a WORD token at priority 2 in the active override APCB, it sits next to the AOD tokens that ABL demonstrably applies. Priority 2 also outranks CBS (3), consistent with the community observation that AOD overrides CBS.
+- It would **survive** AOD saves (AOD purges only its 59-ID list), CBS saves (level 3 only) and, by the same logic, "Load Optimized Defaults".
+- That stickiness cuts both ways. A bad value is **not** removed by loading defaults in setup. It has to be overwritten or deleted with the same tool, or removed by an APCB fallback to the backup or default copy.
+- Whether the "Clear CMOS and load default APCB" / recovery path permanently restores `0x522000` from the backup, or only boots once with defaults, was not established.
+
+This resolves the §5 purge question for AOD and CBS.
+
 ## Conclusion
 
 Mechanically, nothing in DRFXI 1.15 blocks writing token `0x419FF338` through the firmware's own `AmdApcbDxeV3` `SetToken16`: the register-permission whitelist is never armed, and the pre-/post-ReadyToBoot paths both accept the write. The ABL then applies it the way `docs/checkpoints/2026-11-24-trefi-abl-path.md` traced.
@@ -79,6 +114,8 @@ Any actual attempt would modify boot-critical configuration and must be preceded
 
 ## Open items
 
-- Which CBS priority the injected token should use to avoid the Save-time purge (§5).
+- ~~Which priority avoids the Save-time purge (§5)~~: resolved in §8 — priority 2 survives AOD and CBS saves.
+- Whether the recovery path permanently restores the active override APCB from its backup (§8).
+- State of the B-side APCB mirrors after firmware write-backs (§8).
 - Whether the ABL get-token service treats `0xFFFF` as "absent" (relevant only to the ASRock default-value side, not to a deliberate injection).
 - `0xE138`/`0xE139` write-back gating conditions.
