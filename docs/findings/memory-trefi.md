@@ -130,10 +130,19 @@ What follows, and how firmly:
   - the branch was cut partway through the 1.0.0.3 → 1.0.0.6 window, or
   - OC-related items were selectively excluded. Trefi and OC Recovery Fail Count are both missing, while non-OC items from the same desktop wave are present.
 
-What would decide it: a desktop BIOS on ComboAM5PI 1.0.0.4 or 1.0.0.5. It would show whether CPPC Dynamic Preferred Cores, ECO Mode and ESPI ABL Init landed in desktop *before* Trefi and OC Recovery Fail Count:
+**Test with ComboAM5PI 1.0.0.5c (2026-11-25).** Two vendors were checked. ASRock X670E Steel Legend 1.18 was retrieved from the ASRock CDN; it is not listed on the board page. Gigabyte X670E AORUS Master F9 was the second. Hashes are in `../../data/reference-firmware-hashes.csv`.
 
-- if they did, a branch-timing artifact is the simplest explanation;
-- if all of them landed in the same release, selective exclusion is more likely.
+Relative to 1.0.0.3, **all six items arrived together by 1.0.0.5c**: CPPC Dynamic Preferred Cores, ECO Mode, ESPI ABL Init, GFXOFF, OC Recovery Fail Count and tREFI. Only Power Supply Idle Control came later, in 1.0.0.6. ASRock names the tREFI question `Trefi`; Gigabyte's AMD CBS has a `Tref Ctrl` / `Tref` pair. Both write token `0x419FF338`.
+
+The Dragon Range CBS carries the first three items of that same wave and omits exactly tREFI, OC Recovery Fail Count and GFXOFF.
+
+By the criterion stated before the test, this **leans toward selective exclusion** of the OC-related items from the mobile CBS, rather than a branch cut before tREFI existed.
+
+It is still not proof:
+
+- the withdrawn 1.0.0.4 and a plain 1.0.0.5 build were not available;
+- an internal AGESA snapshot between 1.0.0.3 and 1.0.0.5c could still have separated these items;
+- GFXOFF may be absent for unrelated, platform-specific reasons.
 
 Only AMD's AGESA release notes would settle intent.
 
