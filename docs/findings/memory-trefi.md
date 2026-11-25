@@ -107,6 +107,36 @@ The APCB setter (`AmdApcbDxeV3`/`AmdApcbSmmV3` Set16) stores `0xFFFF` verbatim; 
 
 So AMD added the tREFI front end to Raphael CBS in early 2023. DragonRangePI-FL1 up to 1.0.0.3h still carries the earlier CBS generation without it. FireRangePI exposes it through AOD instead.
 
+## Why Dragon Range never exposed tREFI: evidence and limits
+
+These are the facts the binaries establish:
+
+- **Not a silicon or ABL limit.** Every analysed ABL reads token `0x419FF338` and programs `DramTiming12[15:0]` the same way: Dragon Range 32.3 → 4C.11, desktop Raphael 28.22 / 2C.16, Fire Range 51.15 / 64.24.
+- **The missing piece is the generated front end** (setup question plus token producer), in CBS or in AOD.
+- **Desktop Raphael CBS gained `Trefi` between ComboAM5PI 1.0.0.3 (ASRock 1.11.x, late 2022) and 1.0.0.6 (ASRock 1.21, April 2023).** The CBS module name (`CbsSetupDxeRPL`) is shared with Dragon Range.
+- **The Dragon Range CBS is a mobile variant of that RPL CBS, not a frozen 1.0.0.3 snapshot.**
+  - It has mobile-only items: Sustained / Fast / Slow PPT, SecureBio, Microsoft Security Levels.
+  - It lacks desktop-only Pluton FIPS/UART items.
+  - Of the seven names that desktop added between 1.0.0.3 and 1.0.0.6, it **has** CPPC Dynamic Preferred Cores, ECO Mode and ESPI ABL Init.
+  - It **lacks** Trefi, OC Recovery Fail Count, GFXOFF and Power Supply Idle Control.
+  - The OC-failure threshold that desktop 1.0.0.6 exposes in CBS is hard-set to 1 in the Dragon Range main APCB.
+- **DragonRangePI-FL1 1.0.0.3a … 3h (images dated December 2023 to August 2026) never added Trefi,** although desktop had it from April 2023.
+- **FireRangePI exposes Tref through AOD** (not CBS) from its first public build. Desktop 1.0.0.6 exposed it through CBS, with an AOD-side producer but no AOD question.
+
+What follows, and how firmly:
+
+- **Reliable:** the "9000-series only" boundary is a firmware front-end boundary, not a hardware one. Fire Range simply starts from a later desktop baseline that already contains the feature.
+- **Not provable from binaries:** whether the omission on Dragon Range was deliberate (a mobile CBS/AOD profile that filtered OC-related items) or incidental (the branch was cut before Trefi landed and only received maintenance). The mixed pattern fits either:
+  - the branch was cut partway through the 1.0.0.3 → 1.0.0.6 window, or
+  - OC-related items were selectively excluded. Trefi and OC Recovery Fail Count are both missing, while non-OC items from the same desktop wave are present.
+
+What would decide it: a desktop BIOS on ComboAM5PI 1.0.0.4 or 1.0.0.5. It would show whether CPPC Dynamic Preferred Cores, ECO Mode and ESPI ABL Init landed in desktop *before* Trefi and OC Recovery Fail Count:
+
+- if they did, a branch-timing artifact is the simplest explanation;
+- if all of them landed in the same release, selective exclusion is more likely.
+
+Only AMD's AGESA release notes would settle intent.
+
 ## Open questions
 
 1. ~~Does a `0x419FF338` token in the APCB actually become the effective `UMC::DramTiming12[Tref]`?~~ Statically yes: "Program UMC Timings" writes `TimingPtr->Tref` (DR `+0x6C`, FR `+0x3C`) to `0x7000230[15:0]` right after Override Timing. Later accesses only save, mask with `0xC00FFFFF` and restore. See `../checkpoints/2026-11-24-trefi-abl-path.md`. A runtime check is still open.
