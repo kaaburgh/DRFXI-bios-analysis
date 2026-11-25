@@ -23,7 +23,7 @@ Fire Range comparison done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-firer
 
 APCB-service injection feasibility done (2026-11-24, `docs/checkpoints/2026-11-24-trefi-apcb-service-feasibility.md`): the register-permission whitelist is not armed on DRFXI 1.15, so the firmware's own `AmdApcbDxeV3` `SetToken16` would accept `0x419FF338`; blockers are persistence, a possible CBS Save-time purge, and training-failure-only auto-recovery.
 
-CMOS-clear reaction done (2026-11-25, same checkpoint §10). Invalid `CMOS[6..7]` markers combined with a modified active override cause ABL to boot from the factory override backup. `AmdPspDxeV2Rpl` then restores `0x522000` from the backup in SPI and resets once. The restore PCD is TRUE on retail silicon. So the Reset Hole is a manual rollback for APCB-override changes and also wipes the AOD timings. The ABL flag → APOB link is inferred, not traced, and the `svc #0x1C` gate is unidentified.
+CMOS-clear reaction done (2026-11-25, same checkpoint §10). Invalid `CMOS[6..7]` markers combined with a modified active override cause ABL to boot from the factory override backup. `AmdPspDxeV2Rpl` then restores `0x522000` from the backup in SPI and resets once. The restore PCD is TRUE on retail silicon. So the Reset Hole is a manual rollback for APCB-override changes and also wipes the AOD timings. The ABL flag → APOB `ApobApcbRecoveryFlag` link is traced byte by byte. The `svc #0x1C` gate is the boot mode: the compare is skipped only on an s0i3 resume.
 
 Remaining bounded items:
 

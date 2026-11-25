@@ -96,7 +96,7 @@ Six AOD token IDs the parser left unnamed map as follows: `0xF0947E37` = UCLK DI
 - Written as a WORD token at priority 2 in the active override APCB, it sits next to the AOD tokens that ABL demonstrably applies. Priority 2 also outranks CBS (3), consistent with the community observation that AOD overrides CBS.
 - It would **survive** AOD saves (AOD purges only its 59-ID list), CBS saves (level 3 only) and, by the same logic, "Load Optimized Defaults".
 - That stickiness cuts both ways. A bad value is **not** removed by loading defaults in setup. It has to be overwritten or deleted with the same tool, or removed by an APCB fallback to the backup or default copy.
-- Whether the "Clear CMOS and load default APCB" / recovery path permanently restores `0x522000` from the backup, or only boots once with defaults: see §10 (restores, statically, with one inferred link).
+- Whether the "Clear CMOS and load default APCB" / recovery path permanently restores `0x522000` from the backup, or only boots once with defaults: see §10 (restores; traced statically).
 
 This resolves the §5 purge question for AOD and CBS.
 
@@ -150,16 +150,24 @@ Static trace in DRFXI 1.15 (ABL core overlay `0x24ADA0`, `AmdPspDxeV2Rpl`, `Apob
 
 **Step 1: ABL reads the markers before it loads the APCB** (core `0x3E7A`). `ctx[0x11E] = CmosCheck()` (`0xCEC`, returns 1 for invalid markers).
 
-**Step 2: if the markers are invalid**, and a `svc #0x1C` boot-mode value is not 1, ABL compares the active override (`0x60`) with its backup (`0x68`, instance 8) through `0xB5C`. That routine logs "SizeOfApcb is identical" / "Apcb content is identical" and skips the CBS sync token `0xB331378E`.
+**Step 2: if the markers are invalid**, and the boot is not an s0i3 resume, ABL compares the active override (`0x60`) with its backup (`0x68`, instance 8) through `0xB5C`. That routine logs "SizeOfApcb is identical" / "Apcb content is identical" and skips the CBS sync token `0xB331378E`.
 
 - If the copies are identical, it writes `5A A5` and clears the flag. A board that never saved AOD/CBS settings just continues.
 - If they differ, as on the reporter's board (§8: AOD tokens in `0x522000`), `ctx[0x11E]` stays 1.
 
-The `svc #0x1C` gate was not identified. When it returns 1, the compare is skipped and the flag stays 1.
+The gate is the boot mode from `svc #0x1C` (stored at `[sp+0x14]`). The ABL dispatcher in the same function (`0x3F84`–`0x4010`) branches on it:
+
+| Value | Real silicon | Pre-silicon |
+|---|---|---|
+| 2 | "S3 Resume" | "S3 Resume on Emulation" |
+| 1 | "s0i3 Resume" | "s0i3 Resume on Emulation" |
+| other | "Cold or Warm Boot" | "Cold or Warm Boot on Emulation" |
+
+So only on an s0i3 resume is the compare skipped with the flag left at 1. A Reset Hole press removes power, so the next boot is a cold boot and the compare runs.
 
 **Step 3: with the flag set, ABL ignores the active override for this boot.** `0x494(1)` zeroes field `+0xC` of every type-`0x60` entry in the 20-entry BIOS-directory cache (`0x1EDB4`). The APCB entry lookup (`0x6EE`) also redirects a request for type `0x60` instance N to type `0x68` instance N+8.
 
-Memory training therefore runs on the factory override backup. The same flag and path are used by "Recoverable APCB Checksum Error" (postcode `0xE329`, §7). The flag is copied into ABL's general-environment heap block `0xA03A` (`+0x5C`, overlay `0x298D10:0x7284`), which "ABL - General APOB Creation" consumes.
+Memory training therefore runs on the factory override backup. The same flag and path are used by "Recoverable APCB Checksum Error" (postcode `0xE329`, §7). How the flag reaches the APOB is traced byte by byte below ("ABL flag → APOB").
 
 **Step 4: DXE restores the active copy in SPI.** `AmdPspDxeV2Rpl` registers `0xE4C` as an EndOfDxe callback.
 
@@ -183,18 +191,53 @@ Both do so only when the low nibble of PSP register `SMN 0x03810A84` is non-zero
 
 Both writers are therefore pre-silicon/emulation switches. On a production board the nibble is 0, the PCD keeps its TRUE default, and the restore handler is armed. No DXE module sets the PCD; the only other `0x304` references, in `AmdCpmDisplayFeatureSmm`, are not PCD calls.
 
-**Result for the reporter's board** (stock 1.15, AOD timings saved, factory override backup per §9). A Reset Hole press most likely does the following:
+**ABL flag → APOB `ApobApcbRecoveryFlag`, byte by byte.** Overlay addresses below are file offsets. The ABL dispatcher loads each overlay at `0x20000` and enters it at `0x20100` (file offset 0, an ARM wrapper that `blx`-es to the Thumb entry in its literal).
+
+1. **ctx.** In core `0x24ADA0`, fn `0x3CCC` uses `r4 = 0x3A000` as the ABL context and publishes it in the global `0x1E76C` (`0x3D24`). It fills the service table: `+0x50` = `0x1AD61`, `+0x68` = `0x19911` (debug print), `+0x7C` = `0x195CD` (heap allocate), `+0x84` = `0x19885` (heap locate), `+0xD4` = `0x1855D` (APCB bool token get). It writes `ctx+0x11E` at `0x3E80`/`0x3E92` (steps 1–2), before any overlay runs.
+2. **Dispatch.** The same function calls each overlay with `r0 = r4 = ctx` (`0x43C0`: `ldr r1,[sp,#0x64]; mov r0,r4; blx r1`, and again at `0x4544`, where `[sp+0x64] = 0x20000 + 0x100`). Both overlays below save that `r0` in their own global as their first action:
+   - `0x298D10`: entry literal `0x27209` → file `0x7108`, `str.w r4,[sl]` with `sl = 0x2A7F0`;
+   - `0x260950`: entry literal `0x2A195` → file `0xA094`, `str r4,[r5]` with `r5 = 0x2E328`.
+3. **Export to heap** (`0x298D10`, "ABL General Environmental Initialization").
+   - `0x71A6`–`0x71C8` allocates heap block `0xA03A`, size `0x60`, through `ctx+0x7C`. The descriptor is `{size, id, flag, out}` at `sp+0x360`, so the block pointer comes back at `sp+0x36C`.
+   - `0x71EE` loads `r7 = [sp+0x36C]`. `r7` is not written again before `0x728C`.
+   - `0x727E`–`0x7288` stores `ctx+0x120` → `[r7+0x58]` (word) and `ctx+0x11E` → `[r7+0x5C]` (byte).
+   - Across all 20 ABL overlays of the image (Thumb disassembly) this is the only `strb` to `#0x5C`.
+4. **APOB entry build** (`0x260950`, "ABL - General APOB Creation").
+   - `0xA148`–`0xA15A` locates heap `0xA03A` through `ctx+0x84` into `r4` and calls `0x354(r4)`. In `0x354`, `r4` stays the heap pointer (`mov r4,r0` at `0x35C`; every later use is `[r4,#0x3C]` = APOB base or `[r4,#0x58/#0x5C]`). The `r4`/`r7` "writes" at `0x74A`–`0x88E` and `0xC90`–`0xDBA` are the overlay's string table (`"\nCreate APOB\n"`, `"\tAdd PMU SMB\n"`, …), not code.
+   - At "Add ApobApcbBootInfo" (`0xE4E`), the entry is built on the stack at `sp+0x220`:
+
+| Stack | Entry offset | Value | Source |
+|---|---|---|---|
+| `sp+0x220` | `+0x00` | 1 | GroupID (`0xEE0`/`0xEE4`) |
+| `sp+0x224` | `+0x04` | `0x10` | DataTypeID (`0xEE6`/`0xEE8`) |
+| `sp+0x228` | `+0x08` | 0 | InstanceID (`0xEEA`/`0xEF0`) |
+| `sp+0x22C` | `+0x0C` | `0x78` | size (`0xEE2`/`0xEF0`) |
+| `sp+0x250` | **`+0x30`** | `[r4+0x58]` = `ctx+0x120` | `0xE58`/`0xE5A` → DXE `ApcbInstance` |
+| `sp+0x284` | `+0x64` | `r7` | `0xE66` → DXE `DimmCfgUpdatedFlag` |
+| `sp+0x285` | **`+0x65`** | `[r4+0x5C]` = `ctx+0x11E` | `0xE7C`/`0xE84` → DXE `ApobApcbRecoveryFlag` |
+| `sp+0x286` / `+0x287` | `+0x66` / `+0x67` | APCB bool tokens `0xCBC2C0DD` / `0x22F4299F` | via `ctx+0xD4` |
+
+5. **Copy to the APOB in DRAM.** `0xEF8` calls `0xD068(src = sp+0x220, dst = 0x1430, size = 0x78, base = [r4+0x3C])`.
+   - For size > `0x30`, `svc #0xA3` signs bytes `+0x30…+0x77` into `+0x10…+0x2F` ("Sign & Copy APOB Entry to DRAM").
+   - It then tail-calls `0xCFE0`. Between `svc #7`/`#8` that routine copies all `0x78` bytes unchanged (8-byte words, then tail bytes) to the APOB DRAM base (global `0x2E960`) + `0x1430`.
+   - The header is therefore 0x30 bytes (ID, type, instance, size and a 32-byte signature), and the first data byte is `+0x30`.
+6. **DXE read.** `ApobRplDxe` `0x2438` walks the APOB entries from `ApobAddr`, matching `[+0x00] == GroupID` and `[+0x04] == DataTypeID`; `0x2648` then matches `[+0x08] == InstanceID`.
+   - `0x15C8` returns byte `+0x65` ("Fail to get ApobApcbRecoveryFlag" on error).
+   - `0x162C` returns byte `+0x30` as `ApcbInstance`.
+   - `0x16A8` returns `+0x64` as `DimmCfgUpdatedFlag`.
+   - The `+0x30` match with ABL's `ctx+0x120` corroborates the layout independently of the flag.
+
+So `ApobApcbRecoveryFlag` is exactly `ctx+0x11E`, the CMOS/compare result of steps 1–2. The handler in step 4 acts on precisely the condition under which ABL booted from the backup.
+
+Caveat: if "Recoverable APCB Checksum Error" sets `ctx+0x11E` only after the `0x298D10` export, the heap copy would be stale. That matters only for the checksum path; the CMOS path sets the flag before the first overlay call.
+
+**Result for the reporter's board** (stock 1.15, AOD timings saved, factory override backup per §9). Statically, a Reset Hole press does the following:
 
 1. **First boot:** ABL sees invalid markers and a differing override, and trains on the factory backup. AOD timings, and any injected Tref token, are **not applied**, even if the stored values would not train.
 2. **Same boot, EndOfDxe:** the active override `0x522000` is rewritten in SPI from the factory backup. This erases all AOD tokens and any Tref token. The markers are set to `5A A5` and the system resets once by itself.
 3. **Later boots:** markers are valid and the override equals factory. To restore the timings, re-enter them in AOD.
 
-**Proof gap.** The byte-level link from ABL `ctx[0x11E]` / heap `0xA03A +0x5C` to APOB group 1 / type `0x10` / `+0x65` was not traced:
-
-- no ABL overlay stores a byte at `+0x65` or `+0x55`;
-- the APOB entry is probably filled by a block copy or by another PSP component.
-
-The link is supported by consistency. On retail silicon, nothing else rewrites the markers after a clear when the copies differ. Without the link, every later boot would again ignore the override and train on factory values while the AOD menu still shows the saved values. Either way, step 1 does not depend on the bad configuration being bootable.
+Step 1 does not depend on the bad configuration being bootable. The rest has been traced statically, but nothing was run on hardware.
 
 **Consequences for a Tref experiment.**
 
@@ -217,8 +260,8 @@ Any actual attempt would modify boot-critical configuration and must be preceded
 ## Open items
 
 - ~~Which priority avoids the Save-time purge (§5)~~: resolved in §8 — priority 2 survives AOD and CBS saves.
-- ~~Whether the recovery path permanently restores the active override APCB from its backup (§8)~~: §10. Statically, a CMOS clear with a modified override leads to ABL booting from the backup and DXE rewriting `0x522000` from it, with one remaining link inferred, not traced. Hardware confirmation would be: after a Reset Hole press, an extra automatic reset, AOD timings back to Auto, and `0x522000` equal to the official image.
-- The `svc #0x1C` gate in front of the CMOS compare (§10, step 2).
+- ~~Whether the recovery path permanently restores the active override APCB from its backup (§8)~~: §10. Statically, a CMOS clear with a modified override leads to ABL booting from the backup and DXE rewriting `0x522000` from it, and the ABL flag → APOB `ApobApcbRecoveryFlag` link is traced byte by byte. Hardware confirmation would be: after a Reset Hole press, an extra automatic reset, AOD timings back to Auto, and `0x522000` equal to the official image.
+- ~~The `svc #0x1C` gate in front of the CMOS compare~~: it is the boot mode; the compare is skipped only on s0i3 resume (§10, step 2).
 - State of the B-side APCB mirrors after firmware write-backs (§8).
 - Whether the ABL get-token service treats `0xFFFF` as "absent" (relevant only to the ASRock default-value side, not to a deliberate injection).
 - `0xE138`/`0xE139` write-back gating conditions.

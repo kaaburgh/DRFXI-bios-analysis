@@ -171,3 +171,34 @@ AmdAgesaParameterGroupPei TE 0x2c0: test byte [val],0xf ; je skip ... 0x2fc push
 AmdCpmOemInitPeim        TE 0x29b: esi = SMN[0x03810A84] & 0xF ; jne -> 0x360 xor esi,esi ... 0x3f2 push esi ; push 0x304 ; call [PeiPcd+0x50]
 FchYuntaiPei: SMN[0x03810A84] bit 9 -> "SkipAllUSBControllerAccess", bit 10 -> "SkipAllUSBPhyAccess" (pre-silicon switches)
 PcdPeim DB: token 0x304 -> 0x0110162B (UINT8 BOOL), init 0x01
+
+5b. ABL ctx+0x11E -> APOB ApobApcbRecoveryFlag, byte by byte (DRFXI 1.15; overlay file offsets,
+    overlays load at 0x20000 and enter at 0x20100 = file offset 0)
+-----------------------------------------------------------------------------------------------
+0x24ADA0 (core):
+003ce4  ldr  r4, =0x3a000                 ; ctx
+003d24  str  r4, [r6]                     ; r6 = 0x1e76c (ctx global)
+        ctx+0x68 <- 0x19911 (print), +0x7c <- 0x195cd (heap alloc), +0x84 <- 0x19885 (heap locate), +0xd4 <- 0x1855d (APCB bool get)
+003e80  strb.w r0, [r4, #0x11e]           ; CMOS/compare result (before any overlay call)
+003f84  [sp+0x14] (svc #0x1c): 2 = "S3 Resume", 1 = "s0i3 Resume", other = "Cold or Warm Boot"
+0043be  ldr  r1, [sp, #0x64] ; mov r0, r4 ; blx r1    ; [sp+0x64] = 0x20000 + 0x100, r0 = ctx
+0x298D10 (entry literal 0x27209 -> file 0x7108):
+007124  str.w r4, [sl]                    ; sl = 0x2a7f0, r4 = r0 = ctx
+0071a6  {size 0x60, id 0xa03a, flag 2} -> blx [ctx+0x7c] ; 0071ee ldr r7, [sp, #0x36c]   ; heap 0xA03A
+00727e  ldr.w r1, [r0, #0x120] ; str r1, [r7, #0x58]
+007284  ldrb.w r1, [r0, #0x11e] ; strb.w r1, [r7, #0x5c]   ; only strb #0x5c in all 20 overlays
+0x260950 (entry literal 0x2a195 -> file 0xa094):
+00a0a4  str  r4, [r5]                     ; r5 = 0x2e328, r4 = r0 = ctx
+00a148  locate heap 0xa03a via [ctx+0x84] -> r4 ; 00a178 bl 0x354 ("ABL - General APOB Creation")
+000e4e  "\tAdd ApobApcbBootInfo\n"
+000e58  ldr  r0, [r4, #0x58] ; str r0, [sp, #0x250]        ; entry +0x30 ApcbInstance
+000e66  strb.w r7, [sp, #0x284]                            ; entry +0x64 DimmCfgUpdatedFlag
+000e7c  ldrb.w r0, [r4, #0x5c] ; strb.w r0, [sp, #0x285]   ; entry +0x65 ApobApcbRecoveryFlag
+000ee0  [sp+0x220]=1 (group) [sp+0x224]=0x10 (type) [sp+0x228]=0 (instance) [sp+0x22c]=0x78 (size)
+000ef8  bl 0xd068(src sp+0x220, dst 0x1430, size 0x78, base [r4+0x3c])
+00d088  svc #0xa3 (sign +0x30..+0x77 into +0x10..+0x2f) ; tail 0xcfe0: svc #7, copy 0x78 bytes to [0x2e960]+0x1430, svc #8
+ApobRplDxe:
+002550  cmp [rbx], group ; cmp [rbx+4], type ; 002710 cmp [rcx+8], instance
+0015c8  mov cl, [rax+0x65]  ; "Fail to get ApobApcbRecoveryFlag"
+00162c  mov cl, [rax+0x30]  ; "Fail to get ApobApcbInstance"
+0016a8  movzx r8d, [rbx+0x64] ; "DimmCfgUpdatedFlag %x"
