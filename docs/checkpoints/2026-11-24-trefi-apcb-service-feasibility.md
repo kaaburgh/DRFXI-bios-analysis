@@ -96,7 +96,7 @@ Six AOD token IDs the parser left unnamed map as follows: `0xF0947E37` = UCLK DI
 - Written as a WORD token at priority 2 in the active override APCB, it sits next to the AOD tokens that ABL demonstrably applies. Priority 2 also outranks CBS (3), consistent with the community observation that AOD overrides CBS.
 - It would **survive** AOD saves (AOD purges only its 59-ID list), CBS saves (level 3 only) and, by the same logic, "Load Optimized Defaults".
 - That stickiness cuts both ways. A bad value is **not** removed by loading defaults in setup. It has to be overwritten or deleted with the same tool, or removed by an APCB fallback to the backup or default copy.
-- Whether the "Clear CMOS and load default APCB" / recovery path permanently restores `0x522000` from the backup, or only boots once with defaults, was not established.
+- Whether the "Clear CMOS and load default APCB" / recovery path permanently restores `0x522000` from the backup, or only boots once with defaults: see §10 (restores, statically, with one inferred link).
 
 This resolves the §5 purge question for AOD and CBS.
 
@@ -129,10 +129,78 @@ Consequences:
 
 Board hardware, from public product photos and the official manual (`M09.04.DRFXI002`, DRFXI V2.0 2023-12-19):
 
-- **Reset Hole** on the rear I/O (manual item 13): with power removed, hold for 10 s to restore BIOS factory defaults, i.e. a CMOS clear. It is not established whether this also clears the APCB override copy.
+- **Reset Hole** on the rear I/O (manual item 13): with power removed, hold for 10 s to restore BIOS factory defaults, i.e. a CMOS clear. Its effect on the APCB override copy is analysed in §10.
 - **CR2032 RTC battery** on a cable, on the back of the board.
 - Unpopulated **2×10 footprint labelled `JTG1`** on the back, most likely a debug (JTAG/HDT) header and not an SPI header.
 - **SPI flash location is not confirmed.** The strongest front-side candidate is an 8-lead package (~6×9 mm including leads, consistent with a 256 Mbit SOIC-8/WSON-8). It sits between the PCIe x16 slot and the CE/RoHS print, above the upper SO-DIMM slot, directly left of a small FPC connector. The back side shows no package of a suitable size; the larger parts there are a 64-pin QFP (`U3401`), QFNs near the rear I/O, and power MOSFETs. Markings are unreadable at the available resolution, so part number and voltage remain unknown.
+
+## 10. Follow-up: what a CMOS clear does to the active override APCB (2026-11-25)
+
+Static trace in DRFXI 1.15 (ABL core overlay `0x24ADA0`, `AmdPspDxeV2Rpl`, `ApobRplDxe`, `AmdAgesaParameterGroupPei`, `AmdCpmOemInitPeim`, `FchYuntaiPei`). The question: does the Reset Hole (§9, a CMOS clear) drop or ignore the active override copy at `0x522000`, where the AOD tokens and any injected Tref token would live?
+
+**CMOS markers.** ABL keeps a two-byte marker in the upper RTC bank: `CMOS[6..7]`, accessed through IO `0x72/0x73`, which the PSP reaches as `0xFC000072/73` via `svc #0x26/#0x27`. `0xA55A` or `0x5555` means "valid"; anything else, including the state after an RTC/CMOS clear, means "invalid". Writers found:
+
+| Writer | Value | When |
+|---|---|---|
+| ABL `0xCEC` | `5A A5` | only on a pre-silicon environment (`0x5854(3,0)`) |
+| ABL `0xB5C` | `5A A5` | active override is identical to its backup (see step 2) |
+| ABL OC-fail `0x289940:0x1900` | `00 00` | "Clear CMOS and load default APCB" (§6/§7) |
+| `AmdPspDxeV2Rpl` `0xE4C` | `5A A5` | after a successful APCB restore, before the reset |
+| `AmdPspDxeV2Rpl` `0xE4C` | `55 55` | `PcdAmdPspApcbRecoveryEnable` is FALSE ("ignore recovery") |
+
+**Step 1: ABL reads the markers before it loads the APCB** (core `0x3E7A`). `ctx[0x11E] = CmosCheck()` (`0xCEC`, returns 1 for invalid markers).
+
+**Step 2: if the markers are invalid**, and a `svc #0x1C` boot-mode value is not 1, ABL compares the active override (`0x60`) with its backup (`0x68`, instance 8) through `0xB5C`. That routine logs "SizeOfApcb is identical" / "Apcb content is identical" and skips the CBS sync token `0xB331378E`.
+
+- If the copies are identical, it writes `5A A5` and clears the flag. A board that never saved AOD/CBS settings just continues.
+- If they differ, as on the reporter's board (§8: AOD tokens in `0x522000`), `ctx[0x11E]` stays 1.
+
+The `svc #0x1C` gate was not identified. When it returns 1, the compare is skipped and the flag stays 1.
+
+**Step 3: with the flag set, ABL ignores the active override for this boot.** `0x494(1)` zeroes field `+0xC` of every type-`0x60` entry in the 20-entry BIOS-directory cache (`0x1EDB4`). The APCB entry lookup (`0x6EE`) also redirects a request for type `0x60` instance N to type `0x68` instance N+8.
+
+Memory training therefore runs on the factory override backup. The same flag and path are used by "Recoverable APCB Checksum Error" (postcode `0xE329`, §7). The flag is copied into ABL's general-environment heap block `0xA03A` (`+0x5C`, overlay `0x298D10:0x7284`), which "ABL - General APOB Creation" consumes.
+
+**Step 4: DXE restores the active copy in SPI.** `AmdPspDxeV2Rpl` registers `0xE4C` as an EndOfDxe callback.
+
+1. It reads `PcdAmdPspApcbRecoveryEnable` (dynamic PCD token `0x304`, PEI DB default `0x01` = TRUE).
+2. If the PCD is FALSE, it writes `55 55` and exits.
+3. If the PCD is TRUE, it asks `ApobRplDxe` for `ApobApcbRecoveryFlag`: APOB group 1, type `0x10`, instance 0, byte `+0x65`. Neighbours in the same entry are `ApcbInstance` at `+0x30` and `DimmCfgUpdatedFlag` at `+0x64`.
+4. If the flag is set, it walks the table at `0x7788`:
+   - `0x68`/8 → `0x60`/0 (mandatory);
+   - `0x68`/9 → `0x60`/1 (optional).
+5. For each entry it reads the backup from SPI, writes a new `UniqueApcbInstance` at `+0x0C`, recomputes the checksum at `+0x10`, and writes the result over the active copy in SPI.
+6. It logs "Recover Succeed, set CMOS flag, reset system", writes `5A A5`, and resets.
+
+The missing-backup cases are fatal ("Required Backup Apcb ... Not Detected").
+
+**The PCD stays TRUE on retail hardware.** Only two modules write token `0x304`, both with `SetBool(0x304, 0)`:
+
+- `AmdAgesaParameterGroupPei` (`0x2FD`);
+- `AmdCpmOemInitPeim` (`0x3F3`).
+
+Both do so only when the low nibble of PSP register `SMN 0x03810A84` is non-zero. In the same register, `FchYuntaiPei` uses bit 9 as "SkipAllUSBControllerAccess" and bit 10 as "SkipAllUSBPhyAccess". `AmdSocFl1RplPei` decodes the low nibble as a platform class (0 → class 0, 1 → 1, otherwise 2+).
+
+Both writers are therefore pre-silicon/emulation switches. On a production board the nibble is 0, the PCD keeps its TRUE default, and the restore handler is armed. No DXE module sets the PCD; the only other `0x304` references, in `AmdCpmDisplayFeatureSmm`, are not PCD calls.
+
+**Result for the reporter's board** (stock 1.15, AOD timings saved, factory override backup per §9). A Reset Hole press most likely does the following:
+
+1. **First boot:** ABL sees invalid markers and a differing override, and trains on the factory backup. AOD timings, and any injected Tref token, are **not applied**, even if the stored values would not train.
+2. **Same boot, EndOfDxe:** the active override `0x522000` is rewritten in SPI from the factory backup. This erases all AOD tokens and any Tref token. The markers are set to `5A A5` and the system resets once by itself.
+3. **Later boots:** markers are valid and the override equals factory. To restore the timings, re-enter them in AOD.
+
+**Proof gap.** The byte-level link from ABL `ctx[0x11E]` / heap `0xA03A +0x5C` to APOB group 1 / type `0x10` / `+0x65` was not traced:
+
+- no ABL overlay stores a byte at `+0x65` or `+0x55`;
+- the APOB entry is probably filled by a block copy or by another PSP component.
+
+The link is supported by consistency. On retail silicon, nothing else rewrites the markers after a clear when the copies differ. Without the link, every later boot would again ignore the override and train on factory values while the AOD menu still shows the saved values. Either way, step 1 does not depend on the bad configuration being bootable.
+
+**Consequences for a Tref experiment.**
+
+- The Reset Hole is a **software-free rollback of any APCB-override change**, including a bad Tref token. It needs no programmer, as long as the override backup (`0x525000`) is intact, which it is factory on this board, and the board reaches EndOfDxe on the factory copy.
+- It is also a **destructive** reset of the user's AOD timings, so they must be written down before use.
+- It does not cover failures outside the APCB override (a damaged firmware image or backup copy). The training-failure-only limitation of §6 still applies to automatic recovery, but not to this manual path.
 
 ## Conclusion
 
@@ -142,14 +210,15 @@ The blockers are practical and safety-related, not permission-related:
 
 1. **Reachability** — using the DXE protocol and, crucially, triggering `AmdPspWriteBackApcbShadowCopy` from outside the firmware's own save flow is non-trivial and unverified; the SMM route additionally needs the AMD PSP SMM runtime buffer. No injector was written or tested.
 2. **CBS purge** — an injected token may be cleared the next time CBS saves settings at the same priority (partially open).
-3. **No safe auto-rollback for bad tREFI** — the ABL safety net only catches training failures, not the warm-instability that a too-high tREFI produces.
+3. **No safe auto-rollback for bad tREFI** — the ABL safety net only catches training failures, not the warm-instability that a too-high tREFI produces. A **manual** rollback does exist (§10): a CMOS clear makes ABL ignore a modified override copy and DXE rewrite it from the factory backup. It also wipes the AOD settings.
 
 Any actual attempt would modify boot-critical configuration and must be preceded by a hardware-level recovery plan (external SPI programmer / confirmed flashback), a conservative first value (e.g. ~2× the ~11677 default, not 65535), and a read-only baseline (ZenTimings) — none of which is in scope here. No flashing or injection is part of this project.
 
 ## Open items
 
 - ~~Which priority avoids the Save-time purge (§5)~~: resolved in §8 — priority 2 survives AOD and CBS saves.
-- Whether the recovery path permanently restores the active override APCB from its backup (§8).
+- ~~Whether the recovery path permanently restores the active override APCB from its backup (§8)~~: §10. Statically, a CMOS clear with a modified override leads to ABL booting from the backup and DXE rewriting `0x522000` from it, with one remaining link inferred, not traced. Hardware confirmation would be: after a Reset Hole press, an extra automatic reset, AOD timings back to Auto, and `0x522000` equal to the official image.
+- The `svc #0x1C` gate in front of the CMOS compare (§10, step 2).
 - State of the B-side APCB mirrors after firmware write-backs (§8).
 - Whether the ABL get-token service treats `0xFFFF` as "absent" (relevant only to the ASRock default-value side, not to a deliberate injection).
 - `0xE138`/`0xE139` write-back gating conditions.

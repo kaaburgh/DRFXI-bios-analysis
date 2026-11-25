@@ -141,3 +141,33 @@ No "cmp ..., 0xffff" exists in AmdApcbDxeV3 or AmdApcbSmmV3.
 0x162 numeric Trdwr              (UINT16)
 0x164 oneof   Processor CK drive strengths
 No IFR prompt in any module matches /refi|refresh interval/i.
+
+5. CMOS clear -> APCB override fallback and restore (DRFXI 1.15)
+-----------------------------------------------------------------
+ABL core overlay 0x24ADA0 (Thumb):
+003e78  svc     #0x1c                    ; boot-mode value -> [sp+0x14]
+003e7a  bl      #0xcec                   ; CmosCheck: CMOS[6]|CMOS[7]<<8 not in {0xA55A,0x5555} -> 1
+003e80  strb.w  r0, [r4, #0x11e]         ; ctx->ApcbRecovery = invalid markers
+003e86  ldr     r0, [sp, #0x14] ; cmp r0,#1 ; beq skip
+003e8c  bl      #0xb5c                   ; compare 0x60 vs 0x68 inst 8 ("Apcb content is identical" -> write 5A A5, return 1)
+003e92  strb.w  r5, [r4, #0x11e]         ; identical -> clear flag
+003e9e  bl      #0x494                   ; flag -> zero +0xC of every type-0x60 BIOS-dir cache entry
+0006ee  ldrb.w  r1, [r1, #0x11e] ; cmp r8,#0x60 ; movs r1,#0x68 ; adds r0,#8   ; 0x60/N -> 0x68/N+8
+0008a0  adr     r2, "\tRecoverable APCB Checksum Error\n" ; ... strb.w r0(=1), [r1, #0x11e]
+Overlay 0x298D10:
+007284  ldrb.w  r1, [r0, #0x11e] ; strb.w r1, [r7, #0x5c]   ; r7 = heap block 0xA03A ("General APOB Creation" input)
+
+AmdPspDxeV2Rpl (EndOfDxe callback 0x2590 -> 0xE4C):
+000e75  mov ecx, 0x304 ; call [PcdProtocol+0x30]   ; PcdAmdPspApcbRecoveryEnable
+000e81  "PcdAmdPspApcbRecoveryEnable Set, Ignore recovery, set CMOS flag 0x5555 to notify ABL" -> out 0x72/0x73: [6]=0x55 [7]=0x55
+000eda  call [ApobProtocol+8]                      ; ApobRplDxe 0x15C8: APOB(group 1, type 0x10, inst 0) byte +0x65 "ApobApcbRecoveryFlag"
+000efe  "APCB.RecoveryFlag Set" ; table 0x7788: 00 68 08 60 00 | 01 68 09 60 01
+0010a4  "UniqueApcbInstance Update from %x to %x" ; checksum at +0x10 recomputed
+001101  "Recover APCB instance SPI region [0x%x] with 0x%x bytes from ..."
+00117b  "Recover Succeed, set CMOS flag, reset system" -> [6]=0x5A [7]=0xA5 ; ResetSystem
+
+PCD token 0x304 writers (only two, both SetBool(0x304, 0)):
+AmdAgesaParameterGroupPei TE 0x2c0: test byte [val],0xf ; je skip ... 0x2fc push esi(=0) ; push 0x304 ; call [PeiPcd+0x50]
+AmdCpmOemInitPeim        TE 0x29b: esi = SMN[0x03810A84] & 0xF ; jne -> 0x360 xor esi,esi ... 0x3f2 push esi ; push 0x304 ; call [PeiPcd+0x50]
+FchYuntaiPei: SMN[0x03810A84] bit 9 -> "SkipAllUSBControllerAccess", bit 10 -> "SkipAllUSBPhyAccess" (pre-silicon switches)
+PcdPeim DB: token 0x304 -> 0x0110162B (UINT8 BOOL), init 0x01
