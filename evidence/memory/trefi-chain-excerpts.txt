@@ -202,3 +202,16 @@ ApobRplDxe:
 0015c8  mov cl, [rax+0x65]  ; "Fail to get ApobApcbRecoveryFlag"
 00162c  mov cl, [rax+0x30]  ; "Fail to get ApobApcbInstance"
 0016a8  movzx r8d, [rbx+0x64] ; "DimmCfgUpdatedFlag %x"
+
+6. DIMM PMIC voltage override (ABL overlay 0x2787F0, DRFXI 1.15)
+-----------------------------------------------------------------
+001d26  ldr.w r2, [ctx, #0xd4] ; ldr r0, =0x288f8a28 ; blx r2     ; Enable Platform PMIC Control
+004dee  cmp r0, #1 ; beq -> "PMIC voltages are adjusted by EC or other platform machanism" (skip)
+004df4  "PMIC Overrides"
+004e66  movs r1, #0x2f ; bl 0x5260 (PMIC read)          ; "\tPMIC 0x2F = %x"
+004e86  orr r2, r0, #4 ; ... bl 0x539c (PMIC write R2F)  ; request Programmable Mode
+004e94  movs r1, #0x2f ; bl 0x5260 (read back)
+004ea6  lsls r0, r0, #0x1d ; bge 0x4f44                  ; bit 2 clear -> secure
+004eb4  "Channel %d, Dimm %d PMIC is in Programmable Mode" ; 004ef0 movw r7, #0x44c (1100 mV default)
+004f12  "PMIC Set VDD = %dmV"
+004f46  ldr r2, =0x2b788 (file 0xb688): "Channel %d, Dimm %d PMIC is in Secure Mode. Default settings can not be overridden."

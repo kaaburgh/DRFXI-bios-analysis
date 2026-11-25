@@ -13,6 +13,7 @@ Current topics:
 - [`smu-power-limit.md`](smu-power-limit.md) — current TCC/SMU power-limit investigation, including negative results
 - [`intel-lan-oprom.md`](intel-lan-oprom.md) — current state of the 1.13 Intel LAN OPROM POST-hang investigation
 - [`memory-trefi.md`](memory-trefi.md) — why DDR5 tREFI is not editable: no IFR question or CBS/AOD token producer, while the ABL already reads Tref token `0x419FF338`
+- [`dimm-pmic-voltage.md`](dimm-pmic-voltage.md) — why DIMM VDD/VDDQ set in AOD may not apply: ABL requests PMIC Programmable Mode and skips modules whose PMIC stays in Secure Mode
 - [`changelog-mapping.md`](changelog-mapping.md) — compact changelog ↔ code/data evidence matrix
 
 Use `../research-status.md` as the project-level starting point.
