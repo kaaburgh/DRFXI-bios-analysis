@@ -100,6 +100,40 @@ Six AOD token IDs the parser left unnamed map as follows: `0xF0947E37` = UCLK DI
 
 This resolves the §5 purge question for AOD and CBS.
 
+## 9. Follow-up: B-side copies, image integrity, and board hardware (2026-11-25)
+
+The board owner ran `scripts/extract_apcb_regions.py` on the same stock 1.15 readback (image SHA-256 prefix `9a732a2d9d271f2e`; per-block hashes only, no NVRAM content shared).
+
+| Copy | vs official 1.15 |
+|---|---|
+| A main `0x51D400` (`0x68` inst 0) | identical |
+| **A active override `0x522000` (`0x60`)** | **differs** (AOD tokens, §8) |
+| A override backup `0x525000` (`0x68` inst 8) | identical |
+| B main `0x8E5400` | identical |
+| **B active override `0x8EA000`** | **identical, i.e. factory** |
+| B override backup `0x8ED000` | identical |
+
+- All PSP/BIOS directory tables and the EFS header are identical.
+- Only 11 of 512 blocks (64 KiB each) differ from the official image, and all of them are runtime-data regions:
+  - `0xC0000–0xEFFFF`: PSP NV data / PSP NVRAM (fTPM);
+  - `0x120000–0x13FFFF`: `APOB_NV_COPY` at `0x125000`;
+  - `0x520000`: the active override APCB;
+  - `0x1BA0000` (erased in the official image) and `0x1BC0000–0x1BFFFFF`: NVRAM / ROM-Armor NV stores.
+- The firmware itself is stock and unmodified.
+
+Consequences:
+
+- The firmware's own write-back touches **only the A-side active override copy**. Both A-side defaults and the A backup are factory, and so is the **entire B side** (a second PSP L2/BIOS L2 directory set at `0x565000` / `0x8E5000`).
+- A corrupted A-side override would therefore leave several factory fallbacks: the A backup (used by the "Recoverable" path in §7) and, if the PSP A/B recovery engages, the whole B side. Whether the PSP actually falls back to B on an APCB failure on this board was not verified.
+- If the board ever boots from the B side, the AOD timings would silently stop applying, because B holds factory APCB. That is a visible sign of a recovery boot.
+
+Board hardware, from public product photos and the official manual (`M09.04.DRFXI002`, DRFXI V2.0 2023-12-19):
+
+- **Reset Hole** on the rear I/O (manual item 13): with power removed, hold for 10 s to restore BIOS factory defaults, i.e. a CMOS clear. It is not established whether this also clears the APCB override copy.
+- **CR2032 RTC battery** on a cable, on the back of the board.
+- Unpopulated **2×10 footprint labelled `JTG1`** on the back, most likely a debug (JTAG/HDT) header and not an SPI header.
+- **SPI flash location is not confirmed.** The strongest front-side candidate is an 8-lead package (~6×9 mm including leads, consistent with a 256 Mbit SOIC-8/WSON-8). It sits between the PCIe x16 slot and the CE/RoHS print, above the upper SO-DIMM slot, directly left of a small FPC connector. The back side shows no package of a suitable size; the larger parts there are a 64-pin QFP (`U3401`), QFNs near the rear I/O, and power MOSFETs. Markings are unreadable at the available resolution, so part number and voltage remain unknown.
+
 ## Conclusion
 
 Mechanically, nothing in DRFXI 1.15 blocks writing token `0x419FF338` through the firmware's own `AmdApcbDxeV3` `SetToken16`: the register-permission whitelist is never armed, and the pre-/post-ReadyToBoot paths both accept the write. The ABL then applies it the way `docs/checkpoints/2026-11-24-trefi-abl-path.md` traced.
