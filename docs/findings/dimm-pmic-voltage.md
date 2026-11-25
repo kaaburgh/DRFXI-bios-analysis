@@ -36,6 +36,21 @@ The board owner's APCB extract (§9 of the checkpoint) holds the following in th
 
 The firmware therefore requests 1.2 V. HWiNFO reads the PMIC's own telemetry, and that stays at 1.1 V. This matches step 4: the module's PMIC ignores the Programmable Mode request, i.e. it is in Secure Mode.
 
+**Confirmed on the running board.** The board owner supplied a ZenTimings 142.1 debug report (Core 1.93.1.0; BIOS 1.15, AGESA DragonRangePI-FL1 1.0.0.3h; serial numbers masked by the tool):
+
+| Item | Both DIMMs (A1, B1) |
+|---|---|
+| Module | SK Hynix `HMCG78AGBSA095N`, 16 GB DDR5-5600 SO-DIMM, 1R x8, 46-45-45 |
+| SPD voltages | VDD/VDDQ 1.1 V, VPP 1.8 V; no XMP/EXPO profile ("EXPO Block: False") |
+| PMIC | PMIC5100 (MPS), at I2C `0x48` / `0x49` |
+| PMIC mode | "Secure"; "High Voltage Mode: Disabled" |
+| PMIC register `0x2F` | `0x5A`: bit 2 (Programmable Mode) = 0 after the boot in which ABL set it |
+| PMIC VDD/VDDQ | 1100 mV (ADC 1095 mV) |
+
+ZenTimings' own AOD decode shows "MEM VDD/VDDQ: AOD (saved 1200 mV)" and "CPU VDDIO: AOD (saved 1200 mV)". Its AOD table reports `MemVddio`/`MemVddq` = 1.1 V and `ApuVddio` = 0 V (not reported). The CPU-side VDDIO therefore cannot be judged from this report.
+
+So these are JEDEC-only modules whose PMIC stays in Secure Mode. The 1.2 V request cannot take effect on them.
+
 ## Consequences
 
 - **No firmware or OS workaround.** ABL already performs the only unlock step a host can perform (set R2F[2] and verify). A runtime SMBus/I3C write from the OS would send the same request and get the same refusal.

@@ -229,6 +229,8 @@ Both writers are therefore pre-silicon/emulation switches. On a production board
 
 So `ApobApcbRecoveryFlag` is exactly `ctx+0x11E`, the CMOS/compare result of steps 1–2. The handler in step 4 acts on precisely the condition under which ABL booted from the backup.
 
+**Hardware corroboration.** A ZenTimings 142.1 debug report from the board owner's running system (stock 1.15) lists the APOB entries. Entry 5 is at offset `0x00001430`, group/type `1/16`, instance 0, 120 bytes, "APCB boot info". That is the same offset, IDs and size as traced above. Its decode shows "APCB Recovery Flag: 0" and "DIMM Config Updated: 0" for that boot, i.e. no recovery boot.
+
 Caveat: if "Recoverable APCB Checksum Error" sets `ctx+0x11E` only after the `0x298D10` export, the heap copy would be stale. That matters only for the checksum path; the CMOS path sets the flag before the first overlay call.
 
 **Result for the reporter's board** (stock 1.15, AOD timings saved, factory override backup per §9). Statically, a Reset Hole press does the following:
