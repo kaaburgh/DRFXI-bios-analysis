@@ -132,7 +132,19 @@ Board hardware, from public product photos and the official manual (`M09.04.DRFX
 - **Reset Hole** on the rear I/O (manual item 13): with power removed, hold for 10 s to restore BIOS factory defaults, i.e. a CMOS clear. Its effect on the APCB override copy is analysed in §10.
 - **CR2032 RTC battery** on a cable, on the back of the board.
 - Unpopulated **2×10 footprint labelled `JTG1`** on the back, most likely a debug (JTAG/HDT) header and not an SPI header.
-- **SPI flash location is not confirmed.** The strongest front-side candidate is an 8-lead package (~6×9 mm including leads, consistent with a 256 Mbit SOIC-8/WSON-8). It sits between the PCIe x16 slot and the CE/RoHS print, above the upper SO-DIMM slot, directly left of a small FPC connector. The back side shows no package of a suitable size; the larger parts there are a 64-pin QFP (`U3401`), QFNs near the rear I/O, and power MOSFETs. Markings are unreadable at the available resolution, so part number and voltage remain unknown.
+- **SPI flash location (from product photos).** The strongest front-side candidate is an 8-lead package (~6×9 mm including leads, consistent with a 256 Mbit SOIC-8/WSON-8). It sits between the PCIe x16 slot and the CE/RoHS print, above the upper SO-DIMM slot, directly left of a small FPC connector. The back side shows no package of a suitable size; the larger parts there are a 64-pin QFP (`U3401`), QFNs near the rear I/O, and power MOSFETs.
+- **SPI flash part (2026-11-26).** The board owner sent three close-up macro photos of the chip. The marking reads `winbond` / **`25Q256JWEQ`** / `2435` / two lot-code lines.
+  - The letter after `J` reads as `W` in all three photos after rotation and enhancement.
+  - By Winbond's usual abbreviated top marking (prefix `W` and temperature letter dropped), this is the **W25Q256JW** family. The ordering code is most likely `W25Q256JWEIQ`.
+  - Properties: 256 Mbit = 32 MiB, matching the image size; **1.8 V supply (1.7–1.95 V)**; WSON-8 8×6 mm with no leads (pads underneath and at the package edge; pin 1 marked by the dot).
+  - `2435` is most likely the date code (2024, week 35).
+  - The exact photo position on the board was not given.
+- **Recovery-path consequences.**
+  - A common CH341A at 3.3 V must not be connected directly; a 1.8 V adapter or a programmer with native 1.8 V output is needed.
+  - A SOIC-8 clip does not fit WSON: use a WSON-8 8×6 pogo-pin probe or desolder the chip into a socket.
+  - Before attaching anything, confirm VCC (pin 8) ≈ 1.8 V against GND (pin 4) with a multimeter on the powered board.
+  - The expected JEDEC ID is `EF 60 19` (W25Q256JW; the DTR "-IM" variant reads `EF 80 19`).
+  - In-circuit work on the 1.8 V rail can back-power the APU/FCH. That risk was not evaluated here.
 
 ## 10. Follow-up: what a CMOS clear does to the active override APCB (2026-11-25)
 
