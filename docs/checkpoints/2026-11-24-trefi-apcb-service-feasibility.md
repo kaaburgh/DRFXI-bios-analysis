@@ -145,6 +145,10 @@ Board hardware, from public product photos and the official manual (`M09.04.DRFX
   - Before attaching anything, confirm VCC (pin 8) ≈ 1.8 V against GND (pin 4) with a multimeter on the powered board.
   - The expected JEDEC ID is `EF 60 19` (W25Q256JW; the DTR "-IM" variant reads `EF 80 19`).
   - In-circuit work on the 1.8 V rail can back-power the APU/FCH. That risk was not evaluated here.
+- **Small FPC connector right of the flash (2026-11-26).** It is not shown on the manual's layout page (items 01–08) or in the vendor's "Motherboard Detail" list. Its silkscreen designator is unreadable in available photos, and no public description of it was found.
+  - Its position, directly beside the flash with a column of small passives in between (likely series resistors), fits a factory/service SPI programming or debug port. That is an inference only.
+  - An eSPI/EC or POST-code debug port is the alternative.
+  - Passive check, with the board unplugged and the CMOS battery removed: measure resistance from each FPC contact to the WSON pins (1 CS#, 2 DO/IO1, 3 WP#/IO2, 4 GND, 5 DI/IO0, 6 CLK, 7 HOLD#/RESET#/IO3, 8 VCC). Contacts that ring to CS#/CLK/DI/DO, directly or through tens of ohms, plus GND/VCC, would identify a SPI port. Such a port still runs at 1.8 V.
 
 ## 10. Follow-up: what a CMOS clear does to the active override APCB (2026-11-25)
 
